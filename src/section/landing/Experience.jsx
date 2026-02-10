@@ -1,96 +1,144 @@
 import { useRef } from 'react';
 import { Box, Container, Typography, Stack, Chip, useTheme, useMediaQuery } from '@mui/material';
-import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
+import { motion, useScroll, useSpring } from 'framer-motion';
+import { SiReact, SiFigma, SiTailwindcss, SiFirebase, SiNodedotjs, SiGooglecloud, SiFlutter, SiSwift, SiDocker } from 'react-icons/si';
+import { VscJson, VscCode, VscSymbolRuler } from 'react-icons/vsc';
 
-// Importando ícones que representam as áreas
-import BrushOutlinedIcon from '@mui/icons-material/BrushOutlined'; // UX/UI
-import CloudQueueOutlinedIcon from '@mui/icons-material/CloudQueueOutlined'; // Backend
-import DevicesOutlinedIcon from '@mui/icons-material/DevicesOutlined'; // Mobile
-
-// Dados dos "Nós" da Rede Neural com os Ícones
+// Ajustar para as ferramentas reais
 const experiences = [
     {
         id: 1,
-        title: "Arquitetura de Experiência",
-        role: "UX/UI & Frontend",
-        description: "Onde o design encontra a lógica. Criamos interfaces imersivas que não apenas impressionam visualmente, mas guiam o usuário intuitivamente.",
-        techs: ["React.js", "Figma", "Motion", "Tailwind"],
-        icon: BrushOutlinedIcon,
-        color: "#A78BFA" // Roxo claro
+        title: "Engenharia de Interface",
+        role: "Frontend & Design System",
+        description: "Não entregamos apenas telas, entregamos sistemas de design componentizados. Interfaces reativas que garantem consistência visual e manutenibilidade a longo prazo.",
+        techs: [
+            { name: "React / Next.js", icon: SiReact },
+            { name: "Figma", icon: SiFigma },
+            { name: "Tailwind", icon: SiTailwindcss }
+        ],
+        color: "#A78BFA",
+        bgType: "code"
     },
     {
         id: 2,
-        title: "Infraestrutura Serverless",
-        role: "Backend & Cloud",
-        description: "Performance invisível. Arquiteturas escaláveis com Firebase e Node.js para garantir que seu sistema cresça com segurança e custo otimizado.",
-        techs: ["Firebase", "Node.js", "GCP", "NoSQL"],
-        icon: CloudQueueOutlinedIcon,
-        color: "#34D399" // Um verde menta tecnológico para diferenciar
+        title: "Arquitetura Cloud & Dados",
+        role: "Backend & Serverless",
+        description: "Escalabilidade nativa. Construímos APIs que aguentam picos de tráfego usando arquitetura serverless, reduzindo custos de infraestrutura ociosa.",
+        techs: [
+            { name: "Firebase", icon: SiFirebase },
+            { name: "Node.js", icon: SiNodedotjs },
+            { name: "GCP", icon: SiGooglecloud }
+        ],
+        color: "#34D399",
+        bgType: "json"
     },
     {
         id: 3,
-        title: "Ecossistemas Multiplataforma",
-        role: "Mobile & Web",
-        description: "Sua marca em qualquer dispositivo. Unificamos a experiência web e mobile criando sistemas fluidos e de fácil manutenção.",
-        techs: ["React Native", "PWA", "API REST"],
-        icon: DevicesOutlinedIcon,
-        color: "#60A5FA" // Azul tech
+        title: "Ecossistema Mobile",
+        role: "iOS & Android",
+        description: "Apps nativos e híbridos com performance de 60fps. Unificamos a lógica de negócios enquanto respeitamos as diretrizes de design da Apple e Google.",
+        techs: [
+            { name: "React Native", icon: SiReact },
+            { name: "Swift", icon: SiSwift },
+            { name: "Flutter", icon: SiFlutter }
+        ],
+        color: "#60A5FA", // Azul
+        bgType: "grid"
     }
 ];
 
-// Componente do Card de Vidro (Holographic Card)
+// Componente para desenhar "Artefatos Técnicos" no fundo
+const BackgroundArtifact = ({ type, color }) => {
+    const codeSnippet = (
+        <Box sx={{ fontFamily: '"Fira Code", monospace', fontSize: '0.6rem', color: color, opacity: 0.15, lineHeight: 1.4 }}>
+            <div>{`const WavemInterface = () => {`}</div>
+            <div style={{ paddingLeft: 10 }}>{`const [state, setState] = useState(null);`}</div>
+            <div style={{ paddingLeft: 10 }}>{`return (`}</div>
+            <div style={{ paddingLeft: 20 }}>{`<motion.div animate={{ opacity: 1 }}>`}</div>
+            <div style={{ paddingLeft: 30 }}>{`<Header sticky={true} />`}</div>
+            <div style={{ paddingLeft: 30 }}>{`<HeroSection data={data} />`}</div>
+            <div style={{ paddingLeft: 20 }}>{`</motion.div>`}</div>
+            <div style={{ paddingLeft: 10 }}>{`);`}</div>
+            <div>{`};`}</div>
+        </Box>
+    );
+
+    const jsonSnippet = (
+        <Box sx={{ fontFamily: '"Fira Code", monospace', fontSize: '0.6rem', color: color, opacity: 0.15, lineHeight: 1.4 }}>
+            <div>{`{`}</div>
+            <div style={{ paddingLeft: 10 }}>{`"status": 200,`}</div>
+            <div style={{ paddingLeft: 10 }}>{`"server": "Wavem-Core-V2",`}</div>
+            <div style={{ paddingLeft: 10 }}>{`"data": {`}</div>
+            <div style={{ paddingLeft: 20 }}>{`"users_active": 1402,`}</div>
+            <div style={{ paddingLeft: 20 }}>{`"region": "us-east-1",`}</div>
+            <div style={{ paddingLeft: 20 }}>{`"latency": "24ms"`}</div>
+            <div style={{ paddingLeft: 10 }}>{`}`}</div>
+            <div>{`}`}</div>
+        </Box>
+    );
+
+    const gridPattern = (
+        <Box sx={{
+            width: '100%', height: '100%',
+            backgroundImage: `radial-gradient(${color} 1px, transparent 1px)`,
+            backgroundSize: '15px 15px',
+            opacity: 0.1
+        }} />
+    );
+
+    return (
+        <Box sx={{ position: 'absolute', top: 20, right: 20, width: '60%', height: '80%', overflow: 'hidden', zIndex: 0, pointerEvents: 'none' }}>
+            {type === 'code' && codeSnippet}
+            {type === 'json' && jsonSnippet}
+            {type === 'grid' && gridPattern}
+        </Box>
+    );
+};
+
 const NeuralCard = ({ item, isMobile }) => {
-    const theme = useTheme();
-    const Icon = item.icon;
 
     return (
         <motion.div
-            whileHover={{ scale: 1.02, rotateX: 2, rotateY: 2 }} // Efeito 3D sutil no hover
+            whileHover={{ scale: 1.01, translateY: -5 }}
             transition={{ type: "spring", stiffness: 300 }}
         >
             <Box
                 sx={{
-                    background: 'rgba(255, 255, 255, 0.03)',
-                    backdropFilter: 'blur(12px)',
-                    border: '1px solid rgba(255, 255, 255, 0.05)',
-                    borderRadius: '24px',
+                    background: 'rgba(10, 10, 10, 0.6)', // Mais escuro para contraste do código
+                    backdropFilter: 'blur(16px)',
+                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                    borderRadius: '16px', // Borda um pouco mais técnica (menos redonda)
                     p: 4,
                     position: 'relative',
                     overflow: 'hidden',
                     transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
                     '&:hover': {
                         borderColor: item.color,
-                        boxShadow: `0 0 40px ${item.color}20`, // Glow colorido baseado na tecnologia
+                        boxShadow: `0 4px 30px ${item.color}15`, // Glow suave
                     }
                 }}
             >
-                {/* Ícone de Fundo Gigante (Marca d'água) */}
-                <Box sx={{ position: 'absolute', right: -20, top: -20, opacity: 0.05, transform: 'rotate(15deg)' }}>
-                    <Icon sx={{ fontSize: 180, color: item.color }} />
-                </Box>
+                {/* Artefato de Fundo (Código, JSON, Grid) */}
+                <BackgroundArtifact type={item.bgType} color={item.color} />
 
-                {/* Cabeçalho do Card com Ícone Animado */}
-                <Stack direction="row" spacing={2} alignItems="center" mb={3}>
+                {/* Cabeçalho */}
+                <Stack direction="row" spacing={2} alignItems="center" mb={2} position="relative" zIndex={1}>
                     <Box
                         sx={{
-                            p: 1.5,
-                            borderRadius: '16px',
-                            background: `linear-gradient(135deg, ${item.color}20 0%, transparent 100%)`,
-                            border: `1px solid ${item.color}40`,
-                            display: 'flex', alignItems: 'center', justifyContent: 'center'
+                            p: 1,
+                            borderRadius: '8px',
+                            background: `rgba(255,255,255,0.05)`,
+                            border: `1px solid rgba(255,255,255,0.1)`,
                         }}
                     >
-                        {/* Ícone pulsando suavemente */}
-                        <motion.div
-                            animate={{ scale: [1, 1.1, 1], rotate: [0, 5, -5, 0] }}
-                            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                        >
-                            <Icon sx={{ color: item.color, fontSize: 32 }} />
-                        </motion.div>
+                        {/* Ícone contextual (Code, JSON, Ruler) */}
+                        {item.bgType === 'code' && <VscCode size={24} color={item.color} />}
+                        {item.bgType === 'json' && <VscJson size={24} color={item.color} />}
+                        {item.bgType === 'grid' && <VscSymbolRuler size={24} color={item.color} />}
                     </Box>
                     <Box>
-                        <Typography variant="caption" sx={{ color: item.color, letterSpacing: 1, fontWeight: 'bold' }}>
-                            {item.role.toUpperCase()}
+                        <Typography variant="caption" sx={{ color: item.color, letterSpacing: 1.5, fontWeight: 'bold', fontFamily: 'monospace' }}>
+                            {`// ${item.role.toUpperCase()}`}
                         </Typography>
                         <Typography variant="h6" fontWeight="bold" sx={{ color: '#fff', lineHeight: 1.2 }}>
                             {item.title}
@@ -98,27 +146,34 @@ const NeuralCard = ({ item, isMobile }) => {
                     </Box>
                 </Stack>
 
-                <Typography variant="body2" sx={{ color: 'text.secondary', mb: 4, lineHeight: 1.7, minHeight: '60px' }}>
+                <Typography variant="body2" sx={{ color: '#A1A1AA', mb: 3, lineHeight: 1.7, position: 'relative', zIndex: 1, maxWidth: '90%' }}>
                     {item.description}
                 </Typography>
 
-                {/* Tech Chips */}
-                <Stack direction="row" gap={1} flexWrap="wrap">
-                    {item.techs.map((tech) => (
-                        <Chip
-                            key={tech}
-                            label={tech}
-                            size="small"
-                            sx={{
-                                borderColor: `${item.color}40`,
-                                color: item.color,
-                                background: `${item.color}10`,
-                                fontWeight: 600,
-                                fontSize: '0.75rem'
-                            }}
-                            variant="outlined"
-                        />
-                    ))}
+                {/* Tech Stack com Logos Reais */}
+                <Stack direction="row" gap={1.5} flexWrap="wrap" position="relative" zIndex={1}>
+                    {item.techs.map((tech) => {
+                        const Icon = tech.icon;
+                        return (
+                            <Box
+                                key={tech.name}
+                                sx={{
+                                    display: 'flex', alignItems: 'center', gap: 1,
+                                    px: 1.5, py: 0.8,
+                                    borderRadius: '6px',
+                                    background: 'rgba(255,255,255,0.03)',
+                                    border: '1px solid rgba(255,255,255,0.05)',
+                                    transition: 'all 0.2s',
+                                    '&:hover': { background: 'rgba(255,255,255,0.08)', borderColor: item.color }
+                                }}
+                            >
+                                <Icon size={16} color={item.color} />
+                                <Typography variant="caption" sx={{ color: '#E4E4E7', fontWeight: 500 }}>
+                                    {tech.name}
+                                </Typography>
+                            </Box>
+                        )
+                    })}
                 </Stack>
             </Box>
         </motion.div>
@@ -130,107 +185,36 @@ export default function Experience() {
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const containerRef = useRef(null);
 
-    const { scrollYProgress } = useScroll({
-        target: containerRef,
-        offset: ["start center", "end center"]
-    });
-
-    const scaleY = useSpring(scrollYProgress, {
-        stiffness: 100,
-        damping: 30,
-        restDelta: 0.001
-    });
+    const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start center", "end center"] });
+    const scaleY = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
 
     return (
-        <Box
-            component="section"
-            ref={containerRef}
-            sx={{ py: 15, position: 'relative' }}
-        >
+        <Box component="section" ref={containerRef} sx={{ py: 15, position: 'relative' }}>
             <Container maxWidth="lg">
-                {/* Título da Seção */}
                 <Box mb={12} textAlign="center" position="relative" zIndex={2}>
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                    >
-                        <Typography variant="overline" color="primary" sx={{ letterSpacing: 3, fontWeight: 'bold' }}>
-                            NOSSA EXPERTISE
-                        </Typography>
-                        <Typography variant="h3" fontWeight={800} sx={{ mt: 1, mb: 2 }}>
-                            Conectando pontos, <br />
-                            <span style={{
-                                background: `linear-gradient(90deg, ${theme.palette.primary.main} 0%, #A78BFA 100%)`,
-                                WebkitBackgroundClip: 'text',
-                                WebkitTextFillColor: 'transparent'
-                            }}>
-                                criando ecossistemas.
-                            </span>
-                        </Typography>
-                    </motion.div>
+                    <Typography variant="overline" color="primary" sx={{ letterSpacing: 3, fontWeight: 'bold' }}>
+                        NOSSO DNA TÉCNICO
+                    </Typography>
+                    <Typography variant="h3" fontWeight={800} sx={{ mt: 1, mb: 2 }}>
+                        Mais que ferramentas, <br />
+                        <span style={{ color: theme.palette.primary.main }}>domínio tecnológico.</span>
+                    </Typography>
                 </Box>
 
                 <Box sx={{ position: 'relative' }}>
-                    {/* A Linha Central (Espinha Dorsal) - Só aparece no Desktop */}
                     {!isMobile && (
-                        <Box
-                            sx={{
-                                position: 'absolute', left: '50%', top: 0, bottom: 0, width: '2px',
-                                background: 'rgba(255,255,255,0.05)', transform: 'translateX(-50%)',
-                                zIndex: 0
-                            }}
-                        >
-                            <motion.div
-                                style={{
-                                    scaleY,
-                                    transformOrigin: 'top',
-                                    background: 'linear-gradient(180deg, #7C3AED 0%, #34D399 50%, #60A5FA 100%)', // Gradiente Multicor
-                                    width: '100%', height: '100%',
-                                    boxShadow: '0 0 15px rgba(124, 58, 237, 0.5)'
-                                }}
-                            />
+                        <Box sx={{ position: 'absolute', left: '50%', top: 0, bottom: 0, width: '2px', background: 'rgba(255,255,255,0.05)', transform: 'translateX(-50%)' }}>
+                            <motion.div style={{ scaleY, transformOrigin: 'top', background: `linear-gradient(180deg, #A78BFA 0%, #34D399 50%, #60A5FA 100%)`, width: '100%', height: '100%' }} />
                         </Box>
                     )}
 
-                    {/* Renderização dos Nós */}
                     <Stack spacing={isMobile ? 6 : 10}>
                         {experiences.map((item, index) => (
-                            <Box
-                                key={item.id}
-                                sx={{
-                                    display: 'flex',
-                                    justifyContent: isMobile ? 'flex-start' : (index % 2 === 0 ? 'flex-end' : 'flex-start'),
-                                    position: 'relative',
-                                    flexDirection: isMobile ? 'column' : (index % 2 === 0 ? 'row-reverse' : 'row'),
-                                    alignItems: 'center',
-                                    zIndex: 1
-                                }}
-                            >
-                                {/* O Ponto Central (Node) Pulsante */}
-                                <Box
-                                    sx={{
-                                        position: 'absolute',
-                                        left: isMobile ? '0px' : '50%',
-                                        transform: 'translateX(-50%)',
-                                        zIndex: 10,
-                                        display: isMobile ? 'none' : 'block'
-                                    }}
-                                >
-                                    <motion.div
-                                        initial={{ scale: 0 }}
-                                        whileInView={{ scale: 1 }}
-                                        transition={{ duration: 0.5 }}
-                                    >
-                                        <Box
-                                            sx={{
-                                                width: 16, height: 16, borderRadius: '50%',
-                                                background: '#050505',
-                                                border: `3px solid ${item.color}`,
-                                                boxShadow: `0 0 15px ${item.color}`
-                                            }}
-                                        />
-                                    </motion.div>
+                            <Box key={item.id} sx={{ display: 'flex', justifyContent: isMobile ? 'flex-start' : (index % 2 === 0 ? 'flex-end' : 'flex-start'), position: 'relative', flexDirection: isMobile ? 'column' : (index % 2 === 0 ? 'row-reverse' : 'row'), alignItems: 'center' }}>
+
+                                {/* O Ponto Central */}
+                                <Box sx={{ position: 'absolute', left: isMobile ? '0px' : '50%', transform: 'translateX(-50%)', zIndex: 10, display: isMobile ? 'none' : 'block' }}>
+                                    <Box sx={{ width: 12, height: 12, borderRadius: '50%', background: '#050505', border: `2px solid ${item.color}`, boxShadow: `0 0 10px ${item.color}` }} />
                                 </Box>
 
                                 {/* Linha Horizontal Animada */}
@@ -240,26 +224,17 @@ export default function Experience() {
                                             initial={{ width: 0, opacity: 0 }}
                                             whileInView={{ width: '100%', opacity: 1 }}
                                             transition={{ duration: 1, delay: 0.2 }}
-                                            style={{
-                                                height: '1px',
-                                                background: `linear-gradient(${index % 2 === 0 ? '90deg' : '-90deg'}, ${item.color} 50%, transparent)`,
-                                            }}
+                                            style={{ height: '1px', background: `linear-gradient(${index % 2 === 0 ? '90deg' : '-90deg'}, ${item.color}40, transparent)` }}
                                         />
                                     </Box>
                                 )}
 
                                 {/* O Card */}
                                 <Box sx={{ width: isMobile ? '100%' : '45%', pl: isMobile ? 0 : 0 }}>
-                                    <motion.div
-                                        initial={{ opacity: 0, x: isMobile ? 0 : (index % 2 === 0 ? -50 : 50) }}
-                                        whileInView={{ opacity: 1, x: 0 }}
-                                        transition={{ duration: 0.7, type: "spring", bounce: 0.4 }}
-                                        viewport={{ once: true, margin: "-50px" }}
-                                    >
+                                    <motion.div initial={{ opacity: 0, x: isMobile ? 0 : (index % 2 === 0 ? -30 : 30) }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
                                         <NeuralCard item={item} isMobile={isMobile} />
                                     </motion.div>
                                 </Box>
-
                             </Box>
                         ))}
                     </Stack>

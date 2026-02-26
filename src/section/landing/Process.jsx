@@ -1,55 +1,19 @@
 import { useRef } from 'react';
 import { Box, Container, Typography, Stack, useTheme, useMediaQuery } from '@mui/material';
 import { motion, useScroll, useSpring } from 'framer-motion';
-
-// Substituindo TbFileSignature por TbFileText
 import { TbCoffee, TbPencil, TbFileText, TbCode, TbRocket } from 'react-icons/tb';
+import { getProcessSteps } from '@/service/content';
 
-const steps = [
-    {
-        id: 1,
-        title: "Descoberta & Conexão",
-        subtitle: "O Café Virtual",
-        description: "Tudo começa com uma conversa sem compromisso. Queremos ouvir sua ideia, entender suas dores e ver se temos a química certa para trabalharmos juntos. Sem termos técnicos difíceis aqui.",
-        icon: TbCoffee,
-        color: "#F59E0B" // Âmbar (Acolhedor)
-    },
-    {
-        id: 2,
-        title: "Rascunho & Escopo",
-        subtitle: "A Visão Toma Forma",
-        description: "Desenhamos os primeiros protótipos (wireframes) para validar se estamos na mesma página. Com a ideia visualizada, definimos o escopo real e apresentamos um orçamento justo.",
-        icon: TbPencil,
-        color: "#EC4899" // Rosa (Criativo)
-    },
-    {
-        id: 3,
-        title: "Design & Contrato",
-        subtitle: "Formalização",
-        description: "Com o aperto de mão (digital) e contrato assinado, nossa equipe foca nos detalhes. Criamos o layout final em alta fidelidade no Figma. É aqui que seu projeto ganha cara e cor.",
-        icon: TbFileText,
-        color: "#8B5CF6" // Roxo (Identidade Wavem)
-    },
-    {
-        id: 4,
-        title: "Desenvolvimento Puro",
-        subtitle: "Construção da Estrutura",
-        description: "Aprovou o design? Agora é conosco. Codificamos a estrutura robusta do sistema. Para garantir a entrega no prazo, mudanças estruturais nesta etapa exigem revisão, garantindo o foco total.",
-        icon: TbCode,
-        color: "#3B82F6" // Azul (Técnico/Confiança)
-    },
-    {
-        id: 5,
-        title: "Deploy & Evolução",
-        subtitle: "O Grande Lançamento",
-        description: "Configuramos servidores, domínio e colocamos seu projeto no ar. Oferecemos planos de suporte contínuo para que você nunca fique na mão e seu sistema continue evoluindo.",
-        icon: TbRocket,
-        color: "#10B981" // Verde (Sucesso/Go)
-    }
-];
+const processIconMap = {
+    coffee: TbCoffee,
+    pencil: TbPencil,
+    file: TbFileText,
+    code: TbCode,
+    rocket: TbRocket
+};
 
 const ProcessStep = ({ step, index, isMobile }) => {
-    const Icon = step.icon;
+    const Icon = processIconMap[step.iconKey] ?? TbCode;
     const isEven = index % 2 === 0;
 
     return (
@@ -60,7 +24,7 @@ const ProcessStep = ({ step, index, isMobile }) => {
                 alignItems: 'center',
                 justifyContent: isMobile ? 'flex-start' : 'space-between',
                 position: 'relative',
-                mb: isMobile ? 8 : 15,
+                mb: isMobile ? 8 : 13,
                 width: '100%'
             }}
         >
@@ -84,9 +48,9 @@ const ProcessStep = ({ step, index, isMobile }) => {
                         width: 50, height: 50, borderRadius: '50%',
                         background: '#050505',
                         border: `2px solid ${step.color}`,
-                        boxShadow: `0 0 20px ${step.color}40`,
+                        boxShadow: `0 0 20px ${step.color}32`,
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        color: step.color, fontWeight: 'bold', fontSize: '1.2rem'
+                        color: step.color, fontWeight: 700, fontSize: '1.08rem', letterSpacing: '-0.01em'
                     }}>
                         {step.id}
                     </Box>
@@ -106,35 +70,66 @@ const ProcessStep = ({ step, index, isMobile }) => {
             >
                 <Box
                     sx={{
-                        background: 'rgba(255,255,255,0.02)',
-                        border: '1px solid rgba(255,255,255,0.05)',
-                        borderRadius: '20px',
-                        p: 4,
+                        background: 'rgba(10,10,10,0.62)',
+                        border: '1px solid rgba(255,255,255,0.08)',
+                        borderRadius: '18px',
+                        p: { xs: 3, md: 3.6 },
                         position: 'relative',
-                        backdropFilter: 'blur(10px)',
-                        transition: 'all 0.3s',
+                        backdropFilter: 'blur(16px)',
+                        transition: 'border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease',
                         '&:hover': {
                             borderColor: step.color,
-                            background: `linear-gradient(145deg, rgba(255,255,255,0.03) 0%, ${step.color}05 100%)`,
+                            boxShadow: `0 8px 34px ${step.color}16`,
                             transform: 'translateY(-5px)'
                         }
                     }}
                 >
-                    <Stack direction="row" alignItems="center" spacing={2} mb={2}>
-                        <Box sx={{ p: 1, borderRadius: '12px', background: `${step.color}20`, color: step.color }}>
+                    <Stack direction="row" alignItems="center" spacing={2} mb={2.2}>
+                        <Box
+                            sx={{
+                                p: 1,
+                                borderRadius: '8px',
+                                background: 'rgba(255,255,255,0.05)',
+                                color: step.color,
+                                border: '1px solid rgba(255,255,255,0.1)'
+                            }}
+                        >
                             <Icon size={28} />
                         </Box>
                         <Box>
-                            <Typography variant="caption" sx={{ color: step.color, fontWeight: 'bold', letterSpacing: 1, textTransform: 'uppercase' }}>
+                            <Typography
+                                variant="caption"
+                                sx={{
+                                    color: step.color,
+                                    letterSpacing: 1.8,
+                                    fontWeight: 700,
+                                    textTransform: 'uppercase',
+                                    opacity: 0.95,
+                                    fontSize: '0.68rem'
+                                }}
+                            >
                                 {step.subtitle}
                             </Typography>
-                            <Typography variant="h5" fontWeight="bold" color="white">
+                            <Typography
+                                variant="h5"
+                                fontWeight={800}
+                                color="white"
+                                sx={{ lineHeight: 1.12, letterSpacing: '-0.018em' }}
+                            >
                                 {step.title}
                             </Typography>
                         </Box>
                     </Stack>
 
-                    <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.7 }}>
+                    <Typography
+                        variant="body1"
+                        sx={{
+                            color: 'rgba(228,228,231,0.74)',
+                            lineHeight: 1.75,
+                            fontSize: { xs: '0.94rem', md: '0.98rem' },
+                            letterSpacing: '0.01em'
+                        }}
+                    >
                         {step.description}
                     </Typography>
                 </Box>
@@ -145,6 +140,7 @@ const ProcessStep = ({ step, index, isMobile }) => {
 
 export default function Process() {
     const theme = useTheme();
+    const steps = getProcessSteps();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const containerRef = useRef(null);
 
@@ -160,22 +156,42 @@ export default function Process() {
     });
 
     return (
-        <Box component="section" ref={containerRef} sx={{ py: 15, position: 'relative', overflow: 'hidden' }}>
+        <Box component="section" ref={containerRef} sx={{ py: { xs: 10, md: 15 }, position: 'relative', overflow: 'hidden' }}>
             <Container maxWidth="lg">
                 {/* Header da Seção */}
-                <Box mb={10} textAlign="center">
+                <Box mb={{ xs: 7, md: 10 }} textAlign="left" position="relative" zIndex={2}>
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                     >
-                        <Typography variant="overline" sx={{ color: '#A1A1AA', letterSpacing: 3 }}>
+                        <Typography variant="overline" color="primary" sx={{ letterSpacing: 4, fontWeight: 700, fontSize: '0.72rem', opacity: 0.95 }}>
                             COMO TRABALHAMOS
                         </Typography>
-                        <Typography variant="h3" fontWeight={800} sx={{ mt: 1, mb: 3 }}>
+                        <Typography
+                            variant="h3"
+                            fontWeight={800}
+                            sx={{
+                                mt: 1.4,
+                                mb: 2.4,
+                                maxWidth: 760,
+                                fontSize: { xs: '2rem', sm: '2.35rem', md: '3.1rem' },
+                                lineHeight: 1.06,
+                                letterSpacing: '-0.03em'
+                            }}
+                        >
                             Do cafézinho ao <span style={{ color: theme.palette.primary.main }}>código.</span>
                         </Typography>
-                        <Typography variant="body1" color="text.secondary" sx={{ maxWidth: '600px', mx: 'auto' }}>
+                        <Typography
+                            variant="body1"
+                            sx={{
+                                maxWidth: 620,
+                                color: 'rgba(228,228,231,0.7)',
+                                lineHeight: 1.75,
+                                fontSize: { xs: '0.95rem', md: '1rem' },
+                                letterSpacing: '0.01em'
+                            }}
+                        >
                             Nosso processo é transparente e sem surpresas. Você acompanha cada etapa, sabendo exatamente o que está acontecendo.
                         </Typography>
                     </motion.div>
@@ -199,7 +215,7 @@ export default function Process() {
                                 transformOrigin: 'top',
                                 background: 'linear-gradient(180deg, #F59E0B 0%, #8B5CF6 50%, #10B981 100%)', // Gradiente acompanhando as cores dos passos
                                 width: '100%', height: '100%',
-                                boxShadow: '0 0 15px rgba(139, 92, 246, 0.3)'
+                                boxShadow: '0 0 12px rgba(139, 92, 246, 0.25)'
                             }}
                         />
                     </Box>
@@ -209,14 +225,6 @@ export default function Process() {
                         {steps.map((step, index) => (
                             <ProcessStep key={step.id} step={step} index={index} isMobile={isMobile} />
                         ))}
-                    </Box>
-
-                    {/* Call to Action Final */}
-                    <Box textAlign="center" mt={5}>
-                        <Typography variant="h6" sx={{ color: 'white', mb: 2 }}>
-                            Gostou do processo?
-                        </Typography>
-                        {/* Aqui poderia vir um botão chamando pro contato */}
                     </Box>
                 </Box>
 

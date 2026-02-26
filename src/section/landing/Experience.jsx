@@ -1,56 +1,27 @@
-import { useRef } from 'react';
-import { Box, Container, Typography, Stack, Chip, useTheme, useMediaQuery } from '@mui/material';
-import { motion, useScroll, useSpring } from 'framer-motion';
-import { SiReact, SiFigma, SiTailwindcss, SiFirebase, SiNodedotjs, SiGooglecloud, SiFlutter, SiSwift, SiDocker } from 'react-icons/si';
+import { Box, Container, Typography, Stack, useTheme } from '@mui/material';
+import { motion } from 'framer-motion';
+import { SiReact, SiFigma, SiTailwindcss, SiFirebase, SiNodedotjs, SiGooglecloud, SiFlutter, SiSwift } from 'react-icons/si';
 import { VscJson, VscCode, VscSymbolRuler } from 'react-icons/vsc';
+import { getExperienceItems } from '@/service/content';
 
-// Ajustar para as ferramentas reais
-const experiences = [
-    {
-        id: 1,
-        title: "Engenharia de Interface",
-        role: "Frontend & Design System",
-        description: "Não entregamos apenas telas, entregamos sistemas de design componentizados. Interfaces reativas que garantem consistência visual e manutenibilidade a longo prazo.",
-        techs: [
-            { name: "React / Next.js", icon: SiReact },
-            { name: "Figma", icon: SiFigma },
-            { name: "Tailwind", icon: SiTailwindcss }
-        ],
-        color: "#A78BFA",
-        bgType: "code"
-    },
-    {
-        id: 2,
-        title: "Arquitetura Cloud & Dados",
-        role: "Backend & Serverless",
-        description: "Escalabilidade nativa. Construímos APIs que aguentam picos de tráfego usando arquitetura serverless, reduzindo custos de infraestrutura ociosa.",
-        techs: [
-            { name: "Firebase", icon: SiFirebase },
-            { name: "Node.js", icon: SiNodedotjs },
-            { name: "GCP", icon: SiGooglecloud }
-        ],
-        color: "#34D399",
-        bgType: "json"
-    },
-    {
-        id: 3,
-        title: "Ecossistema Mobile",
-        role: "iOS & Android",
-        description: "Apps nativos e híbridos com performance de 60fps. Unificamos a lógica de negócios enquanto respeitamos as diretrizes de design da Apple e Google.",
-        techs: [
-            { name: "React Native", icon: SiReact },
-            { name: "Swift", icon: SiSwift },
-            { name: "Flutter", icon: SiFlutter }
-        ],
-        color: "#60A5FA", // Azul
-        bgType: "grid"
-    }
-];
+const techIconMap = {
+    react: SiReact,
+    figma: SiFigma,
+    tailwind: SiTailwindcss,
+    firebase: SiFirebase,
+    node: SiNodedotjs,
+    gcp: SiGooglecloud,
+    swift: SiSwift,
+    flutter: SiFlutter,
+    ruler: VscSymbolRuler,
+    code: VscCode,
+    json: VscJson
+};
 
 // Componente para desenhar "Artefatos Técnicos" no fundo
-const BackgroundArtifact = ({ type, color }) => {
+const BackgroundArtifact = ({ type, color, intensity = 0.05 }) => {
     const codeSnippet = (
-        <Box sx={{ fontFamily: '"Fira Code", monospace', fontSize: '0.6rem', color: color, opacity: 0.15, lineHeight: 1.4 }}>
+        <Box sx={{ fontFamily: '"Fira Code", monospace', fontSize: '0.52rem', color: color, opacity: intensity, lineHeight: 1.35 }}>
             <div>{`const WavemInterface = () => {`}</div>
             <div style={{ paddingLeft: 10 }}>{`const [state, setState] = useState(null);`}</div>
             <div style={{ paddingLeft: 10 }}>{`return (`}</div>
@@ -64,7 +35,7 @@ const BackgroundArtifact = ({ type, color }) => {
     );
 
     const jsonSnippet = (
-        <Box sx={{ fontFamily: '"Fira Code", monospace', fontSize: '0.6rem', color: color, opacity: 0.15, lineHeight: 1.4 }}>
+        <Box sx={{ fontFamily: '"Fira Code", monospace', fontSize: '0.52rem', color: color, opacity: intensity, lineHeight: 1.35 }}>
             <div>{`{`}</div>
             <div style={{ paddingLeft: 10 }}>{`"status": 200,`}</div>
             <div style={{ paddingLeft: 10 }}>{`"server": "Wavem-Core-V2",`}</div>
@@ -82,12 +53,25 @@ const BackgroundArtifact = ({ type, color }) => {
             width: '100%', height: '100%',
             backgroundImage: `radial-gradient(${color} 1px, transparent 1px)`,
             backgroundSize: '15px 15px',
-            opacity: 0.1
+            opacity: Math.min(intensity + 0.01, 0.1)
         }} />
     );
 
     return (
-        <Box sx={{ position: 'absolute', top: 20, right: 20, width: '60%', height: '80%', overflow: 'hidden', zIndex: 0, pointerEvents: 'none' }}>
+        <Box
+            sx={{
+                position: 'absolute',
+                top: 18,
+                right: 18,
+                width: '56%',
+                height: '74%',
+                overflow: 'hidden',
+                zIndex: 0,
+                pointerEvents: 'none',
+                filter: 'blur(0.35px)',
+                maskImage: 'linear-gradient(180deg, rgba(0,0,0,0.8), transparent 80%)'
+            }}
+        >
             {type === 'code' && codeSnippet}
             {type === 'json' && jsonSnippet}
             {type === 'grid' && gridPattern}
@@ -95,83 +79,120 @@ const BackgroundArtifact = ({ type, color }) => {
     );
 };
 
-const NeuralCard = ({ item, isMobile }) => {
+const NeuralCard = ({ item, variant = 'small' }) => {
+    const isHero = variant === 'hero';
 
     return (
         <motion.div
-            whileHover={{ scale: 1.01, translateY: -5 }}
-            transition={{ type: "spring", stiffness: 300 }}
+            initial={{ opacity: 0, y: 32 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            whileHover={{ y: -6, scale: 1.01 }}
+            transition={{ type: 'spring', stiffness: 260, damping: 24 }}
         >
             <Box
                 sx={{
-                    background: 'rgba(10, 10, 10, 0.6)', // Mais escuro para contraste do código
+                    background: isHero ? 'rgba(10, 10, 10, 0.72)' : 'rgba(10, 10, 10, 0.62)',
                     backdropFilter: 'blur(16px)',
                     border: '1px solid rgba(255, 255, 255, 0.08)',
-                    borderRadius: '16px', // Borda um pouco mais técnica (menos redonda)
-                    p: 4,
+                    borderRadius: '18px',
+                    p: { xs: 3, md: isHero ? 4.2 : 3.4 },
+                    minHeight: { xs: 288, md: isHero ? 372 : 308 },
                     position: 'relative',
                     overflow: 'hidden',
                     transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
                     '&:hover': {
                         borderColor: item.color,
-                        boxShadow: `0 4px 30px ${item.color}15`, // Glow suave
+                        boxShadow: `0 8px 34px ${item.color}16`,
                     }
                 }}
             >
-                {/* Artefato de Fundo (Código, JSON, Grid) */}
-                <BackgroundArtifact type={item.bgType} color={item.color} />
+                <BackgroundArtifact type={item.bgType} color={item.color} intensity={isHero ? 0.06 : 0.04} />
 
-                {/* Cabeçalho */}
-                <Stack direction="row" spacing={2} alignItems="center" mb={2} position="relative" zIndex={1}>
+                <Stack direction="row" spacing={2} alignItems="center" mb={2.4} position="relative" zIndex={1}>
                     <Box
                         sx={{
-                            p: 1,
+                            p: isHero ? 1.15 : 1,
                             borderRadius: '8px',
                             background: `rgba(255,255,255,0.05)`,
                             border: `1px solid rgba(255,255,255,0.1)`,
                         }}
                     >
-                        {/* Ícone contextual (Code, JSON, Ruler) */}
                         {item.bgType === 'code' && <VscCode size={24} color={item.color} />}
                         {item.bgType === 'json' && <VscJson size={24} color={item.color} />}
                         {item.bgType === 'grid' && <VscSymbolRuler size={24} color={item.color} />}
                     </Box>
                     <Box>
-                        <Typography variant="caption" sx={{ color: item.color, letterSpacing: 1.5, fontWeight: 'bold', fontFamily: 'monospace' }}>
+                        <Typography
+                            variant="caption"
+                            sx={{
+                                color: item.color,
+                                letterSpacing: 1.8,
+                                fontWeight: 700,
+                                fontFamily: 'monospace',
+                                textTransform: 'uppercase',
+                                opacity: 0.95,
+                                fontSize: '0.68rem'
+                            }}
+                        >
                             {`// ${item.role.toUpperCase()}`}
                         </Typography>
-                        <Typography variant="h6" fontWeight="bold" sx={{ color: '#fff', lineHeight: 1.2 }}>
+                        <Typography
+                            variant={isHero ? 'h5' : 'h6'}
+                            fontWeight={isHero ? 800 : 700}
+                            sx={{ color: '#fff', lineHeight: 1.15, letterSpacing: '-0.015em' }}
+                        >
                             {item.title}
                         </Typography>
                     </Box>
                 </Stack>
 
-                <Typography variant="body2" sx={{ color: '#A1A1AA', mb: 3, lineHeight: 1.7, position: 'relative', zIndex: 1, maxWidth: '90%' }}>
+                <Typography
+                    variant="body2"
+                    sx={{
+                        color: 'rgba(228,228,231,0.74)',
+                        mb: isHero ? 3.9 : 3.2,
+                        lineHeight: 1.75,
+                        fontSize: isHero ? '0.98rem' : '0.9rem',
+                        letterSpacing: '0.01em',
+                        position: 'relative',
+                        zIndex: 1,
+                        maxWidth: isHero ? '86%' : '94%'
+                    }}
+                >
                     {item.description}
                 </Typography>
 
-                {/* Tech Stack com Logos Reais */}
                 <Stack direction="row" gap={1.5} flexWrap="wrap" position="relative" zIndex={1}>
                     {item.techs.map((tech) => {
-                        const Icon = tech.icon;
+                        const Icon = techIconMap[tech.iconKey] ?? VscCode;
                         return (
-                            <Box
+                            <motion.div
                                 key={tech.name}
-                                sx={{
-                                    display: 'flex', alignItems: 'center', gap: 1,
-                                    px: 1.5, py: 0.8,
-                                    borderRadius: '6px',
-                                    background: 'rgba(255,255,255,0.03)',
-                                    border: '1px solid rgba(255,255,255,0.05)',
-                                    transition: 'all 0.2s',
-                                    '&:hover': { background: 'rgba(255,255,255,0.08)', borderColor: item.color }
-                                }}
+                                whileHover={{ scale: 1.04, y: -2 }}
+                                transition={{ type: 'spring', stiffness: 320, damping: 20 }}
                             >
-                                <Icon size={16} color={item.color} />
-                                <Typography variant="caption" sx={{ color: '#E4E4E7', fontWeight: 500 }}>
-                                    {tech.name}
-                                </Typography>
-                            </Box>
+                                <Box
+                                    sx={{
+                                        display: 'flex', alignItems: 'center', gap: 1,
+                                        px: 1.55, py: 0.78,
+                                        borderRadius: '999px',
+                                        background: 'rgba(255,255,255,0.03)',
+                                        border: '1px solid rgba(255,255,255,0.07)',
+                                        transition: 'all 0.24s ease',
+                                        '&:hover': {
+                                            background: 'rgba(255,255,255,0.085)',
+                                            borderColor: item.color,
+                                            boxShadow: `0 0 0 1px ${item.color}22 inset`
+                                        }
+                                    }}
+                                >
+                                    <Icon size={16} color={item.color} />
+                                    <Typography variant="caption" sx={{ color: '#E4E4E7', fontWeight: 600, fontSize: '0.72rem', letterSpacing: '0.01em' }}>
+                                        {tech.name}
+                                    </Typography>
+                                </Box>
+                            </motion.div>
                         )
                     })}
                 </Stack>
@@ -182,62 +203,69 @@ const NeuralCard = ({ item, isMobile }) => {
 
 export default function Experience() {
     const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-    const containerRef = useRef(null);
-
-    const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start center", "end center"] });
-    const scaleY = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
+    const experiences = getExperienceItems();
+    const heroCard = experiences[0];
+    const secondaryCards = experiences.slice(1);
 
     return (
-        <Box component="section" ref={containerRef} sx={{ py: 15, position: 'relative' }}>
+        <Box component="section" sx={{ py: { xs: 10, md: 15 }, position: 'relative' }}>
             <Container maxWidth="lg">
-                <Box mb={12} textAlign="center" position="relative" zIndex={2}>
-                    <Typography variant="overline" color="primary" sx={{ letterSpacing: 3, fontWeight: 'bold' }}>
+                <Box mb={{ xs: 7, md: 10 }} textAlign="left" position="relative" zIndex={2}>
+                    <Typography variant="overline" color="primary" sx={{ letterSpacing: 4, fontWeight: 700, fontSize: '0.72rem', opacity: 0.95 }}>
                         NOSSO DNA TÉCNICO
                     </Typography>
-                    <Typography variant="h3" fontWeight={800} sx={{ mt: 1, mb: 2 }}>
+                    <Typography
+                        variant="h3"
+                        fontWeight={800}
+                        sx={{
+                            mt: 1.4,
+                            mb: 2.4,
+                            maxWidth: 760,
+                            fontSize: { xs: '2rem', sm: '2.35rem', md: '3.1rem' },
+                            lineHeight: 1.06,
+                            letterSpacing: '-0.03em'
+                        }}
+                    >
                         Mais que ferramentas, <br />
                         <span style={{ color: theme.palette.primary.main }}>domínio tecnológico.</span>
                     </Typography>
                 </Box>
 
-                <Box sx={{ position: 'relative' }}>
-                    {!isMobile && (
-                        <Box sx={{ position: 'absolute', left: '50%', top: 0, bottom: 0, width: '2px', background: 'rgba(255,255,255,0.05)', transform: 'translateX(-50%)' }}>
-                            <motion.div style={{ scaleY, transformOrigin: 'top', background: `linear-gradient(180deg, #A78BFA 0%, #34D399 50%, #60A5FA 100%)`, width: '100%', height: '100%' }} />
+                <Box
+                    sx={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(12, minmax(0, 1fr))',
+                        gap: { xs: 2.4, sm: 2.8, md: 3.2 },
+                        alignItems: 'stretch'
+                    }}
+                >
+                    <Box
+                        sx={{
+                            gridColumn: { xs: '1 / -1', sm: '1 / -1', md: '1 / span 7' },
+                            gridRow: { xs: 'auto', md: '1 / span 2' }
+                        }}
+                    >
+                        <NeuralCard item={heroCard} variant="hero" />
+                    </Box>
+
+                    {secondaryCards.map((item, index) => (
+                        <Box
+                            key={item.id}
+                            sx={{
+                                gridColumn: { xs: '1 / -1', sm: 'span 6', md: '8 / span 5' },
+                                gridRow: { md: `${index + 1}` }
+                            }}
+                        >
+                            <motion.div
+                                initial={{ opacity: 0, y: 24 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.5, delay: index * 0.12 }}
+                                viewport={{ once: true, amount: 0.35 }}
+                            >
+                                <NeuralCard item={item} />
+                            </motion.div>
                         </Box>
-                    )}
-
-                    <Stack spacing={isMobile ? 6 : 10}>
-                        {experiences.map((item, index) => (
-                            <Box key={item.id} sx={{ display: 'flex', justifyContent: isMobile ? 'flex-start' : (index % 2 === 0 ? 'flex-end' : 'flex-start'), position: 'relative', flexDirection: isMobile ? 'column' : (index % 2 === 0 ? 'row-reverse' : 'row'), alignItems: 'center' }}>
-
-                                {/* O Ponto Central */}
-                                <Box sx={{ position: 'absolute', left: isMobile ? '0px' : '50%', transform: 'translateX(-50%)', zIndex: 10, display: isMobile ? 'none' : 'block' }}>
-                                    <Box sx={{ width: 12, height: 12, borderRadius: '50%', background: '#050505', border: `2px solid ${item.color}`, boxShadow: `0 0 10px ${item.color}` }} />
-                                </Box>
-
-                                {/* Linha Horizontal Animada */}
-                                {!isMobile && (
-                                    <Box sx={{ width: index % 2 === 0 ? '50%' : '55%', height: '1px', position: 'relative', display: 'flex', justifyContent: index % 2 === 0 ? 'flex-start' : 'flex-end' }}>
-                                        <motion.div
-                                            initial={{ width: 0, opacity: 0 }}
-                                            whileInView={{ width: '100%', opacity: 1 }}
-                                            transition={{ duration: 1, delay: 0.2 }}
-                                            style={{ height: '1px', background: `linear-gradient(${index % 2 === 0 ? '90deg' : '-90deg'}, ${item.color}40, transparent)` }}
-                                        />
-                                    </Box>
-                                )}
-
-                                {/* O Card */}
-                                <Box sx={{ width: isMobile ? '100%' : '45%', pl: isMobile ? 0 : 0 }}>
-                                    <motion.div initial={{ opacity: 0, x: isMobile ? 0 : (index % 2 === 0 ? -30 : 30) }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
-                                        <NeuralCard item={item} isMobile={isMobile} />
-                                    </motion.div>
-                                </Box>
-                            </Box>
-                        ))}
-                    </Stack>
+                    ))}
                 </Box>
             </Container>
         </Box>

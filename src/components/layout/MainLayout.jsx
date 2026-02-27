@@ -37,6 +37,28 @@ const navLinks = [
     { label: 'Sobre Nós', to: '/sobre' }
 ];
 
+const routePrefetchMap = {
+    '/': () => import('@pages/public/Home'),
+    '/projetos': () => import('@pages/public/Projects'),
+    '/sobre': () => import('@pages/public/About')
+};
+
+const prefetchedRoutes = new Set();
+
+function prefetchRoute(route) {
+    if (prefetchedRoutes.has(route)) {
+        return;
+    }
+
+    const load = routePrefetchMap[route];
+    if (!load) {
+        return;
+    }
+
+    prefetchedRoutes.add(route);
+    void load();
+}
+
 // Um Navbar simplificado para começar (podemos mover para um arquivo próprio depois)
 const Navbar = ({ pathname }) => {
     const routeTheme = getScrollThemeByPath(pathname);
@@ -62,6 +84,8 @@ const Navbar = ({ pathname }) => {
                         variant="h6"
                         component={RouterLink}
                         to="/"
+                        onMouseEnter={() => prefetchRoute('/')}
+                        onFocus={() => prefetchRoute('/')}
                         sx={{
                             fontWeight: 'bold',
                             letterSpacing: 1,
@@ -86,6 +110,8 @@ const Navbar = ({ pathname }) => {
                                     key={link.to}
                                     component={RouterLink}
                                     to={link.to}
+                                    onMouseEnter={() => prefetchRoute(link.to)}
+                                    onFocus={() => prefetchRoute(link.to)}
                                     color="inherit"
                                     sx={{
                                         fontSize: '0.9rem',
@@ -119,6 +145,8 @@ const Navbar = ({ pathname }) => {
                         <Button
                             component={RouterLink}
                             to="/projetos"
+                            onMouseEnter={() => prefetchRoute('/projetos')}
+                            onFocus={() => prefetchRoute('/projetos')}
                             variant="contained"
                             sx={{
                                 borderRadius: '20px',

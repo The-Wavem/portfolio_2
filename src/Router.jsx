@@ -1,25 +1,36 @@
+import { lazy, Suspense } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
-import MainLayout from './components/layout/MainLayout';
-import Home from '@pages/public/Home';
-import About from '@pages/public/About';
-import Projects from '@pages/public/Projects';
+import PageLoader from '@/components/ui/PageLoader';
+
+const MainLayout = lazy(() => import('./components/layout/MainLayout'));
+const Home = lazy(() => import('@pages/public/Home'));
+const About = lazy(() => import('@pages/public/About'));
+const Projects = lazy(() => import('@pages/public/Projects'));
+
+function withSuspense(Component) {
+    return (
+        <Suspense fallback={<PageLoader />}>
+            <Component />
+        </Suspense>
+    );
+}
 
 export const router = createBrowserRouter([
     {
         path: "/",
-        element: <MainLayout />, // O Layout envolve todas as rotas filhas
+        element: withSuspense(MainLayout),
         children: [
             {
-                index: true, // Isso diz que é a rota padrão "/"
-                element: <Home />,
+                index: true,
+                element: withSuspense(Home),
             },
             {
                 path: 'sobre',
-                element: <About />,
+                element: withSuspense(About),
             },
             {
                 path: 'projetos',
-                element: <Projects />,
+                element: withSuspense(Projects),
             },
         ],
     },

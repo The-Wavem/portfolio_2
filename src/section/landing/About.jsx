@@ -96,16 +96,9 @@ const stackIconMap = {
 };
 
 function getToolMeta(tool) {
-    if (typeof tool === 'string') {
-        return {
-            key: tool.toLowerCase().trim(),
-            name: tool
-        };
-    }
-
     return {
-        key: (tool?.key ?? '').toLowerCase().trim(),
-        name: tool?.label ?? tool?.name ?? tool?.key ?? ''
+        key: tool.key.toLowerCase().trim(),
+        name: tool.label ?? tool.name ?? tool.key
     };
 }
 
@@ -282,7 +275,44 @@ export default function About() {
                 }}
             >
                 {selectedMember && (
-                    <DialogContent sx={{ p: 0 }}>
+                    <DialogContent
+                        sx={{
+                            p: 0,
+                            maxHeight: '88vh',
+                            overflowY: 'auto',
+                            scrollBehavior: 'smooth',
+                            position: 'relative',
+                            scrollbarWidth: 'thin',
+                            scrollbarColor: `${selectedMember.accent}99 rgba(255,255,255,0.1)`,
+                            '&::-webkit-scrollbar': {
+                                width: '10px'
+                            },
+                            '&::-webkit-scrollbar-track': {
+                                background: 'rgba(255,255,255,0.06)',
+                                borderRadius: '12px'
+                            },
+                            '&::-webkit-scrollbar-thumb': {
+                                background: `linear-gradient(180deg, ${selectedMember.accent}, rgba(255,255,255,0.35))`,
+                                borderRadius: '12px',
+                                border: '2px solid rgba(8,8,8,0.7)'
+                            },
+                            '&::-webkit-scrollbar-thumb:hover': {
+                                background: `linear-gradient(180deg, ${selectedMember.accent}, rgba(255,255,255,0.5))`
+                            }
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                position: 'sticky',
+                                top: 0,
+                                zIndex: 4,
+                                height: 22,
+                                marginBottom: '-22px',
+                                pointerEvents: 'none',
+                                background: 'linear-gradient(180deg, rgba(8,8,8,0.96) 0%, rgba(8,8,8,0) 100%)'
+                            }}
+                        />
+
                         <Box
                             sx={{
                                 display: 'grid',
@@ -322,20 +352,28 @@ export default function About() {
                                 transition={{ duration: 0.35, delay: 0.08, ease: 'easeOut' }}
                             >
                                 <Box sx={{ p: { xs: 2.4, md: 3 } }}>
-                                    <IconButton
-                                        onClick={() => setSelectedMember(null)}
-                                        sx={{
-                                            position: 'absolute',
-                                            top: 14,
-                                            right: 14,
-                                            color: '#fff',
-                                            border: '1px solid rgba(255,255,255,0.18)',
-                                            background: 'rgba(0,0,0,0.35)',
-                                            '&:hover': { background: 'rgba(0,0,0,0.55)' }
-                                        }}
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.92, rotate: -10 }}
+                                        animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                                        transition={{ duration: 0.28, ease: 'easeOut' }}
+                                        style={{ position: 'absolute', top: 14, right: 14, zIndex: 2 }}
                                     >
-                                        <TbX size={20} />
-                                    </IconButton>
+                                        <IconButton
+                                            onClick={() => setSelectedMember(null)}
+                                            component={motion.button}
+                                            whileHover={{ scale: 1.06, rotate: 90 }}
+                                            whileTap={{ scale: 0.94, rotate: 45 }}
+                                            transition={{ type: 'spring', stiffness: 320, damping: 18 }}
+                                            sx={{
+                                                color: '#fff',
+                                                border: '1px solid rgba(255,255,255,0.18)',
+                                                background: 'rgba(0,0,0,0.35)',
+                                                '&:hover': { background: 'rgba(0,0,0,0.55)' }
+                                            }}
+                                        >
+                                            <TbX size={20} />
+                                        </IconButton>
+                                    </motion.div>
 
                                     <Typography variant="caption" sx={{ color: selectedMember.accent, letterSpacing: 1.8, fontWeight: 700, textTransform: 'uppercase', fontSize: '0.68rem' }}>
                                         {selectedMember.role}
@@ -386,7 +424,7 @@ export default function About() {
                             <Typography sx={{ mt: 2.4, color: '#fff', fontWeight: 700, fontSize: '0.96rem' }}>Stack de trabalho</Typography>
                             <Stack direction="row" flexWrap="wrap" gap={0.9} sx={{ mt: 1.1 }}>
                                 {(selectedMember.workTools ?? []).map((tool) => (
-                                    <Tooltip key={typeof tool === 'string' ? tool : tool.key} title={getToolMeta(tool).name} arrow>
+                                    <Tooltip key={tool.key} title={getToolMeta(tool).name} arrow>
                                         <Box
                                             sx={{
                                                 width: 36,
@@ -422,6 +460,29 @@ export default function About() {
                                     </Tooltip>
                                 ))}
                             </Stack>
+
+                            <Typography sx={{ mt: 2.4, color: '#fff', fontWeight: 700, fontSize: '0.96rem' }}>Soft Skills</Typography>
+                            <Stack direction="row" flexWrap="wrap" gap={0.9} sx={{ mt: 1.1 }}>
+                                {(selectedMember.softSkills ?? []).map((skill) => (
+                                    <Chip
+                                        key={skill}
+                                        label={skill}
+                                        size="small"
+                                        variant="outlined"
+                                        sx={{
+                                            color: 'rgba(255,255,255,0.92)',
+                                            borderColor: 'rgba(255,255,255,0.22)',
+                                            background: 'rgba(255,255,255,0.03)',
+                                            '& .MuiChip-label': { fontWeight: 600, fontSize: '0.72rem' }
+                                        }}
+                                    />
+                                ))}
+                            </Stack>
+
+                            <Typography sx={{ mt: 2.2, color: '#fff', fontWeight: 700, fontSize: '0.96rem' }}>Hobbies</Typography>
+                            <Typography sx={{ mt: 0.9, color: 'rgba(228,228,231,0.74)', lineHeight: 1.7, fontSize: '0.9rem' }}>
+                                {(selectedMember.hobbies ?? []).join(' • ')}
+                            </Typography>
 
                             <Typography sx={{ mt: 2.4, color: '#fff', fontWeight: 700, fontSize: '0.96rem' }}>Projetos pessoais</Typography>
                             <Box
@@ -514,7 +575,7 @@ export default function About() {
 
                                     {selectedMember.links.map((link) => (
                                         <Button
-                                            key={link.label}
+                                            key={link.key}
                                             component="a"
                                             href={link.href}
                                             target="_blank"
@@ -535,6 +596,18 @@ export default function About() {
                                 </Stack>
                             </Box>
                         </Box>
+
+                        <Box
+                            sx={{
+                                position: 'sticky',
+                                bottom: 0,
+                                zIndex: 4,
+                                height: 24,
+                                marginTop: '-24px',
+                                pointerEvents: 'none',
+                                background: `linear-gradient(0deg, rgba(8,8,8,0.98) 0%, rgba(8,8,8,0) 100%)`
+                            }}
+                        />
                     </DialogContent>
                 )}
             </Dialog>

@@ -1,6 +1,26 @@
-import { Outlet } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
 import { Box, Container, AppBar, Toolbar, Typography, Button, Stack } from '@mui/material';
 import Footer from './Footer'; // Assumindo que você já tem ou vai criar o Footer.jsx
+
+const routeScrollThemeMap = {
+    '/': { start: '#7C3AED', end: '#A78BFA' },
+    '/sobre': { start: '#06B6D4', end: '#38BDF8' },
+    '/projetos': { start: '#22C55E', end: '#4ADE80' },
+    '/contato': { start: '#F59E0B', end: '#FBBF24' }
+};
+
+function getScrollThemeByPath(pathname) {
+    const matchedRoute = Object.keys(routeScrollThemeMap)
+        .filter((route) => route !== '/')
+        .find((route) => pathname.startsWith(route));
+
+    if (matchedRoute) {
+        return routeScrollThemeMap[matchedRoute];
+    }
+
+    return routeScrollThemeMap['/'];
+}
 
 // Um Navbar simplificado para começar (podemos mover para um arquivo próprio depois)
 const Navbar = () => (
@@ -37,6 +57,16 @@ const Navbar = () => (
 );
 
 export default function MainLayout() {
+    const location = useLocation();
+
+    useEffect(() => {
+        const rootStyle = document.documentElement.style;
+        const scrollTheme = getScrollThemeByPath(location.pathname);
+
+        rootStyle.setProperty('--page-scroll-start', scrollTheme.start);
+        rootStyle.setProperty('--page-scroll-end', scrollTheme.end);
+    }, [location.pathname]);
+
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: 'background.default' }}>
             <Navbar />

@@ -23,6 +23,33 @@ export const theme = createTheme({
         button: { textTransform: 'none', fontWeight: 600 }, // Tira o CAPS LOCK padrão do MUI
     },
     components: {
+        MuiCssBaseline: {
+            styleOverrides: {
+                ':root': {
+                    '--page-scroll-start': '#7C3AED',
+                    '--page-scroll-end': '#A78BFA'
+                },
+                'html, body': {
+                    scrollbarWidth: 'thin',
+                    scrollbarColor: 'var(--page-scroll-start) rgba(255,255,255,0.12)'
+                },
+                '::-webkit-scrollbar': {
+                    width: '10px',
+                    height: '10px'
+                },
+                '::-webkit-scrollbar-track': {
+                    background: 'rgba(255,255,255,0.06)'
+                },
+                '::-webkit-scrollbar-thumb': {
+                    background: 'linear-gradient(180deg, var(--page-scroll-start), var(--page-scroll-end))',
+                    borderRadius: '12px',
+                    border: '2px solid rgba(5,5,5,0.78)'
+                },
+                '::-webkit-scrollbar-thumb:hover': {
+                    background: 'linear-gradient(180deg, var(--page-scroll-end), var(--page-scroll-start))'
+                }
+            }
+        },
         MuiButton: {
             styleOverrides: {
                 root: {

@@ -15,6 +15,8 @@ export const aboutMembers = [
             { key: 'figma', name: 'Figma' },
             { key: 'firebase', name: 'Firebase' }
         ],
+        softSkills: ['Resolução de problemas', 'Conversação técnica', 'Organização técnica'],
+        hobbies: ['RPG', 'Filmes', 'HQs'],
         focuses: ['Landing pages de alta conversão', 'Design systems', 'Performance web'],
         personalProjects: [
             {
@@ -41,8 +43,8 @@ export const aboutMembers = [
             }
         ],
         links: [
-            { label: 'LinkedIn', href: 'https://linkedin.com' },
-            { label: 'GitHub', href: 'https://github.com' }
+            { key: 'linkedin', label: 'LinkedIn', href: 'https://linkedin.com' },
+            { key: 'github', label: 'GitHub', href: 'https://github.com' }
         ]
     },
     {
@@ -61,6 +63,8 @@ export const aboutMembers = [
             { key: 'redis', name: 'Redis' },
             { key: 'docker', name: 'Docker' }
         ],
+        softSkills: ['Resolução de problemas', 'Pensamento analítico', 'Organização técnica'],
+        hobbies: ['Xadrez', 'Filmes sci-fi', 'Automação pessoal'],
         focuses: ['Sistemas internos', 'Integrações com gateways', 'Automação operacional'],
         personalProjects: [
             {
@@ -87,8 +91,8 @@ export const aboutMembers = [
             }
         ],
         links: [
-            { label: 'LinkedIn', href: 'https://linkedin.com' },
-            { label: 'GitHub', href: 'https://github.com' }
+            { key: 'linkedin', label: 'LinkedIn', href: 'https://linkedin.com' },
+            { key: 'github', label: 'GitHub', href: 'https://github.com' }
         ]
     },
     {
@@ -107,6 +111,8 @@ export const aboutMembers = [
             { key: 'notion', name: 'Notion' },
             { key: 'maze', name: 'Maze' }
         ],
+        softSkills: ['Empatia com usuário', 'Storytelling visual', 'Facilitação de workshops'],
+        hobbies: ['Fotografia', 'Arte digital', 'Leitura sobre design'],
         focuses: ['Web institucional premium', 'Fluxos de onboarding', 'Direção de interface'],
         personalProjects: [
             {
@@ -133,8 +139,8 @@ export const aboutMembers = [
             }
         ],
         links: [
-            { label: 'LinkedIn', href: 'https://linkedin.com' },
-            { label: 'Behance', href: 'https://behance.net' }
+            { key: 'linkedin', label: 'LinkedIn', href: 'https://linkedin.com' },
+            { key: 'behance', label: 'Behance', href: 'https://behance.net' }
         ]
     },
     {
@@ -153,6 +159,8 @@ export const aboutMembers = [
             { key: 'firebase', name: 'Firebase' },
             { key: 'expo', name: 'Expo' }
         ],
+        softSkills: ['Foco em entrega', 'Adaptabilidade', 'Comunicação objetiva'],
+        hobbies: ['Academia', 'Games mobile', 'Trilhas'],
         focuses: ['Aplicativos de serviço', 'MVPs mobile', 'Integração com backend'],
         personalProjects: [
             {
@@ -179,8 +187,8 @@ export const aboutMembers = [
             }
         ],
         links: [
-            { label: 'LinkedIn', href: 'https://linkedin.com' },
-            { label: 'GitHub', href: 'https://github.com' }
+            { key: 'linkedin', label: 'LinkedIn', href: 'https://linkedin.com' },
+            { key: 'github', label: 'GitHub', href: 'https://github.com' }
         ]
     },
     {
@@ -199,6 +207,8 @@ export const aboutMembers = [
             { key: 'terraform', name: 'Terraform' },
             { key: 'kubernetes', name: 'Kubernetes' }
         ],
+        softSkills: ['Planejamento de risco', 'Disciplina operacional', 'Senso de dono'],
+        hobbies: ['Mecânica', 'Ciclismo', 'Podcasts de tecnologia'],
         focuses: ['Deploy automatizado', 'Monitoramento', 'Hardening de ambiente'],
         personalProjects: [
             {
@@ -225,8 +235,8 @@ export const aboutMembers = [
             }
         ],
         links: [
-            { label: 'LinkedIn', href: 'https://linkedin.com' },
-            { label: 'GitHub', href: 'https://github.com' }
+            { key: 'linkedin', label: 'LinkedIn', href: 'https://linkedin.com' },
+            { key: 'github', label: 'GitHub', href: 'https://github.com' }
         ]
     },
     {
@@ -245,6 +255,8 @@ export const aboutMembers = [
             { key: 'snyk', name: 'Snyk' },
             { key: 'postman', name: 'Postman' }
         ],
+        softSkills: ['Atenção a detalhes', 'Pensamento crítico', 'Comunicação assertiva'],
+        hobbies: ['Quebra-cabeças', 'Livros de não ficção', 'Treino funcional'],
         focuses: ['Prevenção de regressão', 'Auditoria técnica', 'Confiabilidade de release'],
         personalProjects: [
             {
@@ -271,8 +283,8 @@ export const aboutMembers = [
             }
         ],
         links: [
-            { label: 'LinkedIn', href: 'https://linkedin.com' },
-            { label: 'GitHub', href: 'https://github.com' }
+            { key: 'linkedin', label: 'LinkedIn', href: 'https://linkedin.com' },
+            { key: 'github', label: 'GitHub', href: 'https://github.com' }
         ]
     }
 ];

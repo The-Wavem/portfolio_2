@@ -5,6 +5,7 @@ import Experience from '@/section/landing/Experience';
 import Process from '@/section/landing/Process';
 import Portfolio from '@/section/landing/Portfolio';
 import Contact from '@/section/landing/Contact';
+import FAQ from '@/section/landing/FAQ';
 
 export default function Home() {
     return (
@@ -15,6 +16,7 @@ export default function Home() {
             <Process />
             <Experience />
             <Contact />
+            <FAQ />
            
         </Box>
     );

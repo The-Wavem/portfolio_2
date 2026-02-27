@@ -1,11 +1,13 @@
 import { Box } from '@mui/material';
 
-import AboutSection from '@/section/landing/About';
+import AboutHeroSection from '@/section/about/AboutHeroSection';
+import AboutTeamSection from '@/section/about/AboutTeamSection';
 
 export default function About() {
     return (
         <Box component="main">
-            <AboutSection />
+            <AboutHeroSection />
+            <AboutTeamSection />
         </Box>
     );
 }

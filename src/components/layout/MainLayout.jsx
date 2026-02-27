@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Link as RouterLink, Outlet, useLocation } from 'react-router-dom';
 import { Box, Container, AppBar, Toolbar, Typography, Button, Stack } from '@mui/material';
 import Footer from './Footer'; // Assumindo que você já tem ou vai criar o Footer.jsx
 
@@ -36,18 +36,47 @@ const Navbar = () => (
         <Container maxWidth="lg">
             <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
                 {/* Logo */}
-                <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', letterSpacing: 1 }}>
+                <Typography
+                    variant="h6"
+                    component={RouterLink}
+                    to="/"
+                    sx={{
+                        fontWeight: 'bold',
+                        letterSpacing: 1,
+                        color: 'inherit',
+                        textDecoration: 'none'
+                    }}
+                >
                     THE WAVEM
                 </Typography>
 
                 {/* Links Desktop */}
                 <Stack direction="row" spacing={4} sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
-                    {['Serviços', 'Processo', 'Projetos', 'Sobre Nós'].map((item) => (
-                        <Button key={item} color="inherit" sx={{ fontSize: '0.9rem', opacity: 0.8, '&:hover': { opacity: 1, color: '#7C3AED' } }}>
-                            {item}
-                        </Button>
-                    ))}
-                    <Button variant="contained" color="primary" sx={{ borderRadius: '20px', px: 3 }}>
+                    <Button
+                        component={RouterLink}
+                        to="/"
+                        color="inherit"
+                        sx={{ fontSize: '0.9rem', opacity: 0.8, '&:hover': { opacity: 1, color: '#7C3AED' } }}
+                    >
+                        Início
+                    </Button>
+                    <Button
+                        component={RouterLink}
+                        to="/projetos"
+                        color="inherit"
+                        sx={{ fontSize: '0.9rem', opacity: 0.8, '&:hover': { opacity: 1, color: '#7C3AED' } }}
+                    >
+                        Projetos
+                    </Button>
+                    <Button
+                        component={RouterLink}
+                        to="/sobre"
+                        color="inherit"
+                        sx={{ fontSize: '0.9rem', opacity: 0.8, '&:hover': { opacity: 1, color: '#7C3AED' } }}
+                    >
+                        Sobre Nós
+                    </Button>
+                    <Button component={RouterLink} to="/projetos" variant="contained" color="primary" sx={{ borderRadius: '20px', px: 3 }}>
                         Iniciar Projeto
                     </Button>
                 </Stack>

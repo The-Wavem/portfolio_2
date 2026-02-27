@@ -15,7 +15,7 @@ export default function FAQ() {
     const faqItems = getFaqItems();
 
     return (
-        <Box component="section" sx={{ py: { xs: 10, md: 14 } }}>
+        <Box id="faq" component="section" sx={{ py: { xs: 10, md: 14 } }}>
             <Container maxWidth="lg">
                 <Box sx={{ maxWidth: 860, mb: { xs: 5, md: 6 } }}>
                     <Typography variant="overline" color="primary" sx={{ letterSpacing: 4, fontWeight: 700, fontSize: '0.72rem', opacity: 0.95 }}>

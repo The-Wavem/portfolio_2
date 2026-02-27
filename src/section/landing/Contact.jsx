@@ -108,50 +108,10 @@ export default function Contact() {
 								>
 									{whatsappChannel?.cta ?? 'Conversar no WhatsApp'}
 								</Button>
-
-								<Button
-									variant="outlined"
-									startIcon={<TbCopy size={18} />}
-									onClick={handleCopyEmail}
-									sx={{
-										borderRadius: '10px',
-										fontWeight: 700,
-										px: 2.1,
-										py: 0.95,
-										color: '#fff',
-										borderColor: 'rgba(255,255,255,0.24)',
-										'&:hover': { borderColor: 'primary.main', background: 'rgba(255,255,255,0.04)' }
-									}}
-								>
-									Copiar e-mail
-								</Button>
 							</Stack>
 
-							<Divider sx={{ my: 2.2, borderColor: 'rgba(255,255,255,0.08)' }} />
+							<Divider sx={{ my: 2.0, borderColor: 'rgba(255,255,255,0.08)' }} />
 
-							<Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.4}>
-								<Button
-									component="a"
-									href={emailChannel?.href}
-									variant="text"
-									startIcon={<TbMail size={17} />}
-									sx={{ color: 'rgba(228,228,231,0.82)', justifyContent: 'flex-start', px: 0.2, fontWeight: 600 }}
-								>
-									{emailChannel?.cta ?? 'Enviar e-mail'}
-								</Button>
-								<Button
-									component="a"
-									href={meetingChannel?.href}
-									target="_blank"
-									rel="noreferrer"
-									variant="text"
-									startIcon={<TbCalendarEvent size={17} />}
-									endIcon={<TbArrowUpRight size={16} />}
-									sx={{ color: 'rgba(228,228,231,0.82)', justifyContent: 'flex-start', px: 0.2, fontWeight: 600 }}
-								>
-									{meetingChannel?.cta ?? 'Agendar reunião'}
-								</Button>
-							</Stack>
 						</Box>
 					</Box>
 

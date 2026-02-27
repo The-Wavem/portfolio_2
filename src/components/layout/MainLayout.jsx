@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Link as RouterLink, Outlet, useLocation } from 'react-router-dom';
 import { Box, Container, AppBar, Toolbar, Typography, Button, Stack } from '@mui/material';
+import { motion } from 'framer-motion';
 import Footer from './Footer'; // Assumindo que você já tem ou vai criar o Footer.jsx
 
 const routeScrollThemeMap = {
@@ -22,68 +23,126 @@ function getScrollThemeByPath(pathname) {
     return routeScrollThemeMap['/'];
 }
 
-// Um Navbar simplificado para começar (podemos mover para um arquivo próprio depois)
-const Navbar = () => (
-    <AppBar
-        position="fixed"
-        sx={{
-            background: 'rgba(5, 5, 5, 0.8)', // Fundo translúcido
-            backdropFilter: 'blur(10px)',     // Efeito de vidro (Glassmorphism)
-            boxShadow: 'none',
-            borderBottom: '1px solid rgba(255,255,255,0.1)'
-        }}
-    >
-        <Container maxWidth="lg">
-            <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
-                {/* Logo */}
-                <Typography
-                    variant="h6"
-                    component={RouterLink}
-                    to="/"
-                    sx={{
-                        fontWeight: 'bold',
-                        letterSpacing: 1,
-                        color: 'inherit',
-                        textDecoration: 'none'
-                    }}
-                >
-                    THE WAVEM
-                </Typography>
+function isRouteActive(pathname, routePath) {
+    if (routePath === '/') {
+        return pathname === '/';
+    }
 
-                {/* Links Desktop */}
-                <Stack direction="row" spacing={4} sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
-                    <Button
+    return pathname.startsWith(routePath);
+}
+
+const navLinks = [
+    { label: 'Início', to: '/' },
+    { label: 'Projetos', to: '/projetos' },
+    { label: 'Sobre Nós', to: '/sobre' }
+];
+
+// Um Navbar simplificado para começar (podemos mover para um arquivo próprio depois)
+const Navbar = ({ pathname }) => {
+    const routeTheme = getScrollThemeByPath(pathname);
+    const activeColor = routeTheme.end;
+
+    return (
+        <AppBar
+            component={motion.header}
+            initial={{ opacity: 0, y: -14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: 'easeOut' }}
+            position="fixed"
+            sx={{
+                background: 'rgba(5, 5, 5, 0.8)',
+                backdropFilter: 'blur(10px)',
+                boxShadow: 'none',
+                borderBottom: '1px solid rgba(255,255,255,0.1)'
+            }}
+        >
+            <Container maxWidth="lg">
+                <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
+                    <Typography
+                        variant="h6"
                         component={RouterLink}
                         to="/"
-                        color="inherit"
-                        sx={{ fontSize: '0.9rem', opacity: 0.8, '&:hover': { opacity: 1, color: '#7C3AED' } }}
+                        sx={{
+                            fontWeight: 'bold',
+                            letterSpacing: 1,
+                            color: isRouteActive(pathname, '/') ? activeColor : 'inherit',
+                            textDecoration: 'none',
+                            transition: 'color 0.25s ease, transform 0.25s ease',
+                            '&:hover': {
+                                color: activeColor,
+                                transform: 'translateY(-1px)'
+                            }
+                        }}
                     >
-                        Início
-                    </Button>
-                    <Button
-                        component={RouterLink}
-                        to="/projetos"
-                        color="inherit"
-                        sx={{ fontSize: '0.9rem', opacity: 0.8, '&:hover': { opacity: 1, color: '#7C3AED' } }}
-                    >
-                        Projetos
-                    </Button>
-                    <Button
-                        component={RouterLink}
-                        to="/sobre"
-                        color="inherit"
-                        sx={{ fontSize: '0.9rem', opacity: 0.8, '&:hover': { opacity: 1, color: '#7C3AED' } }}
-                    >
-                        Sobre Nós
-                    </Button>
-                    <Button component={RouterLink} to="/projetos" variant="contained" color="primary" sx={{ borderRadius: '20px', px: 3 }}>
-                        Iniciar Projeto
-                    </Button>
-                </Stack>
-            </Toolbar>
-        </Container>
-    </AppBar>
-);
+                        THE WAVEM
+                    </Typography>
+
+                    <Stack direction="row" spacing={4} sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
+                        {navLinks.map((link) => {
+                            const active = isRouteActive(pathname, link.to);
+
+                            return (
+                                <Button
+                                    key={link.to}
+                                    component={RouterLink}
+                                    to={link.to}
+                                    color="inherit"
+                                    sx={{
+                                        fontSize: '0.9rem',
+                                        opacity: active ? 1 : 0.8,
+                                        color: active ? activeColor : 'inherit',
+                                        position: 'relative',
+                                        transition: 'color 0.25s ease, opacity 0.25s ease, transform 0.25s ease',
+                                        '&:hover': { opacity: 1, color: activeColor, transform: 'translateY(-1px)' },
+                                        '&::after': {
+                                            content: '""',
+                                            position: 'absolute',
+                                            left: 10,
+                                            right: 10,
+                                            bottom: 3,
+                                            height: '2px',
+                                            borderRadius: '999px',
+                                            background: activeColor,
+                                            transform: active ? 'scaleX(1)' : 'scaleX(0)',
+                                            transformOrigin: 'center',
+                                            transition: 'transform 0.25s ease'
+                                        },
+                                        '&:hover::after': {
+                                            transform: 'scaleX(1)'
+                                        }
+                                    }}
+                                >
+                                    {link.label}
+                                </Button>
+                            );
+                        })}
+                        <Button
+                            component={RouterLink}
+                            to="/projetos"
+                            variant="contained"
+                            sx={{
+                                borderRadius: '20px',
+                                px: 3,
+                                fontWeight: 700,
+                                color: '#fff',
+                                backgroundColor: `${activeColor}D9`,
+                                boxShadow: `0 8px 20px ${activeColor}33`,
+                                transition: 'transform 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease',
+                                '&:hover': {
+                                    transform: 'translateY(-1px)',
+                                    backgroundColor: activeColor,
+                                    boxShadow: `0 10px 24px ${activeColor}4D`
+                                }
+                            }}
+                        >
+                            Iniciar Projeto
+                        </Button>
+                    </Stack>
+                </Toolbar>
+            </Container>
+        </AppBar>
+    );
+};
 
 export default function MainLayout() {
     const location = useLocation();
@@ -102,7 +161,7 @@ export default function MainLayout() {
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: 'background.default' }}>
-            <Navbar />
+            <Navbar pathname={location.pathname} />
 
             {/* O Outlet renderiza a rota filha (no caso, a Home) */}
             <Box sx={{ flexGrow: 1 }}>

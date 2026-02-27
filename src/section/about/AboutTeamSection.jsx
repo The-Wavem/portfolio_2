@@ -1,16 +1,49 @@
 import { useState } from 'react';
-import { Box, Container } from '@mui/material';
+import { Box, Container, Typography, useTheme } from '@mui/material';
+import { motion } from 'framer-motion';
 import { getAboutMembers } from '@/service/content';
 import TeamMemberCard from '@/components/organism/TeamMemberCard';
 import TeamMemberDetailsModal from '@/components/organism/TeamMemberDetailsModal';
 
 export default function AboutTeamSection() {
+    const theme = useTheme();
     const members = getAboutMembers();
     const [selectedMember, setSelectedMember] = useState(null);
 
     return (
         <Box component="section" sx={{ pb: { xs: 10, md: 15 }, pt: { xs: 1, md: 2 }, position: 'relative' }}>
+            <Box
+                aria-hidden
+                sx={{
+                    position: 'absolute',
+                    left: { xs: -120, md: -140 },
+                    top: { xs: 120, md: 40 },
+                    width: { xs: 220, md: 280 },
+                    height: { xs: 220, md: 280 },
+                    borderRadius: '50%',
+                    filter: 'blur(84px)',
+                    background: `${theme.palette.primary.main}22`,
+                    pointerEvents: 'none'
+                }}
+            />
+
             <Container maxWidth="lg">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.35 }}
+                    transition={{ duration: 0.48, ease: 'easeOut' }}
+                >
+                    <Box sx={{ mb: { xs: 2.2, md: 2.8 }, maxWidth: 720, position: 'relative', zIndex: 2 }}>
+                        <Typography variant="overline" sx={{ color: theme.palette.primary.main, letterSpacing: 2.4, fontWeight: 700, fontSize: '0.68rem' }}>
+                            TIME WAVEM
+                        </Typography>
+                        <Typography sx={{ mt: 0.8, color: 'rgba(228,228,231,0.72)', lineHeight: 1.75, fontSize: { xs: '0.92rem', md: '0.97rem' } }}>
+                            Pessoas reais, com especialidades complementares, unidas para transformar o seu rascunho em produto funcional com padrão profissional.
+                        </Typography>
+                    </Box>
+                </motion.div>
+
                 <Box
                     sx={{
                         display: 'grid',

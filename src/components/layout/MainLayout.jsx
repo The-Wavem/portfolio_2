@@ -96,6 +96,10 @@ export default function MainLayout() {
         rootStyle.setProperty('--page-scroll-end', scrollTheme.end);
     }, [location.pathname]);
 
+    useEffect(() => {
+        window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    }, [location.pathname]);
+
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: 'background.default' }}>
             <Navbar />

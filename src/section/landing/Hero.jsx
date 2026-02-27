@@ -24,7 +24,7 @@ export default function Hero() {
                     textAlign="center"
                 >
                     <Typography variant="overline" color="primary" sx={{ letterSpacing: 4, fontWeight: 'bold' }}>
-                        EST. 2024 • ARQUITETOS DIGITAIS
+                        The Wavem
                     </Typography>
 
                     <MotionTypography

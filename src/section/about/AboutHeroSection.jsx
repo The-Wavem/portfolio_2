@@ -1,8 +1,8 @@
-import { Box, Container, Typography, useTheme } from '@mui/material';
+import { Box, Container, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
 
 export default function AboutHeroSection() {
-    const theme = useTheme();
+    const aboutAccent = '#38BDF8';
 
     return (
         <Box component="section" sx={{ pt: { xs: 12, md: 16 }, position: 'relative', overflow: 'hidden' }}>
@@ -14,7 +14,7 @@ export default function AboutHeroSection() {
                     height: { xs: 220, md: 340 },
                     borderRadius: '50%',
                     filter: 'blur(78px)',
-                    background: `${theme.palette.primary.main}2A`,
+                    background: `${aboutAccent}2A`,
                     top: { xs: 12, md: 0 },
                     right: { xs: -120, md: -140 },
                     pointerEvents: 'none'
@@ -29,7 +29,7 @@ export default function AboutHeroSection() {
                     transition={{ duration: 0.55, ease: 'easeOut' }}
                 >
                 <Box mb={{ xs: 5, md: 7 }} textAlign="left" sx={{ position: 'relative', zIndex: 2 }}>
-                    <Typography variant="overline" color="primary" sx={{ letterSpacing: 4, fontWeight: 700, fontSize: '0.72rem', opacity: 0.95 }}>
+                    <Typography variant="overline" sx={{ color: aboutAccent, letterSpacing: 4, fontWeight: 700, fontSize: '0.72rem', opacity: 0.95 }}>
                         QUEM FAZ A THE WAVEM
                     </Typography>
                     <Typography
@@ -44,7 +44,7 @@ export default function AboutHeroSection() {
                             letterSpacing: '-0.03em'
                         }}
                     >
-                        Um time de especialistas com <span style={{ color: theme.palette.primary.main }}>foco em resultado real.</span>
+                        Um time de especialistas com <span style={{ color: aboutAccent }}>foco em resultado real.</span>
                     </Typography>
                     <Typography sx={{ maxWidth: 700, color: 'rgba(228,228,231,0.72)', lineHeight: 1.75, fontSize: { xs: '0.95rem', md: '1rem' }, letterSpacing: '0.01em' }}>
                         Clique em cada perfil para conhecer habilidades, áreas de foco, projetos pessoais e canais individuais de contato.
@@ -63,7 +63,7 @@ export default function AboutHeroSection() {
                             background: 'rgba(255,255,255,0.03)'
                         }}
                     >
-                        <Box sx={{ width: 7, height: 7, borderRadius: '50%', background: theme.palette.primary.main, boxShadow: `0 0 0 6px ${theme.palette.primary.main}22` }} />
+                        <Box sx={{ width: 7, height: 7, borderRadius: '50%', background: aboutAccent, boxShadow: `0 0 0 6px ${aboutAccent}22` }} />
                         <Typography sx={{ color: 'rgba(228,228,231,0.84)', fontSize: '0.82rem', fontWeight: 600 }}>
                             Web • Mobile • Manutenção • Evolução contínua
                         </Typography>

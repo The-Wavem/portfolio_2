@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { Box, Container, Typography, useTheme } from '@mui/material';
+import { Box, Container, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
 import { getAboutMembers } from '@/service/content';
 import TeamMemberCard from '@/components/organism/TeamMemberCard';
 import TeamMemberDetailsModal from '@/components/organism/TeamMemberDetailsModal';
 
 export default function AboutTeamSection() {
-    const theme = useTheme();
+    const aboutAccent = '#38BDF8';
     const members = getAboutMembers();
     const [selectedMember, setSelectedMember] = useState(null);
 
@@ -22,7 +22,7 @@ export default function AboutTeamSection() {
                     height: { xs: 220, md: 280 },
                     borderRadius: '50%',
                     filter: 'blur(84px)',
-                    background: `${theme.palette.primary.main}22`,
+                    background: `${aboutAccent}22`,
                     pointerEvents: 'none'
                 }}
             />
@@ -35,7 +35,7 @@ export default function AboutTeamSection() {
                     transition={{ duration: 0.48, ease: 'easeOut' }}
                 >
                     <Box sx={{ mb: { xs: 2.2, md: 2.8 }, maxWidth: 720, position: 'relative', zIndex: 2 }}>
-                        <Typography variant="overline" sx={{ color: theme.palette.primary.main, letterSpacing: 2.4, fontWeight: 700, fontSize: '0.68rem' }}>
+                        <Typography variant="overline" sx={{ color: aboutAccent, letterSpacing: 2.4, fontWeight: 700, fontSize: '0.68rem' }}>
                             TIME WAVEM
                         </Typography>
                         <Typography sx={{ mt: 0.8, color: 'rgba(228,228,231,0.72)', lineHeight: 1.75, fontSize: { xs: '0.92rem', md: '0.97rem' } }}>

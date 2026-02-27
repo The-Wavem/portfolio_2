@@ -1,9 +1,9 @@
-import { Box, Container, Typography, useTheme } from '@mui/material';
+import { Box, Container, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
 import { getAboutStoryContent } from '@/service/content';
 
 export default function AboutStorySection() {
-    const theme = useTheme();
+    const aboutAccent = '#38BDF8';
     const content = getAboutStoryContent();
 
     return (
@@ -30,12 +30,12 @@ export default function AboutStorySection() {
                         sx={{
                             position: 'absolute',
                             inset: 0,
-                            backgroundImage: `radial-gradient(circle at 14% 20%, ${theme.palette.primary.main}24 0%, transparent 32%), radial-gradient(circle at 82% 78%, rgba(255,255,255,0.1) 0%, transparent 22%)`,
+                            backgroundImage: `radial-gradient(circle at 14% 20%, ${aboutAccent}24 0%, transparent 32%), radial-gradient(circle at 82% 78%, rgba(255,255,255,0.1) 0%, transparent 22%)`,
                             pointerEvents: 'none'
                         }}
                     />
 
-                    <Typography variant="overline" color="primary" sx={{ letterSpacing: 4, fontWeight: 700, fontSize: '0.7rem', opacity: 0.95 }}>
+                    <Typography variant="overline" sx={{ color: aboutAccent, letterSpacing: 4, fontWeight: 700, fontSize: '0.7rem', opacity: 0.95 }}>
                         {content.eyebrow}
                     </Typography>
 
@@ -50,7 +50,7 @@ export default function AboutStorySection() {
                             maxWidth: 920
                         }}
                     >
-                        <span style={{ color: theme.palette.primary.main }}>{content.title}</span>
+                        <span style={{ color: aboutAccent }}>{content.title}</span>
                     </Typography>
 
                     <motion.div
@@ -102,7 +102,7 @@ export default function AboutStorySection() {
                                         transition: 'transform 0.25s ease, border-color 0.25s ease',
                                         '&:hover': {
                                             transform: 'translateY(-3px)',
-                                            borderColor: `${theme.palette.primary.main}66`
+                                            borderColor: `${aboutAccent}66`
                                         }
                                     }}
                                 >

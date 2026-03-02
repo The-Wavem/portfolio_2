@@ -6,6 +6,7 @@ const MainLayout = lazy(() => import('./components/layout/MainLayout'));
 const Home = lazy(() => import('@pages/public/Home'));
 const About = lazy(() => import('@pages/public/About'));
 const Projects = lazy(() => import('@pages/public/Projects'));
+const Services = lazy(() => import('@pages/public/Services'));
 
 function withSuspense(Component) {
     return (
@@ -31,6 +32,10 @@ export const router = createBrowserRouter([
             {
                 path: 'projetos',
                 element: withSuspense(Projects),
+            },
+            {
+                path: 'servicos',
+                element: withSuspense(Services),
             },
         ],
     },

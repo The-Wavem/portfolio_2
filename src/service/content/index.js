@@ -5,3 +5,4 @@ export { getContactChannels, getContactAssurances, contactChannels, contactAssur
 export { getAboutMembers, aboutMembers } from './about.service';
 export { getFaqItems, faqItems } from './faq.service';
 export { getAboutStoryContent, aboutStoryContent } from './aboutStory.service';
+export { getServicesContent, servicesContent } from './services.service';

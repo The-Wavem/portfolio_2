@@ -77,45 +77,6 @@ export default function AboutStorySection() {
                         </Box>
                     </motion.div>
 
-                    <Box
-                        sx={{
-                            mt: 2.3,
-                            display: 'grid',
-                            gridTemplateColumns: { xs: '1fr', md: 'repeat(3, minmax(0, 1fr))' },
-                            gap: 1.2
-                        }}
-                    >
-                        {content.pillars.map((pillar, index) => (
-                            <motion.div
-                                key={pillar.id}
-                                initial={{ opacity: 0, y: 12 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true, amount: 0.2 }}
-                                transition={{ duration: 0.36, delay: index * 0.08, ease: 'easeOut' }}
-                            >
-                                <Box
-                                    sx={{
-                                        p: 1.6,
-                                        borderRadius: '12px',
-                                        border: '1px solid rgba(255,255,255,0.1)',
-                                        background: 'rgba(255,255,255,0.02)',
-                                        transition: 'transform 0.25s ease, border-color 0.25s ease',
-                                        '&:hover': {
-                                            transform: 'translateY(-3px)',
-                                            borderColor: `${aboutAccent}66`
-                                        }
-                                    }}
-                                >
-                                    <Typography sx={{ color: '#fff', fontWeight: 700, fontSize: '0.92rem', letterSpacing: '-0.01em' }}>
-                                        {pillar.title}
-                                    </Typography>
-                                    <Typography sx={{ mt: 0.55, color: 'rgba(228,228,231,0.72)', fontSize: '0.86rem', lineHeight: 1.65 }}>
-                                        {pillar.description}
-                                    </Typography>
-                                </Box>
-                            </motion.div>
-                        ))}
-                    </Box>
                 </Box>
                 </motion.div>
             </Container>

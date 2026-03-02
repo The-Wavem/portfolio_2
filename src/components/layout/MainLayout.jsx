@@ -6,6 +6,7 @@ import Footer from './Footer'; // Assumindo que você já tem ou vai criar o Foo
 
 const routeScrollThemeMap = {
     '/': { start: '#7C3AED', end: '#A78BFA' },
+    '/servicos': { start: '#5E1624', end: '#8C2438' },
     '/sobre': { start: '#06B6D4', end: '#38BDF8' },
     '/projetos': { start: '#22C55E', end: '#4ADE80' },
     '/contato': { start: '#F59E0B', end: '#FBBF24' }
@@ -33,12 +34,14 @@ function isRouteActive(pathname, routePath) {
 
 const navLinks = [
     { label: 'Início', to: '/' },
+    { label: 'Serviços', to: '/servicos' },
     { label: 'Projetos', to: '/projetos' },
     { label: 'Sobre Nós', to: '/sobre' }
 ];
 
 const routePrefetchMap = {
     '/': () => import('@pages/public/Home'),
+    '/servicos': () => import('@pages/public/Services'),
     '/projetos': () => import('@pages/public/Projects'),
     '/sobre': () => import('@pages/public/About')
 };

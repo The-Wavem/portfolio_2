@@ -2,11 +2,15 @@ import { Box, Typography, Container, Button, Stack } from '@mui/material';
 import { motion } from 'framer-motion';
 import { Link as RouterLink } from 'react-router-dom';
 import BrandNetworkMark from '@components/ui/BrandNetworkMark';
+import { getHomeLandingContent } from '@/service/content';
+import { trackAction } from '@/service/analytics/tracking.service';
 
 const MotionTypography = motion.create(Typography);
 const MotionBox = motion.create(Box);
 
 export default function Hero() {
+    const { hero } = getHomeLandingContent();
+
     return (
         <Box
             sx={{
@@ -53,7 +57,7 @@ export default function Hero() {
                         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 1, sm: 1.2 }} alignItems={{ xs: 'center', md: 'center' }} justifyContent={{ xs: 'center', md: 'flex-start' }}>
                             
                             <Typography variant="overline" color="primary" sx={{ letterSpacing: 3.2, fontWeight: 'bold', fontSize: '0.68rem' }}>
-                                PRODUTOs DIGITAis
+                                {hero.eyebrow}
                             </Typography>
                         </Stack>
 
@@ -71,17 +75,18 @@ export default function Hero() {
                                 letterSpacing: '-0.03em'
                             }}
                         >
-                            Tiramos seu rascunho do papel e entregamos <span style={{ color: '#7C3AED', WebkitTextFillColor: '#7C3AED' }}>produto real em produção.</span>
+                            {hero.titleStart} <span style={{ color: '#7C3AED', WebkitTextFillColor: '#7C3AED' }}>{hero.titleHighlight}</span>
                         </MotionTypography>
 
                         <Typography variant="h6" color="text.secondary" sx={{ maxWidth: { xs: '100%', md: 620 }, mx: { xs: 'auto', md: 0 }, mb: 3.2, lineHeight: 1.6, fontSize: { xs: '0.98rem', md: '1.05rem' }, color: 'rgba(228,228,231,0.82)' }}>
-                            Construímos aplicações web e mobile, com manutenção contínua e evolução técnica para o negócio crescer com segurança.
+                            {hero.description}
                         </Typography>
 
                         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.2} justifyContent={{ xs: 'center', md: 'flex-start' }}>
                             <Button
                                 component="a"
-                                href="#contato"
+                                href={hero.primaryCta.href}
+                                onClick={() => trackAction({ page: 'home', section: 'hero', action: 'click_primary_cta', label: hero.primaryCta.label })}
                                 variant="contained"
                                 size="large"
                                 sx={{
@@ -93,12 +98,13 @@ export default function Hero() {
                                     boxShadow: '0px 0px 20px rgba(124, 58, 237, 0.4)'
                                 }}
                             >
-                                Quero começar meu projeto
+                                {hero.primaryCta.label}
                             </Button>
 
                             <Button
                                 component={RouterLink}
-                                to="/projetos"
+                                to={hero.secondaryCta.to}
+                                onClick={() => trackAction({ page: 'home', section: 'hero', action: 'click_secondary_cta', label: hero.secondaryCta.label })}
                                 variant="outlined"
                                 size="large"
                                 sx={{
@@ -112,12 +118,12 @@ export default function Hero() {
                                     '&:hover': { borderColor: '#7C3AED', background: 'rgba(124,58,237,0.12)' }
                                 }}
                             >
-                                Ver projetos publicados
+                                {hero.secondaryCta.label}
                             </Button>
                         </Stack>
 
                         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 0.8, sm: 1.8 }} sx={{ mt: 2 }} justifyContent={{ xs: 'center', md: 'flex-start' }}>
-                            {['Entrega com contexto de negócio', 'Qualidade técnica e manutenção', 'Comunicação direta com especialistas'].map((item) => (
+                            {hero.trustPills.map((item) => (
                                 <Typography key={item} sx={{ color: 'rgba(228,228,231,0.84)', fontSize: '0.82rem' }}>
                                     • {item}
                                 </Typography>
@@ -157,23 +163,19 @@ export default function Hero() {
 
                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1 }}>
                                 <Typography sx={{ color: '#7C3AED', fontWeight: 800, fontSize: '0.73rem', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                                    Contexto de execução
+                                    {hero.executionContext.eyebrow}
                                 </Typography>
                                 <BrandNetworkMark size={80} textColor="#F5F5F5" motionLevel="subtle" />
                             </Box>
 
                             <Typography sx={{ mt: 0.8, color: '#fff', fontWeight: 800, fontSize: { xs: '1.05rem', md: '1.2rem' }, lineHeight: 1.2 }}>
-                                Da estratégia ao deploy com acompanhamento contínuo.
+                                {hero.executionContext.title}
                             </Typography>
 
                             <Stack spacing={1.05} sx={{ mt: 1.4, position: 'relative', zIndex: 1 }}>
-                                {[
-                                    ['01', 'Descoberta e escopo realista'],
-                                    ['02', 'Design + arquitetura técnica'],
-                                    ['03', 'Build, publicação e evolução']
-                                ].map(([step, text]) => (
+                                {hero.executionContext.steps.map((step) => (
                                     <Box
-                                        key={step}
+                                        key={step.id}
                                         sx={{
                                             display: 'grid',
                                             gridTemplateColumns: '34px 1fr',
@@ -186,9 +188,9 @@ export default function Hero() {
                                         }}
                                     >
                                         <Box sx={{ width: 24, height: 24, borderRadius: '999px', border: '1px solid rgba(124,58,237,0.65)', color: '#C4B5FD', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.66rem', fontWeight: 800 }}>
-                                            {step}
+                                            {step.id}
                                         </Box>
-                                        <Typography sx={{ color: 'rgba(228,228,231,0.84)', fontSize: '0.84rem' }}>{text}</Typography>
+                                        <Typography sx={{ color: 'rgba(228,228,231,0.84)', fontSize: '0.84rem' }}>{step.text}</Typography>
                                     </Box>
                                 ))}
                             </Stack>

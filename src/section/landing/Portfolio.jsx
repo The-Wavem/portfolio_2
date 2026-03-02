@@ -8,21 +8,33 @@ import {
 	useTheme
 } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
-import { getPortfolioProjects } from '@/service/content';
+import { getHomeLandingContent, getPortfolioProjects } from '@/service/content';
 import ProjectCard from '@/components/organism/ProjectCard';
 import ProjectDetailsModal from '@/components/organism/ProjectDetailsModal';
+import { trackAction } from '@/service/analytics/tracking.service';
 
 export default function Portfolio() {
 	const theme = useTheme();
 	const projects = getPortfolioProjects();
+	const { portfolio } = getHomeLandingContent();
 	const [selectedProject, setSelectedProject] = useState(null);
+
+	const handleOpenProject = (project) => {
+		setSelectedProject(project);
+		trackAction({
+			page: 'home',
+			section: 'portfolio',
+			action: 'open_project',
+			label: project?.title ?? 'Projeto'
+		});
+	};
 
 	return (
 		<Box component="section" sx={{ py: { xs: 10, md: 15 }, position: 'relative' }}>
 			<Container maxWidth="lg">
 				<Box mb={{ xs: 7, md: 10 }} textAlign="left" position="relative" zIndex={2}>
 					<Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 0.6, sm: 1.3 }} sx={{ mb: 1.4 }}>
-						{['Cases publicados', 'Escopo orientado a negócio', 'Pós-lançamento ativo'].map((item) => (
+						{portfolio.topTags.map((item) => (
 							<Typography key={item} sx={{ color: 'rgba(228,228,231,0.74)', fontSize: '0.75rem', letterSpacing: '0.04em', textTransform: 'uppercase', fontWeight: 700 }}>
 								{item}
 							</Typography>
@@ -30,7 +42,7 @@ export default function Portfolio() {
 					</Stack>
 
 					<Typography variant="overline" color="primary" sx={{ letterSpacing: 4, fontWeight: 700, fontSize: '0.72rem', opacity: 0.95 }}>
-						PORTFÓLIO SELECIONADO
+						{portfolio.eyebrow}
 					</Typography>
 					<Typography
 						variant="h3"
@@ -44,7 +56,7 @@ export default function Portfolio() {
 							letterSpacing: '-0.03em'
 						}}
 					>
-						Projetos reais com foco em <span style={{ color: theme.palette.primary.main }}>resultado e confiança.</span>
+						{portfolio.titleStart} <span style={{ color: theme.palette.primary.main }}>{portfolio.titleHighlight}</span>
 					</Typography>
 					<Typography
 						sx={{
@@ -55,12 +67,13 @@ export default function Portfolio() {
 							letterSpacing: '0.01em'
 						}}
 					>
-						Uma vitrine de produtos que nasceram de problemas reais. Em cada entrega, equilibramos estética, clareza de fluxo e engenharia sólida para gerar resultado contínuo.
+						{portfolio.description}
 					</Typography>
 
 					<Button
 						component={RouterLink}
-						to="/projetos"
+						to={portfolio.cta.to}
+						onClick={() => trackAction({ page: 'home', section: 'portfolio', action: 'click_portfolio_cta', label: portfolio.cta.label })}
 						variant="outlined"
 						sx={{
 							mt: 3,
@@ -74,7 +87,7 @@ export default function Portfolio() {
 							}
 						}}
 					>
-						Ver página completa de projetos
+						{portfolio.cta.label}
 					</Button>
 				</Box>
 
@@ -91,7 +104,7 @@ export default function Portfolio() {
 							<ProjectCard
 								project={project}
 								index={index}
-								onOpen={setSelectedProject}
+								onOpen={handleOpenProject}
 								variant="home"
 								titleSx={{
 									fontSize: { xs: '1.58rem', md: project.id <= 2 ? '2.05rem' : '1.7rem' },

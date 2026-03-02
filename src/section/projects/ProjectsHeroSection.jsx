@@ -1,8 +1,10 @@
-import { Box, Container, Typography, useTheme } from '@mui/material';
+import { Box, Container, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
+import { getProjectsHeroContent } from '@/service/content';
 
 export default function ProjectsHeroSection() {
-    const theme = useTheme();
+    const content = getProjectsHeroContent();
+    const accent = content.accent ?? '#4ADE80';
 
     return (
         <Box component="section" sx={{ pt: { xs: 12, md: 16 }, position: 'relative', overflow: 'hidden' }}>
@@ -15,7 +17,7 @@ export default function ProjectsHeroSection() {
                     width: { xs: 260, md: 380 },
                     height: { xs: 260, md: 380 },
                     borderRadius: '50%',
-                    background: 'rgba(74,222,128,0.2)',
+                    background: `${accent}33`,
                     filter: 'blur(86px)',
                     pointerEvents: 'none'
                 }}
@@ -32,9 +34,9 @@ export default function ProjectsHeroSection() {
                         <Typography
                             variant="overline"
                             color="primary"
-                            sx={{ letterSpacing: 4, fontWeight: 700, fontSize: '0.72rem', opacity: 0.95, color: '#4ADE80' }}
+                            sx={{ letterSpacing: 4, fontWeight: 700, fontSize: '0.72rem', opacity: 0.95, color: accent }}
                         >
-                            PROJETOS COMPLETOS
+                            {content.eyebrow}
                         </Typography>
 
                         <Typography
@@ -47,7 +49,7 @@ export default function ProjectsHeroSection() {
                                 fontSize: { xs: '2rem', sm: '2.6rem', md: '3.4rem' }
                             }}
                         >
-                            Tudo que falamos, aqui vira visão de <span style={{ color: '#4ADE80' }}>execução real</span>.
+                            {content.titleStart} <span style={{ color: accent }}>{content.titleHighlight}</span>.
                         </Typography>
 
                         <Typography
@@ -59,8 +61,7 @@ export default function ProjectsHeroSection() {
                                 fontSize: { xs: '0.96rem', md: '1.02rem' }
                             }}
                         >
-                            Esta página detalha os projetos que já entregamos: contexto, decisões de produto, stack e direcionamento de resultado.
-                            A ideia é simples: te ajudar a entender como pensamos, como construímos e qual nível de qualidade você pode esperar.
+                            {content.description}
                         </Typography>
 
                         <Box
@@ -70,7 +71,7 @@ export default function ProjectsHeroSection() {
                                 width: { xs: 120, md: 160 },
                                 height: '2px',
                                 borderRadius: '999px',
-                                background: `linear-gradient(90deg, #4ADE80, rgba(74,222,128,0.9))`
+                                background: `linear-gradient(90deg, ${accent}, ${accent}E6)`
                             }}
                         />
                     </Box>

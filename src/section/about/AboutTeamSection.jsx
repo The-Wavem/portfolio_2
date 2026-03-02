@@ -1,14 +1,21 @@
 import { useState } from 'react';
 import { Box, Container, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
-import { getAboutMembers } from '@/service/content';
+import { getAboutMembers, getAboutTeamContent } from '@/service/content';
 import TeamMemberCard from '@/components/organism/TeamMemberCard';
 import TeamMemberDetailsModal from '@/components/organism/TeamMemberDetailsModal';
+import { trackAction } from '@/service/analytics/tracking.service';
 
 export default function AboutTeamSection() {
-    const aboutAccent = '#38BDF8';
+    const content = getAboutTeamContent();
+    const aboutAccent = content.accent ?? '#38BDF8';
     const members = getAboutMembers();
     const [selectedMember, setSelectedMember] = useState(null);
+
+    const handleOpenMember = (member) => {
+        setSelectedMember(member);
+        trackAction({ page: 'about', section: 'team', action: 'open_member', label: member?.name ?? 'Colaborador' });
+    };
 
     return (
         <Box component="section" sx={{ pb: { xs: 10, md: 15 }, pt: { xs: 1, md: 2 }, position: 'relative' }}>
@@ -36,10 +43,10 @@ export default function AboutTeamSection() {
                 >
                     <Box sx={{ mb: { xs: 2.2, md: 2.8 }, maxWidth: 720, position: 'relative', zIndex: 2 }}>
                         <Typography variant="overline" sx={{ color: aboutAccent, letterSpacing: 2.4, fontWeight: 700, fontSize: '0.68rem' }}>
-                            TIME WAVEM
+                            {content.eyebrow}
                         </Typography>
                         <Typography sx={{ mt: 0.8, color: 'rgba(228,228,231,0.72)', lineHeight: 1.75, fontSize: { xs: '0.92rem', md: '0.97rem' } }}>
-                            Pessoas reais, com especialidades complementares, unidas para transformar o seu rascunho em produto funcional com padrão profissional.
+                            {content.description}
                         </Typography>
                     </Box>
                 </motion.div>
@@ -53,7 +60,7 @@ export default function AboutTeamSection() {
                 >
                     {members.map((member, index) => (
                         <Box key={member.id} sx={{ gridColumn: { xs: '1 / -1', sm: 'span 6', md: 'span 6' } }}>
-                            <TeamMemberCard member={member} index={index} onOpen={setSelectedMember} />
+                            <TeamMemberCard member={member} index={index} onOpen={handleOpenMember} />
                         </Box>
                     ))}
                 </Box>

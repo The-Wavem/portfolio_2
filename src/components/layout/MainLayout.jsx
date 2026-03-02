@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link as RouterLink, Outlet, useLocation } from 'react-router-dom';
 import { Box, Container, AppBar, Toolbar, Typography, Button, Stack, IconButton, Drawer } from '@mui/material';
 import { motion } from 'framer-motion';
@@ -7,6 +7,13 @@ import BrandIntroOverlay from '@/components/ui/BrandIntroOverlay';
 import { getRouteBrandTheme } from '@/theme/routeBrandTheme';
 import Footer from './Footer'; // Assumindo que você já tem ou vai criar o Footer.jsx
 import BrandNetworkMark from '../ui/BrandNetworkMark';
+import {
+    getTrackingConsentStatus,
+    setTrackingConsentStatus,
+    trackAction,
+    trackPageViewFromPath,
+    trackRouteNavigation
+} from '@/service/analytics/tracking.service';
 
 function isRouteActive(pathname, routePath) {
     if (routePath === '/') {
@@ -47,7 +54,7 @@ function prefetchRoute(route) {
 }
 
 // Um Navbar simplificado para começar (podemos mover para um arquivo próprio depois)
-const Navbar = ({ pathname }) => {
+const Navbar = ({ pathname, onNavigate }) => {
     const routeTheme = getRouteBrandTheme(pathname);
     const activeColor = routeTheme.end;
     const [mobileOpen, setMobileOpen] = useState(false);
@@ -83,6 +90,7 @@ const Navbar = ({ pathname }) => {
                     <Box
                         component={RouterLink}
                         to="/"
+                        onClick={() => onNavigate({ to: '/', label: 'Logo Wavem' })}
                         onMouseEnter={() => prefetchRoute('/')}
                         onFocus={() => prefetchRoute('/')}
                         sx={{
@@ -110,6 +118,7 @@ const Navbar = ({ pathname }) => {
                                     key={link.to}
                                     component={RouterLink}
                                     to={link.to}
+                                    onClick={() => onNavigate({ to: link.to, label: link.label })}
                                     onMouseEnter={() => prefetchRoute(link.to)}
                                     onFocus={() => prefetchRoute(link.to)}
                                     color="inherit"
@@ -145,6 +154,7 @@ const Navbar = ({ pathname }) => {
                         <Button
                             component={RouterLink}
                             to="/projetos"
+                            onClick={() => onNavigate({ to: '/projetos', label: 'Iniciar Projeto' })}
                             onMouseEnter={() => prefetchRoute('/projetos')}
                             onFocus={() => prefetchRoute('/projetos')}
                             variant="contained"
@@ -214,7 +224,10 @@ const Navbar = ({ pathname }) => {
                                 key={`mobile-${link.to}`}
                                 component={RouterLink}
                                 to={link.to}
-                                onClick={closeMobileMenu}
+                                onClick={() => {
+                                    onNavigate({ to: link.to, label: `Menu mobile ${link.label}` });
+                                    closeMobileMenu();
+                                }}
                                 onMouseEnter={() => prefetchRoute(link.to)}
                                 onFocus={() => prefetchRoute(link.to)}
                                 sx={{
@@ -240,7 +253,10 @@ const Navbar = ({ pathname }) => {
                     <Button
                         component={RouterLink}
                         to="/projetos"
-                        onClick={closeMobileMenu}
+                        onClick={() => {
+                            onNavigate({ to: '/projetos', label: 'Menu mobile iniciar projeto' });
+                            closeMobileMenu();
+                        }}
                         variant="contained"
                         sx={{
                             mt: 1,
@@ -267,6 +283,8 @@ const Navbar = ({ pathname }) => {
 export default function MainLayout() {
     const location = useLocation();
     const [showBrandIntro, setShowBrandIntro] = useState(true);
+    const previousPathRef = useRef(location.pathname);
+    const [trackingConsent, setTrackingConsent] = useState(() => getTrackingConsentStatus());
 
     function handleBrandIntroDone() {
         setShowBrandIntro(false);
@@ -284,6 +302,35 @@ export default function MainLayout() {
         window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
     }, [location.pathname]);
 
+    useEffect(() => {
+        const previousPath = previousPathRef.current;
+        trackRouteNavigation(previousPath, location.pathname);
+        previousPathRef.current = location.pathname;
+    }, [location.pathname]);
+
+    function handleAcceptTracking() {
+        setTrackingConsentStatus('accepted');
+        setTrackingConsent('accepted');
+        trackPageViewFromPath(location.pathname, { source: 'consent_accept' });
+    }
+
+    function handleRejectTracking() {
+        setTrackingConsentStatus('rejected');
+        setTrackingConsent('rejected');
+    }
+
+    function handleNavigate({ to, label }) {
+        trackAction({
+            page: location.pathname,
+            section: 'navigator',
+            action: 'click_navigation',
+            label,
+            meta: {
+                to
+            }
+        });
+    }
+
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: 'background.default' }}>
             <BrandIntroOverlay
@@ -291,12 +338,67 @@ export default function MainLayout() {
                 onDone={handleBrandIntroDone}
                 duration={1650}
             />
-            <Navbar pathname={location.pathname} />
+            <Navbar pathname={location.pathname} onNavigate={handleNavigate} />
 
             {/* O Outlet renderiza a rota filha (no caso, a Home) */}
             <Box sx={{ flexGrow: 1 }}>
                 <Outlet />
             </Box>
+
+            {trackingConsent === 'pending' ? (
+                <Box
+                    sx={{
+                        position: 'fixed',
+                        left: { xs: 12, md: 24 },
+                        right: { xs: 12, md: 24 },
+                        bottom: { xs: 12, md: 18 },
+                        zIndex: 1400,
+                        p: { xs: 1.6, md: 2 },
+                        borderRadius: '14px',
+                        border: '1px solid rgba(255,255,255,0.14)',
+                        background: 'rgba(10,10,12,0.94)',
+                        backdropFilter: 'blur(14px)',
+                        boxShadow: '0 16px 34px rgba(0,0,0,0.38)'
+                    }}
+                >
+                    <Stack direction={{ xs: 'column', md: 'row' }} spacing={1.2} justifyContent="space-between" alignItems={{ xs: 'flex-start', md: 'center' }}>
+                        <Typography sx={{ color: 'rgba(228,228,231,0.88)', fontSize: { xs: '0.84rem', md: '0.9rem' }, lineHeight: 1.6, maxWidth: 900 }}>
+                            Coletamos dados de navegação e interações para melhorar sua experiência e entender quais conteúdos são mais úteis. Você pode aceitar ou recusar a coleta.
+                        </Typography>
+
+                        <Stack direction="row" spacing={0.9} sx={{ width: { xs: '100%', md: 'auto' } }}>
+                            <Button
+                                onClick={handleRejectTracking}
+                                variant="outlined"
+                                sx={{
+                                    borderRadius: '999px',
+                                    textTransform: 'none',
+                                    fontWeight: 700,
+                                    color: 'rgba(228,228,231,0.9)',
+                                    borderColor: 'rgba(255,255,255,0.22)',
+                                    width: { xs: '50%', md: 'auto' }
+                                }}
+                            >
+                                Recusar
+                            </Button>
+                            <Button
+                                onClick={handleAcceptTracking}
+                                variant="contained"
+                                sx={{
+                                    borderRadius: '999px',
+                                    textTransform: 'none',
+                                    fontWeight: 800,
+                                    bgcolor: '#7C3AED',
+                                    '&:hover': { bgcolor: '#6D28D9' },
+                                    width: { xs: '50%', md: 'auto' }
+                                }}
+                            >
+                                Aceitar coleta
+                            </Button>
+                        </Stack>
+                    </Stack>
+                </Box>
+            ) : null}
 
             <Footer />
         </Box>

@@ -1,9 +1,11 @@
 import { Box, Container, Typography } from "@mui/material";
 import { motion } from "framer-motion";
 import { useTheme } from "@mui/material/styles";
+import { getAboutHeroContent } from '@/service/content';
 
 export default function AboutHeroSection() {
-  const aboutAccent = "#38BDF8";
+  const content = getAboutHeroContent();
+  const aboutAccent = content.accent ?? "#38BDF8";
   const theme = useTheme();
 
   return (
@@ -48,7 +50,7 @@ export default function AboutHeroSection() {
                 opacity: 0.95,
               }}
             >
-              QUEM FAZ A THE WAVEM
+              {content.eyebrow}
             </Typography>
             <Typography
               variant="h3"
@@ -62,9 +64,9 @@ export default function AboutHeroSection() {
                 letterSpacing: "-0.03em",
               }}
             >
-              Um time de especialistas com{" "}
+              {content.titleStart}{" "}
               <span style={{ color: aboutAccent }}>
-                foco em resultado real.
+                {content.titleHighlight}
               </span>
             </Typography>
             <Typography
@@ -76,8 +78,7 @@ export default function AboutHeroSection() {
                 letterSpacing: "0.01em",
               }}
             >
-              Clique em cada perfil para conhecer habilidades, áreas de foco,
-              projetos pessoais e canais individuais de contato.
+              {content.description}
             </Typography>
 
             <Box

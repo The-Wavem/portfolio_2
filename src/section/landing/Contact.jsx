@@ -11,25 +11,24 @@ import {
 	Typography,
 	useTheme
 } from '@mui/material';
-import { TbBrandWhatsapp, TbMail, TbCalendarEvent, TbCopy, TbArrowUpRight } from 'react-icons/tb';
-import { getContactAssurances, getContactChannels } from '@/service/content';
-
-const quickMessage = 'Olá, The Wavem! Quero conversar sobre um novo projeto e entender o melhor caminho para começar.';
-const contactEmail = 'contato.thewavem@gmail.com';
+import { TbBrandWhatsapp, TbCopy } from 'react-icons/tb';
+import { getContactAssurances, getContactChannels, getHomeLandingContent } from '@/service/content';
+import { trackAction } from '@/service/analytics/tracking.service';
 
 export default function Contact() {
 	const theme = useTheme();
 	const channels = getContactChannels();
+	const { contact } = getHomeLandingContent();
 	const assurances = getContactAssurances();
 	const whatsappChannel = channels.find((channel) => channel.id === 'whatsapp');
-	const emailChannel = channels.find((channel) => channel.id === 'email');
-	const meetingChannel = channels.find((channel) => channel.id === 'meeting');
+	const contactEmail = contact.email;
 	const [copied, setCopied] = useState(false);
 
 	const handleCopyEmail = async () => {
 		try {
 			await navigator.clipboard.writeText(contactEmail);
 			setCopied(true);
+			trackAction({ page: 'home', section: 'contact', action: 'copy_email', label: 'Copiar e-mail' });
 		} catch (error) {
 			setCopied(false);
 		}
@@ -40,7 +39,7 @@ export default function Contact() {
 			<Container maxWidth="lg">
 				<Box mb={{ xs: 7, md: 9 }} textAlign="left">
 					<Typography variant="overline" color="primary" sx={{ letterSpacing: 4, fontWeight: 700, fontSize: '0.72rem', opacity: 0.95 }}>
-						CONTATO SEM FRICÇÃO
+						{contact.eyebrow}
 					</Typography>
 					<Typography
 						variant="h3"
@@ -54,10 +53,10 @@ export default function Contact() {
 							letterSpacing: '-0.03em'
 						}}
 					>
-						Fale com a The Wavem com <span style={{ color: theme.palette.primary.main }}>clareza desde o primeiro clique.</span>
+						{contact.titleStart} <span style={{ color: theme.palette.primary.main }}>{contact.titleHighlight}</span>
 					</Typography>
 					<Typography sx={{ maxWidth: 700, color: 'rgba(228,228,231,0.72)', lineHeight: 1.75, fontSize: { xs: '0.95rem', md: '1rem' }, letterSpacing: '0.01em' }}>
-						Nada de formulário longo. Você escolhe o canal, abre a conversa na hora e já sabe exatamente o que foi enviado.
+						{contact.description}
 					</Typography>
 				</Box>
 
@@ -93,13 +92,14 @@ export default function Contact() {
 								{whatsappChannel?.subtitle}
 							</Typography>
 							<Typography sx={{ mt: 1.2, color: 'rgba(228,228,231,0.82)', lineHeight: 1.75, fontSize: { xs: '0.92rem', md: '0.98rem' } }}>
-								{quickMessage}
+								{contact.quickMessage}
 							</Typography>
 
 							<Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.2} sx={{ mt: 2.2 }}>
 								<Button
 									component="a"
 									href={whatsappChannel?.href}
+									onClick={() => trackAction({ page: 'home', section: 'contact', action: 'open_whatsapp', label: whatsappChannel?.cta ?? 'WhatsApp' })}
 									target="_blank"
 									rel="noreferrer"
 									variant="contained"
@@ -169,7 +169,7 @@ export default function Contact() {
 
 			<Snackbar open={copied} autoHideDuration={2500} onClose={() => setCopied(false)} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
 				<Alert onClose={() => setCopied(false)} severity="success" variant="filled" sx={{ width: '100%' }}>
-					E-mail copiado com sucesso.
+					{contact.copiedFeedback}
 				</Alert>
 			</Snackbar>
 		</Box>

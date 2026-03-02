@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import { createBrowserRouter } from 'react-router-dom';
+import { Navigate, createBrowserRouter } from 'react-router-dom';
 import PageLoader from '@/components/ui/PageLoader';
 
 const MainLayout = lazy(() => import('./components/layout/MainLayout'));
@@ -51,8 +51,16 @@ export const router = createBrowserRouter([
                 element: withSuspense(AdminOverview)
             },
             {
-                path: ':section',
+                path: ':page',
                 element: withSuspense(AdminSectionPlaceholder)
+            },
+            {
+                path: ':page/:section',
+                element: withSuspense(AdminSectionPlaceholder)
+            },
+            {
+                path: '*',
+                element: <Navigate to="/admin" replace />
             }
         ]
     }

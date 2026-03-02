@@ -1,12 +1,13 @@
 import { useMemo, useState } from 'react';
-import { Box, Container, Typography, useTheme } from '@mui/material';
+import { Box, Container, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
-import { getPortfolioProjects } from '@/service/content';
+import { getPortfolioProjects, getProjectsCatalogContent } from '@/service/content';
 import ProjectCard from '@/components/organism/ProjectCard';
 import ProjectDetailsModal from '@/components/organism/ProjectDetailsModal';
 
 export default function ProjectsCatalogSection() {
-    const theme = useTheme();
+    const content = getProjectsCatalogContent();
+    const accent = content.accent ?? '#4ADE80';
     const projects = useMemo(() => getPortfolioProjects(), []);
     const [selectedProject, setSelectedProject] = useState(null);
 
@@ -21,7 +22,7 @@ export default function ProjectsCatalogSection() {
                     width: { xs: 220, md: 320 },
                     height: { xs: 220, md: 320 },
                     borderRadius: '50%',
-                    background: `${theme.palette.primary.main}20`,
+                    background: `${accent}30`,
                     filter: 'blur(88px)',
                     pointerEvents: 'none'
                 }}
@@ -35,11 +36,11 @@ export default function ProjectsCatalogSection() {
                     transition={{ duration: 0.46, ease: 'easeOut' }}
                 >
                     <Box sx={{ mb: { xs: 2.2, md: 2.8 }, maxWidth: 740, position: 'relative', zIndex: 2 }}>
-                        <Typography variant="overline" sx={{ color: '#4ADE80', letterSpacing: 2.3, fontWeight: 700, fontSize: '0.68rem' }}>
-                            ESTUDOS DE PROJETO
+                        <Typography variant="overline" sx={{ color: accent, letterSpacing: 2.3, fontWeight: 700, fontSize: '0.68rem' }}>
+                            {content.eyebrow}
                         </Typography>
                         <Typography sx={{ mt: 0.8, color: 'rgba(228,228,231,0.72)', lineHeight: 1.75, fontSize: { xs: '0.92rem', md: '0.97rem' } }}>
-                            Abra cada card para ver contexto, direção técnica e como estruturamos entregas para resultados consistentes.
+                            {content.description}
                         </Typography>
                     </Box>
                 </motion.div>

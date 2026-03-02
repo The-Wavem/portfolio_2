@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { Box, Container, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
-import { getAboutMembers } from '@/service/content';
+import { getAboutMembers, getAboutTeamContent } from '@/service/content';
 import TeamMemberCard from '@/components/organism/TeamMemberCard';
 import TeamMemberDetailsModal from '@/components/organism/TeamMemberDetailsModal';
 
 export default function AboutTeamSection() {
-    const aboutAccent = '#38BDF8';
+    const content = getAboutTeamContent();
+    const aboutAccent = content.accent ?? '#38BDF8';
     const members = getAboutMembers();
     const [selectedMember, setSelectedMember] = useState(null);
 
@@ -36,10 +37,10 @@ export default function AboutTeamSection() {
                 >
                     <Box sx={{ mb: { xs: 2.2, md: 2.8 }, maxWidth: 720, position: 'relative', zIndex: 2 }}>
                         <Typography variant="overline" sx={{ color: aboutAccent, letterSpacing: 2.4, fontWeight: 700, fontSize: '0.68rem' }}>
-                            TIME WAVEM
+                            {content.eyebrow}
                         </Typography>
                         <Typography sx={{ mt: 0.8, color: 'rgba(228,228,231,0.72)', lineHeight: 1.75, fontSize: { xs: '0.92rem', md: '0.97rem' } }}>
-                            Pessoas reais, com especialidades complementares, unidas para transformar o seu rascunho em produto funcional com padrão profissional.
+                            {content.description}
                         </Typography>
                     </Box>
                 </motion.div>

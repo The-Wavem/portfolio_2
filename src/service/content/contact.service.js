@@ -13,18 +13,9 @@ export const contactChannels = [
         title: 'E-mail profissional',
         subtitle: 'Para escopo detalhado e anexos',
         cta: 'Enviar e-mail',
-        href: 'mailto:contato@thewavem.com?subject=Novo%20projeto%20-%20The%20Wavem&body=Ol%C3%A1%20time%20The%20Wavem%2C%0A%0AQuero%20conversar%20sobre%20um%20projeto.%0A%0AObjetivo%3A%0APrazo%3A%0AOr%C3%A7amento%3A%0A%0AObrigado!',
+        href: 'mailto:contato.thewavem@gmail.com?subject=Novo%20projeto%20-%20The%20Wavem&body=Ol%C3%A1%20time%20The%20Wavem%2C%0A%0AQuero%20conversar%20sobre%20um%20projeto.%0A%0AObjetivo%3A%0APrazo%3A%0AOr%C3%A7amento%3A%0A%0AObrigado!',
         accent: '#7C3AED',
         kind: 'email'
-    },
-    {
-        id: 'meeting',
-        title: 'Call de alinhamento',
-        subtitle: '30 min para mapear escopo e próximos passos',
-        cta: 'Agendar reunião',
-        href: 'https://calendly.com',
-        accent: '#60A5FA',
-        kind: 'external'
     }
 ];
 

@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { Box, Container, Typography, Stack, useTheme, useMediaQuery } from '@mui/material';
 import { motion, useScroll, useSpring } from 'framer-motion';
 import { TbCoffee, TbPencil, TbFileText, TbCode, TbRocket } from 'react-icons/tb';
-import { getProcessSteps } from '@/service/content';
+import { getHomeLandingContent, getProcessSteps } from '@/service/content';
 
 const processIconMap = {
     coffee: TbCoffee,
@@ -141,6 +141,7 @@ const ProcessStep = ({ step, index, isMobile }) => {
 export default function Process() {
     const theme = useTheme();
     const steps = getProcessSteps();
+    const { process } = getHomeLandingContent();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const containerRef = useRef(null);
 
@@ -166,7 +167,7 @@ export default function Process() {
                         viewport={{ once: true }}
                     >
                         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 0.6, sm: 1.2 }} sx={{ mb: 1.3 }}>
-                            {['Método proprietário', 'Transparência em cada sprint', 'Entrega com acompanhamento'].map((item) => (
+                            {process.topTags.map((item) => (
                                 <Typography key={item} sx={{ color: 'rgba(228,228,231,0.72)', fontSize: '0.74rem', letterSpacing: '0.04em', textTransform: 'uppercase', fontWeight: 700 }}>
                                     {item}
                                 </Typography>
@@ -174,7 +175,7 @@ export default function Process() {
                         </Stack>
 
                         <Typography variant="overline" color="primary" sx={{ letterSpacing: 4, fontWeight: 700, fontSize: '0.72rem', opacity: 0.95 }}>
-                            COMO TRABALHAMOS
+                            {process.eyebrow}
                         </Typography>
                         <Typography
                             variant="h3"
@@ -188,7 +189,7 @@ export default function Process() {
                                 letterSpacing: '-0.03em'
                             }}
                         >
-                            Do cafézinho ao <span style={{ color: theme.palette.primary.main }}>código.</span>
+                            {process.titleStart} <span style={{ color: theme.palette.primary.main }}>{process.titleHighlight}</span>
                         </Typography>
                         <Typography
                             variant="body1"
@@ -200,7 +201,7 @@ export default function Process() {
                                 letterSpacing: '0.01em'
                             }}
                         >
-                            Você acompanha o projeto de ponta a ponta, com checkpoints claros, decisões registradas e previsibilidade de entrega sem ruído.
+                            {process.description}
                         </Typography>
                     </motion.div>
                 </Box>

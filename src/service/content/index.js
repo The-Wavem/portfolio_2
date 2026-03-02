@@ -6,3 +6,5 @@ export { getAboutMembers, aboutMembers } from './about.service';
 export { getFaqItems, faqItems } from './faq.service';
 export { getAboutStoryContent, aboutStoryContent } from './aboutStory.service';
 export { getServicesContent, servicesContent } from './services.service';
+export { getAdminOverviewData, adminOverviewData } from './adminDashboard.service';
+export { getHomeLandingContent, homeLandingContent } from './homeLanding.service';

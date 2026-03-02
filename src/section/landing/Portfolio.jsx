@@ -11,12 +11,23 @@ import { Link as RouterLink } from 'react-router-dom';
 import { getHomeLandingContent, getPortfolioProjects } from '@/service/content';
 import ProjectCard from '@/components/organism/ProjectCard';
 import ProjectDetailsModal from '@/components/organism/ProjectDetailsModal';
+import { trackAction } from '@/service/analytics/tracking.service';
 
 export default function Portfolio() {
 	const theme = useTheme();
 	const projects = getPortfolioProjects();
 	const { portfolio } = getHomeLandingContent();
 	const [selectedProject, setSelectedProject] = useState(null);
+
+	const handleOpenProject = (project) => {
+		setSelectedProject(project);
+		trackAction({
+			page: 'home',
+			section: 'portfolio',
+			action: 'open_project',
+			label: project?.title ?? 'Projeto'
+		});
+	};
 
 	return (
 		<Box component="section" sx={{ py: { xs: 10, md: 15 }, position: 'relative' }}>
@@ -62,6 +73,7 @@ export default function Portfolio() {
 					<Button
 						component={RouterLink}
 						to={portfolio.cta.to}
+						onClick={() => trackAction({ page: 'home', section: 'portfolio', action: 'click_portfolio_cta', label: portfolio.cta.label })}
 						variant="outlined"
 						sx={{
 							mt: 3,
@@ -92,7 +104,7 @@ export default function Portfolio() {
 							<ProjectCard
 								project={project}
 								index={index}
-								onOpen={setSelectedProject}
+								onOpen={handleOpenProject}
 								variant="home"
 								titleSx={{
 									fontSize: { xs: '1.58rem', md: project.id <= 2 ? '2.05rem' : '1.7rem' },

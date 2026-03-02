@@ -4,12 +4,18 @@ import { motion } from 'framer-motion';
 import { getPortfolioProjects, getProjectsCatalogContent } from '@/service/content';
 import ProjectCard from '@/components/organism/ProjectCard';
 import ProjectDetailsModal from '@/components/organism/ProjectDetailsModal';
+import { trackAction } from '@/service/analytics/tracking.service';
 
 export default function ProjectsCatalogSection() {
     const content = getProjectsCatalogContent();
     const accent = content.accent ?? '#4ADE80';
     const projects = useMemo(() => getPortfolioProjects(), []);
     const [selectedProject, setSelectedProject] = useState(null);
+
+    const handleOpenProject = (project) => {
+        setSelectedProject(project);
+        trackAction({ page: 'projects', section: 'catalog', action: 'open_project', label: project?.title ?? 'Projeto' });
+    };
 
     return (
         <Box component="section" sx={{ py: { xs: 4, md: 10 }, position: 'relative' }}>
@@ -57,7 +63,7 @@ export default function ProjectsCatalogSection() {
                             key={project.id}
                             project={project}
                             index={index}
-                            onOpen={setSelectedProject}
+                            onOpen={handleOpenProject}
                             variant="projects"
                             minHeight={{ xs: 320, md: 370 }}
                             transition={{ duration: 0.48, delay: index * 0.06 }}

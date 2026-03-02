@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Link as RouterLink } from 'react-router-dom';
 import BrandNetworkMark from '@components/ui/BrandNetworkMark';
 import { getHomeLandingContent } from '@/service/content';
+import { trackAction } from '@/service/analytics/tracking.service';
 
 const MotionTypography = motion.create(Typography);
 const MotionBox = motion.create(Box);
@@ -85,6 +86,7 @@ export default function Hero() {
                             <Button
                                 component="a"
                                 href={hero.primaryCta.href}
+                                onClick={() => trackAction({ page: 'home', section: 'hero', action: 'click_primary_cta', label: hero.primaryCta.label })}
                                 variant="contained"
                                 size="large"
                                 sx={{
@@ -102,6 +104,7 @@ export default function Hero() {
                             <Button
                                 component={RouterLink}
                                 to={hero.secondaryCta.to}
+                                onClick={() => trackAction({ page: 'home', section: 'hero', action: 'click_secondary_cta', label: hero.secondaryCta.label })}
                                 variant="outlined"
                                 size="large"
                                 sx={{

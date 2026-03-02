@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import { TbChevronDown } from 'react-icons/tb';
 import { getFaqItems, getHomeLandingContent } from '@/service/content';
+import { trackAction } from '@/service/analytics/tracking.service';
 
 export default function FAQ() {
     const theme = useTheme();
@@ -46,6 +47,16 @@ export default function FAQ() {
                         <Accordion
                             key={item.id}
                             disableGutters
+                            onChange={(_, expanded) => {
+                                if (expanded) {
+                                    trackAction({
+                                        page: 'home',
+                                        section: 'faq',
+                                        action: 'faq_expand',
+                                        label: item.question
+                                    });
+                                }
+                            }}
                             sx={{
                                 background: 'rgba(10,10,10,0.62)',
                                 border: '1px solid rgba(255,255,255,0.08)',

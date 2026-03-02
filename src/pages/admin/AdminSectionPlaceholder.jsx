@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Alert, Box, Button, Chip, Container, Stack, TextField, Typography } from '@mui/material';
+import { Alert, Box, Button, Chip, Container, Dialog, DialogContent, DialogTitle, Stack, TextField, Typography } from '@mui/material';
 import { NavLink, useParams } from 'react-router-dom';
 import { editorConfigByPageSection, pageLabelByKey } from './editors';
 
@@ -73,6 +73,25 @@ function createEmptyProject(nextId) {
     };
 }
 
+function getMembersArray(draft, path) {
+    const items = getNestedValue(draft, path);
+    return Array.isArray(items) ? items : [];
+}
+
+function createEmptyMember(nextId) {
+    return {
+        id: nextId,
+        name: 'Novo colaborador',
+        role: 'Função',
+        headline: 'Resumo profissional',
+        bio: 'Descreva aqui a bio do colaborador.',
+        accent: '#7C3AED',
+        photo: '',
+        specialties: ['Nova skill'],
+        focuses: ['Novo aprendizado']
+    };
+}
+
 function SectionPreview({ config, draft }) {
     if (config.previewType === 'aboutHero') {
         return (
@@ -112,14 +131,26 @@ function SectionPreview({ config, draft }) {
 
     if (config.previewType === 'aboutTeam') {
         return (
-            <Box sx={{ p: 1.3, borderRadius: '12px', border: '1px solid rgba(255,255,255,0.14)', bgcolor: 'rgba(255,255,255,0.02)' }}>
-                <Typography sx={{ color: draft.accent || '#38BDF8', textTransform: 'uppercase', fontWeight: 700, fontSize: '0.68rem', letterSpacing: '0.08em' }}>
-                    {draft.eyebrow || 'EYEBROW'}
-                </Typography>
-                <Typography sx={{ mt: 0.7, color: 'rgba(228,228,231,0.78)', fontSize: '0.82rem', lineHeight: 1.55 }}>
-                    {draft.description}
-                </Typography>
-            </Box>
+            <Stack spacing={1}>
+                <Box sx={{ p: 1.3, borderRadius: '12px', border: '1px solid rgba(255,255,255,0.14)', bgcolor: 'rgba(255,255,255,0.02)' }}>
+                    <Typography sx={{ color: draft.accent || '#38BDF8', textTransform: 'uppercase', fontWeight: 700, fontSize: '0.68rem', letterSpacing: '0.08em' }}>
+                        {draft.eyebrow || 'EYEBROW'}
+                    </Typography>
+                    <Typography sx={{ mt: 0.7, color: 'rgba(228,228,231,0.78)', fontSize: '0.82rem', lineHeight: 1.55 }}>
+                        {draft.description}
+                    </Typography>
+                    <Typography sx={{ mt: 0.9, color: '#fff', fontWeight: 700, fontSize: '0.78rem' }}>
+                        Colaboradores: {(draft.members || []).length}
+                    </Typography>
+                </Box>
+
+                {(draft.members || []).slice(0, 4).map((member) => (
+                    <Box key={member.id || member.name} sx={{ p: 1, borderRadius: '10px', border: '1px solid rgba(255,255,255,0.14)', bgcolor: 'rgba(255,255,255,0.02)' }}>
+                        <Typography sx={{ color: '#fff', fontWeight: 700, fontSize: '0.8rem' }}>{member.name}</Typography>
+                        <Typography sx={{ color: 'rgba(228,228,231,0.7)', fontSize: '0.76rem', mt: 0.2 }}>{member.role}</Typography>
+                    </Box>
+                ))}
+            </Stack>
         );
     }
 
@@ -397,10 +428,14 @@ function SectionPreview({ config, draft }) {
 function ContentEditor({ config }) {
     const [draft, setDraft] = useState(() => structuredClone(config.getContent()));
     const [savedMessage, setSavedMessage] = useState(false);
+    const [memberModalIndex, setMemberModalIndex] = useState(null);
+    const [projectModalIndex, setProjectModalIndex] = useState(null);
 
     useEffect(() => {
         setDraft(structuredClone(config.getContent()));
         setSavedMessage(false);
+        setMemberModalIndex(null);
+        setProjectModalIndex(null);
     }, [config]);
 
     function handleChange(field, rawValue) {
@@ -462,6 +497,59 @@ function ContentEditor({ config }) {
             const projects = getProjectsArray(current, config.dynamicProjectsPath);
             const nextProjects = projects.filter((_, itemIndex) => itemIndex !== index);
             return setNestedValue(current, config.dynamicProjectsPath, nextProjects);
+        });
+        setProjectModalIndex(null);
+    }
+
+    function handleAddMember() {
+        if (!config.dynamicMembersPath) {
+            return;
+        }
+
+        setDraft((current) => {
+            const members = getMembersArray(current, config.dynamicMembersPath);
+            const nextId = members.length ? Math.max(...members.map((item) => Number(item.id) || 0)) + 1 : 1;
+            const nextMembers = [...members, createEmptyMember(nextId)];
+            return setNestedValue(current, config.dynamicMembersPath, nextMembers);
+        });
+    }
+
+    function handleRemoveMember(index) {
+        if (!config.dynamicMembersPath) {
+            return;
+        }
+
+        setDraft((current) => {
+            const members = getMembersArray(current, config.dynamicMembersPath);
+            const nextMembers = members.filter((_, itemIndex) => itemIndex !== index);
+            return setNestedValue(current, config.dynamicMembersPath, nextMembers);
+        });
+        setMemberModalIndex(null);
+    }
+
+    function handleMemberFieldChange(index, key, rawValue) {
+        if (!config.dynamicMembersPath) {
+            return;
+        }
+
+        setDraft((current) => {
+            const members = getMembersArray(current, config.dynamicMembersPath);
+            const nextMembers = members.map((member, memberIndex) => {
+                if (memberIndex !== index) {
+                    return member;
+                }
+
+                const nextValue = key === 'specialties' || key === 'focuses'
+                    ? rawValue.split(';').map((part) => part.trim()).filter(Boolean)
+                    : rawValue;
+
+                return {
+                    ...member,
+                    [key]: nextValue
+                };
+            });
+
+            return setNestedValue(current, config.dynamicMembersPath, nextMembers);
         });
     }
 
@@ -569,7 +657,13 @@ function ContentEditor({ config }) {
                                 </Button>
                             </Stack>
 
-                            <Stack spacing={1.2}>
+                            <Box
+                                sx={{
+                                    display: 'grid',
+                                    gridTemplateColumns: { xs: '1fr', md: 'repeat(2, minmax(0, 1fr))' },
+                                    gap: 1.2
+                                }}
+                            >
                                 {(getProjectsArray(draft, config.dynamicProjectsPath)).map((project, index) => (
                                     <Box
                                         key={project.id || index}
@@ -580,94 +674,109 @@ function ContentEditor({ config }) {
                                             bgcolor: 'rgba(255,255,255,0.02)'
                                         }}
                                     >
-                                        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
-                                            <Typography sx={{ color: '#fff', fontWeight: 800, fontSize: '0.84rem' }}>
-                                                Projeto {index + 1}
-                                            </Typography>
+                                        <Stack direction="row" justifyContent="space-between" alignItems="center">
+                                            <Box>
+                                                <Typography sx={{ color: '#fff', fontWeight: 800, fontSize: '0.86rem' }}>
+                                                    {project.title || `Projeto ${index + 1}`}
+                                                </Typography>
+                                                <Typography sx={{ color: 'rgba(228,228,231,0.72)', fontSize: '0.78rem', mt: 0.2 }}>
+                                                    {project.tag || 'Sem tag'}
+                                                </Typography>
+                                            </Box>
                                             <Button
-                                                onClick={() => handleRemoveProject(index)}
+                                                onClick={() => setProjectModalIndex(index)}
                                                 sx={{
                                                     borderRadius: '999px',
                                                     textTransform: 'none',
                                                     fontWeight: 700,
-                                                    color: '#FCA5A5',
-                                                    minWidth: 0,
-                                                    px: 1.2
+                                                    color: '#DDD6FE',
+                                                    border: '1px solid rgba(124,58,237,0.4)',
+                                                    px: 1.2,
+                                                    minWidth: 0
                                                 }}
                                             >
-                                                Remover
+                                                Editar
                                             </Button>
                                         </Stack>
 
-                                        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, minmax(0, 1fr))' }, gap: 1 }}>
-                                            <TextField
-                                                label="ID"
-                                                value={project.id ?? ''}
-                                                onChange={(event) => handleProjectChange(index, 'id', event.target.value)}
-                                                sx={{ '& .MuiInputBase-root': { bgcolor: 'rgba(7,7,8,0.86)', borderRadius: '12px', color: '#F5F5F5' } }}
-                                            />
-                                            <TextField
-                                                label="Tag"
-                                                value={project.tag ?? ''}
-                                                onChange={(event) => handleProjectChange(index, 'tag', event.target.value)}
-                                                sx={{ '& .MuiInputBase-root': { bgcolor: 'rgba(7,7,8,0.86)', borderRadius: '12px', color: '#F5F5F5' } }}
-                                            />
-                                            <Box sx={{ gridColumn: '1 / -1' }}>
-                                                <TextField
-                                                    label="Título"
-                                                    fullWidth
-                                                    value={project.title ?? ''}
-                                                    onChange={(event) => handleProjectChange(index, 'title', event.target.value)}
-                                                    sx={{ '& .MuiInputBase-root': { bgcolor: 'rgba(7,7,8,0.86)', borderRadius: '12px', color: '#F5F5F5' } }}
-                                                />
-                                            </Box>
-                                            <Box sx={{ gridColumn: '1 / -1' }}>
-                                                <TextField
-                                                    label="Resumo"
-                                                    fullWidth
-                                                    multiline
-                                                    rows={2}
-                                                    value={project.summary ?? ''}
-                                                    onChange={(event) => handleProjectChange(index, 'summary', event.target.value)}
-                                                    sx={{ '& .MuiInputBase-root': { bgcolor: 'rgba(7,7,8,0.86)', borderRadius: '12px', color: '#F5F5F5' } }}
-                                                />
-                                            </Box>
-                                            <Box sx={{ gridColumn: '1 / -1' }}>
-                                                <TextField
-                                                    label="Detalhes"
-                                                    fullWidth
-                                                    multiline
-                                                    rows={3}
-                                                    value={project.details ?? ''}
-                                                    onChange={(event) => handleProjectChange(index, 'details', event.target.value)}
-                                                    sx={{ '& .MuiInputBase-root': { bgcolor: 'rgba(7,7,8,0.86)', borderRadius: '12px', color: '#F5F5F5' } }}
-                                                />
-                                            </Box>
-                                            <TextField
-                                                label="Stack (separada por ;)"
-                                                value={Array.isArray(project.stack) ? project.stack.join('; ') : ''}
-                                                onChange={(event) => handleProjectChange(index, 'stack', event.target.value)}
-                                                sx={{ '& .MuiInputBase-root': { bgcolor: 'rgba(7,7,8,0.86)', borderRadius: '12px', color: '#F5F5F5' } }}
-                                            />
-                                            <TextField
-                                                label="Accent (hex)"
-                                                value={project.accent ?? ''}
-                                                onChange={(event) => handleProjectChange(index, 'accent', event.target.value)}
-                                                sx={{ '& .MuiInputBase-root': { bgcolor: 'rgba(7,7,8,0.86)', borderRadius: '12px', color: '#F5F5F5' } }}
-                                            />
-                                            <Box sx={{ gridColumn: '1 / -1' }}>
-                                                <TextField
-                                                    label="Link do projeto"
-                                                    fullWidth
-                                                    value={project.href ?? ''}
-                                                    onChange={(event) => handleProjectChange(index, 'href', event.target.value)}
-                                                    sx={{ '& .MuiInputBase-root': { bgcolor: 'rgba(7,7,8,0.86)', borderRadius: '12px', color: '#F5F5F5' } }}
-                                                />
-                                            </Box>
-                                        </Box>
+                                        <Typography sx={{ mt: 0.8, color: 'rgba(228,228,231,0.68)', fontSize: '0.78rem', lineHeight: 1.5 }}>
+                                            {project.summary || 'Sem resumo ainda.'}
+                                        </Typography>
                                     </Box>
                                 ))}
+                            </Box>
+                        </Box>
+                    ) : null}
+
+                    {config.dynamicMembersPath ? (
+                        <Box sx={{ gridColumn: '1 / -1', mt: 0.6 }}>
+                            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.1 }}>
+                                <Typography sx={{ color: '#fff', fontWeight: 800, fontSize: '0.96rem' }}>
+                                    Cards dos colaboradores
+                                </Typography>
+                                <Button
+                                    onClick={handleAddMember}
+                                    variant="outlined"
+                                    sx={{
+                                        borderRadius: '999px',
+                                        textTransform: 'none',
+                                        fontWeight: 700,
+                                        color: '#E0F2FE',
+                                        borderColor: 'rgba(56,189,248,0.48)'
+                                    }}
+                                >
+                                    Adicionar colaborador
+                                </Button>
                             </Stack>
+
+                            <Box
+                                sx={{
+                                    display: 'grid',
+                                    gridTemplateColumns: { xs: '1fr', md: 'repeat(2, minmax(0, 1fr))' },
+                                    gap: 1.2
+                                }}
+                            >
+                                {getMembersArray(draft, config.dynamicMembersPath).map((member, index) => (
+                                    <Box
+                                        key={member.id || index}
+                                        sx={{
+                                            p: 1.2,
+                                            borderRadius: '12px',
+                                            border: '1px solid rgba(255,255,255,0.14)',
+                                            bgcolor: 'rgba(255,255,255,0.02)'
+                                        }}
+                                    >
+                                        <Stack direction="row" justifyContent="space-between" alignItems="center">
+                                            <Box>
+                                                <Typography sx={{ color: '#fff', fontWeight: 800, fontSize: '0.86rem' }}>
+                                                    {member.name || `Colaborador ${index + 1}`}
+                                                </Typography>
+                                                <Typography sx={{ color: 'rgba(228,228,231,0.72)', fontSize: '0.78rem', mt: 0.2 }}>
+                                                    {member.role || 'Função não definida'}
+                                                </Typography>
+                                            </Box>
+                                            <Button
+                                                onClick={() => setMemberModalIndex(index)}
+                                                sx={{
+                                                    borderRadius: '999px',
+                                                    textTransform: 'none',
+                                                    fontWeight: 700,
+                                                    color: '#DDD6FE',
+                                                    border: '1px solid rgba(124,58,237,0.4)',
+                                                    px: 1.2,
+                                                    minWidth: 0
+                                                }}
+                                            >
+                                                Editar
+                                            </Button>
+                                        </Stack>
+
+                                        <Typography sx={{ mt: 0.8, color: 'rgba(228,228,231,0.68)', fontSize: '0.78rem', lineHeight: 1.5 }}>
+                                            {member.headline || 'Sem headline ainda.'}
+                                        </Typography>
+                                    </Box>
+                                ))}
+                            </Box>
                         </Box>
                     ) : null}
                 </Box>
@@ -730,6 +839,238 @@ function ContentEditor({ config }) {
                 >
                     Rascunho salvo localmente. No próximo passo, conectamos este botão ao Firebase.
                 </Alert>
+            ) : null}
+
+            {config.dynamicMembersPath ? (
+                <Dialog
+                    open={memberModalIndex !== null}
+                    onClose={() => setMemberModalIndex(null)}
+                    maxWidth="md"
+                    fullWidth
+                    PaperProps={{
+                        sx: {
+                            borderRadius: '18px',
+                            bgcolor: 'rgba(12,12,14,0.98)',
+                            border: '1px solid rgba(255,255,255,0.12)'
+                        }
+                    }}
+                >
+                    <DialogTitle sx={{ color: '#fff', fontWeight: 800 }}>
+                        Editar colaborador
+                    </DialogTitle>
+                    <DialogContent>
+                        {(() => {
+                            const members = getMembersArray(draft, config.dynamicMembersPath);
+                            const member = memberModalIndex !== null ? members[memberModalIndex] : null;
+
+                            if (!member) {
+                                return null;
+                            }
+
+                            return (
+                                <Stack spacing={1.2} sx={{ mt: 0.4 }}>
+                                    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, minmax(0, 1fr))' }, gap: 1.1 }}>
+                                        <TextField
+                                            label="ID"
+                                            value={member.id ?? ''}
+                                            onChange={(event) => handleMemberFieldChange(memberModalIndex, 'id', event.target.value)}
+                                            sx={{ '& .MuiInputBase-root': { bgcolor: 'rgba(7,7,8,0.86)', borderRadius: '12px', color: '#F5F5F5' } }}
+                                        />
+                                        <TextField
+                                            label="Accent (hex)"
+                                            value={member.accent ?? ''}
+                                            onChange={(event) => handleMemberFieldChange(memberModalIndex, 'accent', event.target.value)}
+                                            sx={{ '& .MuiInputBase-root': { bgcolor: 'rgba(7,7,8,0.86)', borderRadius: '12px', color: '#F5F5F5' } }}
+                                        />
+                                        <TextField
+                                            label="Nome"
+                                            value={member.name ?? ''}
+                                            onChange={(event) => handleMemberFieldChange(memberModalIndex, 'name', event.target.value)}
+                                            sx={{ '& .MuiInputBase-root': { bgcolor: 'rgba(7,7,8,0.86)', borderRadius: '12px', color: '#F5F5F5' } }}
+                                        />
+                                        <TextField
+                                            label="Função"
+                                            value={member.role ?? ''}
+                                            onChange={(event) => handleMemberFieldChange(memberModalIndex, 'role', event.target.value)}
+                                            sx={{ '& .MuiInputBase-root': { bgcolor: 'rgba(7,7,8,0.86)', borderRadius: '12px', color: '#F5F5F5' } }}
+                                        />
+                                        <Box sx={{ gridColumn: '1 / -1' }}>
+                                            <TextField
+                                                label="Headline"
+                                                fullWidth
+                                                value={member.headline ?? ''}
+                                                onChange={(event) => handleMemberFieldChange(memberModalIndex, 'headline', event.target.value)}
+                                                sx={{ '& .MuiInputBase-root': { bgcolor: 'rgba(7,7,8,0.86)', borderRadius: '12px', color: '#F5F5F5' } }}
+                                            />
+                                        </Box>
+                                        <Box sx={{ gridColumn: '1 / -1' }}>
+                                            <TextField
+                                                label="Bio"
+                                                fullWidth
+                                                multiline
+                                                rows={4}
+                                                value={member.bio ?? ''}
+                                                onChange={(event) => handleMemberFieldChange(memberModalIndex, 'bio', event.target.value)}
+                                                sx={{ '& .MuiInputBase-root': { bgcolor: 'rgba(7,7,8,0.86)', borderRadius: '12px', color: '#F5F5F5' } }}
+                                            />
+                                        </Box>
+                                        <Box sx={{ gridColumn: '1 / -1' }}>
+                                            <TextField
+                                                label="Especialidades (separadas por ;)"
+                                                fullWidth
+                                                value={Array.isArray(member.specialties) ? member.specialties.join('; ') : ''}
+                                                onChange={(event) => handleMemberFieldChange(memberModalIndex, 'specialties', event.target.value)}
+                                                sx={{ '& .MuiInputBase-root': { bgcolor: 'rgba(7,7,8,0.86)', borderRadius: '12px', color: '#F5F5F5' } }}
+                                            />
+                                        </Box>
+                                        <Box sx={{ gridColumn: '1 / -1' }}>
+                                            <TextField
+                                                label="Focos / Aprendizados (separados por ;)"
+                                                fullWidth
+                                                value={Array.isArray(member.focuses) ? member.focuses.join('; ') : ''}
+                                                onChange={(event) => handleMemberFieldChange(memberModalIndex, 'focuses', event.target.value)}
+                                                sx={{ '& .MuiInputBase-root': { bgcolor: 'rgba(7,7,8,0.86)', borderRadius: '12px', color: '#F5F5F5' } }}
+                                            />
+                                        </Box>
+                                    </Box>
+
+                                    <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ pt: 0.4 }}>
+                                        <Button
+                                            onClick={() => handleRemoveMember(memberModalIndex)}
+                                            sx={{ color: '#FCA5A5', textTransform: 'none', fontWeight: 700 }}
+                                        >
+                                            Remover colaborador
+                                        </Button>
+                                        <Button
+                                            onClick={() => setMemberModalIndex(null)}
+                                            variant="contained"
+                                            sx={{ borderRadius: '999px', textTransform: 'none', fontWeight: 700, bgcolor: '#7C3AED', '&:hover': { bgcolor: '#6D28D9' } }}
+                                        >
+                                            Fechar
+                                        </Button>
+                                    </Stack>
+                                </Stack>
+                            );
+                        })()}
+                    </DialogContent>
+                </Dialog>
+            ) : null}
+
+            {config.dynamicProjectsPath ? (
+                <Dialog
+                    open={projectModalIndex !== null}
+                    onClose={() => setProjectModalIndex(null)}
+                    maxWidth="md"
+                    fullWidth
+                    PaperProps={{
+                        sx: {
+                            borderRadius: '18px',
+                            bgcolor: 'rgba(12,12,14,0.98)',
+                            border: '1px solid rgba(255,255,255,0.12)'
+                        }
+                    }}
+                >
+                    <DialogTitle sx={{ color: '#fff', fontWeight: 800 }}>
+                        Editar projeto
+                    </DialogTitle>
+                    <DialogContent>
+                        {(() => {
+                            const projects = getProjectsArray(draft, config.dynamicProjectsPath);
+                            const project = projectModalIndex !== null ? projects[projectModalIndex] : null;
+
+                            if (!project) {
+                                return null;
+                            }
+
+                            return (
+                                <Stack spacing={1.2} sx={{ mt: 0.4 }}>
+                                    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, minmax(0, 1fr))' }, gap: 1.1 }}>
+                                        <TextField
+                                            label="ID"
+                                            value={project.id ?? ''}
+                                            onChange={(event) => handleProjectChange(projectModalIndex, 'id', event.target.value)}
+                                            sx={{ '& .MuiInputBase-root': { bgcolor: 'rgba(7,7,8,0.86)', borderRadius: '12px', color: '#F5F5F5' } }}
+                                        />
+                                        <TextField
+                                            label="Tag"
+                                            value={project.tag ?? ''}
+                                            onChange={(event) => handleProjectChange(projectModalIndex, 'tag', event.target.value)}
+                                            sx={{ '& .MuiInputBase-root': { bgcolor: 'rgba(7,7,8,0.86)', borderRadius: '12px', color: '#F5F5F5' } }}
+                                        />
+                                        <Box sx={{ gridColumn: '1 / -1' }}>
+                                            <TextField
+                                                label="Título"
+                                                fullWidth
+                                                value={project.title ?? ''}
+                                                onChange={(event) => handleProjectChange(projectModalIndex, 'title', event.target.value)}
+                                                sx={{ '& .MuiInputBase-root': { bgcolor: 'rgba(7,7,8,0.86)', borderRadius: '12px', color: '#F5F5F5' } }}
+                                            />
+                                        </Box>
+                                        <Box sx={{ gridColumn: '1 / -1' }}>
+                                            <TextField
+                                                label="Resumo"
+                                                fullWidth
+                                                multiline
+                                                rows={2}
+                                                value={project.summary ?? ''}
+                                                onChange={(event) => handleProjectChange(projectModalIndex, 'summary', event.target.value)}
+                                                sx={{ '& .MuiInputBase-root': { bgcolor: 'rgba(7,7,8,0.86)', borderRadius: '12px', color: '#F5F5F5' } }}
+                                            />
+                                        </Box>
+                                        <Box sx={{ gridColumn: '1 / -1' }}>
+                                            <TextField
+                                                label="Detalhes"
+                                                fullWidth
+                                                multiline
+                                                rows={3}
+                                                value={project.details ?? ''}
+                                                onChange={(event) => handleProjectChange(projectModalIndex, 'details', event.target.value)}
+                                                sx={{ '& .MuiInputBase-root': { bgcolor: 'rgba(7,7,8,0.86)', borderRadius: '12px', color: '#F5F5F5' } }}
+                                            />
+                                        </Box>
+                                        <TextField
+                                            label="Stack (separada por ;)"
+                                            value={Array.isArray(project.stack) ? project.stack.join('; ') : ''}
+                                            onChange={(event) => handleProjectChange(projectModalIndex, 'stack', event.target.value)}
+                                            sx={{ '& .MuiInputBase-root': { bgcolor: 'rgba(7,7,8,0.86)', borderRadius: '12px', color: '#F5F5F5' } }}
+                                        />
+                                        <TextField
+                                            label="Accent (hex)"
+                                            value={project.accent ?? ''}
+                                            onChange={(event) => handleProjectChange(projectModalIndex, 'accent', event.target.value)}
+                                            sx={{ '& .MuiInputBase-root': { bgcolor: 'rgba(7,7,8,0.86)', borderRadius: '12px', color: '#F5F5F5' } }}
+                                        />
+                                        <Box sx={{ gridColumn: '1 / -1' }}>
+                                            <TextField
+                                                label="Link do projeto"
+                                                fullWidth
+                                                value={project.href ?? ''}
+                                                onChange={(event) => handleProjectChange(projectModalIndex, 'href', event.target.value)}
+                                                sx={{ '& .MuiInputBase-root': { bgcolor: 'rgba(7,7,8,0.86)', borderRadius: '12px', color: '#F5F5F5' } }}
+                                            />
+                                        </Box>
+                                    </Box>
+
+                                    <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ pt: 0.4 }}>
+                                        <Button
+                                            onClick={() => handleRemoveProject(projectModalIndex)}
+                                            sx={{ color: '#FCA5A5', textTransform: 'none', fontWeight: 700 }}
+                                        >
+                                            Remover projeto
+                                        </Button>
+                                        <Button
+                                            onClick={() => setProjectModalIndex(null)}
+                                            variant="contained"
+                                            sx={{ borderRadius: '999px', textTransform: 'none', fontWeight: 700, bgcolor: '#7C3AED', '&:hover': { bgcolor: '#6D28D9' } }}
+                                        >
+                                            Fechar
+                                        </Button>
+                                    </Stack>
+                                </Stack>
+                            );
+                        })()}
+                    </DialogContent>
+                </Dialog>
             ) : null}
         </Box>
     );

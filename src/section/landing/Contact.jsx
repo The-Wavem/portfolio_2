@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import { TbBrandWhatsapp, TbCopy } from 'react-icons/tb';
 import { getContactAssurances, getContactChannels, getHomeLandingContent } from '@/service/content';
+import { trackAction } from '@/service/analytics/tracking.service';
 
 export default function Contact() {
 	const theme = useTheme();
@@ -27,6 +28,7 @@ export default function Contact() {
 		try {
 			await navigator.clipboard.writeText(contactEmail);
 			setCopied(true);
+			trackAction({ page: 'home', section: 'contact', action: 'copy_email', label: 'Copiar e-mail' });
 		} catch (error) {
 			setCopied(false);
 		}
@@ -97,6 +99,7 @@ export default function Contact() {
 								<Button
 									component="a"
 									href={whatsappChannel?.href}
+									onClick={() => trackAction({ page: 'home', section: 'contact', action: 'open_whatsapp', label: whatsappChannel?.cta ?? 'WhatsApp' })}
 									target="_blank"
 									rel="noreferrer"
 									variant="contained"

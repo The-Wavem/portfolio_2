@@ -1,13 +1,18 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Box } from '@mui/material';
 import { getServicesContent } from '@/service/content';
 import ServicesHeroSection from '@/section/services/ServicesHeroSection';
 import ServicesHighlightsSection from '@/section/services/ServicesHighlightsSection';
 import ServicesProcessSection from '@/section/services/ServicesProcessSection';
+import { trackPageView } from '@/service/analytics/tracking.service';
 
 export default function Services() {
     const content = useMemo(() => getServicesContent(), []);
     const accent = content.accent?.end ?? '#8C2438';
+
+    useEffect(() => {
+        trackPageView('services');
+    }, []);
 
     return (
         <Box component="main" sx={{ pt: { xs: 11, md: 14 }, pb: { xs: 8, md: 12 }, position: 'relative' }}>

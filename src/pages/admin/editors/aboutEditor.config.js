@@ -1,4 +1,11 @@
-import { getAboutHeroContent, getAboutStoryContent, getAboutTeamContent } from '@/service/content';
+import { getAboutHeroContent, getAboutMembers, getAboutStoryContent, getAboutTeamContent } from '@/service/content';
+
+function getAboutTeamEditorContent() {
+    return {
+        ...getAboutTeamContent(),
+        members: structuredClone(getAboutMembers())
+    };
+}
 
 export const aboutEditorConfig = {
     hero: {
@@ -40,9 +47,10 @@ export const aboutEditorConfig = {
     time: {
         title: 'Time',
         navLabel: 'Time',
-        description: 'Apresentação da seção de equipe.',
-        getContent: getAboutTeamContent,
+        description: 'Apresentação da seção de equipe e cards dos colaboradores.',
+        getContent: getAboutTeamEditorContent,
         previewType: 'aboutTeam',
+        dynamicMembersPath: 'members',
         fields: [
             { path: 'accent', label: 'Accent (hex)' },
             { path: 'eyebrow', label: 'Eyebrow' },

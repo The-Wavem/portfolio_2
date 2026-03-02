@@ -2,6 +2,7 @@ import { memo } from 'react';
 import { Box, Button, Container, Stack, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
 import { Link as RouterLink } from 'react-router-dom';
+import { trackAction } from '@/service/analytics/tracking.service';
 
 const HeroImpactStats = memo(function HeroImpactStats({ items, accent }) {
     return (
@@ -159,6 +160,7 @@ export default function ServicesHeroSection({ content, accent }) {
                             <Button
                                 component={RouterLink}
                                 to="/projetos"
+                                onClick={() => trackAction({ page: 'services', section: 'hero', action: 'click_primary_cta', label: 'Iniciar meu projeto' })}
                                 variant="contained"
                                 sx={{
                                     borderRadius: '999px',
@@ -174,6 +176,7 @@ export default function ServicesHeroSection({ content, accent }) {
                             <Button
                                 component="a"
                                 href="#processo-parceria"
+                                onClick={() => trackAction({ page: 'services', section: 'hero', action: 'click_secondary_cta', label: 'Ver etapas' })}
                                 variant="outlined"
                                 sx={{
                                     borderRadius: '999px',

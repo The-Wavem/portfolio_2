@@ -4,12 +4,18 @@ import { motion } from 'framer-motion';
 import { getAboutMembers, getAboutTeamContent } from '@/service/content';
 import TeamMemberCard from '@/components/organism/TeamMemberCard';
 import TeamMemberDetailsModal from '@/components/organism/TeamMemberDetailsModal';
+import { trackAction } from '@/service/analytics/tracking.service';
 
 export default function AboutTeamSection() {
     const content = getAboutTeamContent();
     const aboutAccent = content.accent ?? '#38BDF8';
     const members = getAboutMembers();
     const [selectedMember, setSelectedMember] = useState(null);
+
+    const handleOpenMember = (member) => {
+        setSelectedMember(member);
+        trackAction({ page: 'about', section: 'team', action: 'open_member', label: member?.name ?? 'Colaborador' });
+    };
 
     return (
         <Box component="section" sx={{ pb: { xs: 10, md: 15 }, pt: { xs: 1, md: 2 }, position: 'relative' }}>
@@ -54,7 +60,7 @@ export default function AboutTeamSection() {
                 >
                     {members.map((member, index) => (
                         <Box key={member.id} sx={{ gridColumn: { xs: '1 / -1', sm: 'span 6', md: 'span 6' } }}>
-                            <TeamMemberCard member={member} index={index} onOpen={setSelectedMember} />
+                            <TeamMemberCard member={member} index={index} onOpen={handleOpenMember} />
                         </Box>
                     ))}
                 </Box>

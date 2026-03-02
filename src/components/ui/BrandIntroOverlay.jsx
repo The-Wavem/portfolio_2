@@ -70,7 +70,7 @@ export default function BrandIntroOverlay({
                             boxShadow: '0 24px 58px rgba(0,0,0,0.42)'
                         }}
                     >
-                        <BrandNetworkMark size={520} textColor={resolvedTextColor} nodeColor={resolvedNodeColor} linkColor={resolvedLinkColor} surface="light" />
+                        <BrandNetworkMark size={520} textColor={resolvedTextColor} nodeColor={resolvedNodeColor} linkColor={resolvedLinkColor} surface="light" motionLevel="normal" />
                     </Box>
 
                     <Typography sx={{ color: 'rgba(228,228,231,0.68)', fontSize: '0.78rem', letterSpacing: '0.04em', textTransform: 'uppercase' }}>

@@ -9,12 +9,12 @@ const MotionPath = motion.create('path');
 const MotionG = motion.create('g');
 
 const nodes = [
-    { id: 'l1', x: 90, y: 122, r: 34 },
-    { id: 'l2', x: 234, y: 48, r: 28 },
-    { id: 'l3', x: 186, y: 238, r: 24 },
-    { id: 'r1', x: 620, y: 82, r: 28 },
-    { id: 'r2', x: 668, y: 166, r: 31 },
-    { id: 'r3', x: 538, y: 236, r: 24 }
+    { id: 'l1', x: 90, y: 122, r: 34, fx: 1.8, fy: -1.2 },
+    { id: 'l2', x: 234, y: 48, r: 28, fx: -1.4, fy: 1.6 },
+    { id: 'l3', x: 186, y: 238, r: 24, fx: 1.2, fy: 1.8 },
+    { id: 'r1', x: 620, y: 82, r: 28, fx: -1.6, fy: -1.3 },
+    { id: 'r2', x: 668, y: 166, r: 31, fx: 1.9, fy: 1.1 },
+    { id: 'r3', x: 538, y: 236, r: 24, fx: -1.1, fy: 1.7 }
 ];
 
 const links = [
@@ -58,7 +58,8 @@ export default function BrandNetworkMark({
     textColor,
     nodeColor,
     linkColor,
-    surface = 'dark'
+    surface = 'dark',
+    motionLevel = 'normal'
 }) {
     const currentPath = getCurrentPathname();
     const routeTheme = getRouteBrandTheme(currentPath);
@@ -71,6 +72,10 @@ export default function BrandNetworkMark({
     const nodeStart = hexToRgba(resolvedNodeColor, 0.75);
     const nodeEnd = hexToRgba(resolvedNodeColor, 1);
     const linkStroke = hexToRgba(resolvedLinkColor, 0.88);
+
+    const motionConfig = motionLevel === 'subtle'
+        ? { waveAmplitude: 1.8, scaleBoost: 0.03, waveDuration: 4.2 }
+        : { waveAmplitude: 4.2, scaleBoost: 0.055, waveDuration: 3.2 };
 
     return (
         <Box sx={{ width: size, maxWidth: '100%', height: size * 0.4 }}>
@@ -138,10 +143,20 @@ export default function BrandNetworkMark({
                         r={node.r}
                         fill="url(#wavemNodeGradient)"
                         initial={{ scale: 0.6, opacity: 0.35 }}
-                        animate={{ scale: [1, 1.05, 1], opacity: [0.72, 1, 0.72] }}
+                        animate={{
+                            scale: [1, 1 + motionConfig.scaleBoost, 1],
+                            opacity: [0.72, 1, 0.72],
+                            cy: [
+                                node.y,
+                                node.y - (motionConfig.waveAmplitude * (index % 2 === 0 ? 1 : 0.75)),
+                                node.y + (motionConfig.waveAmplitude * (index % 3 === 0 ? 0.65 : 1.1)),
+                                node.y
+                            ]
+                        }}
                         transition={{
-                            scale: { duration: 2.4, repeat: Infinity, ease: 'easeInOut', delay: index * 0.16 },
-                            opacity: { duration: 2.4, repeat: Infinity, ease: 'easeInOut', delay: index * 0.16 },
+                            scale: { duration: 2.5, repeat: Infinity, ease: 'easeInOut', delay: index * 0.16 },
+                            opacity: { duration: 2.5, repeat: Infinity, ease: 'easeInOut', delay: index * 0.16 },
+                            cy: { duration: motionConfig.waveDuration + index * 0.1, repeat: Infinity, ease: 'easeInOut', delay: index * 0.14 },
                             default: { duration: 0.42, delay: 0.08 * index }
                         }}
                     />

@@ -39,7 +39,7 @@ export default function Footer() {
                     }}
                 >
                     <Box sx={{ gridColumn: { xs: '1 / -1', md: '1 / span 5' } }}>
-                        <BrandNetworkMark size={100} textColor="#F5F5F5" />
+                        <BrandNetworkMark size={100} textColor="#F5F5F5" motionLevel="subtle" />
 
                         <Typography sx={{ mt: 1.1, color: 'rgba(228,228,231,0.72)', lineHeight: 1.75, maxWidth: 420, fontSize: '0.92rem' }}>
                             Criação e manutenção de aplicações digitais com foco em clareza técnica, performance e crescimento contínuo do negócio.

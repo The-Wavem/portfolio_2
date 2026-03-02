@@ -159,7 +159,7 @@ export default function Hero() {
                                 <Typography sx={{ color: '#7C3AED', fontWeight: 800, fontSize: '0.73rem', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
                                     Contexto de execução
                                 </Typography>
-                                <BrandNetworkMark size={80} textColor="#F5F5F5" />
+                                <BrandNetworkMark size={80} textColor="#F5F5F5" motionLevel="subtle" />
                             </Box>
 
                             <Typography sx={{ mt: 0.8, color: '#fff', fontWeight: 800, fontSize: { xs: '1.05rem', md: '1.2rem' }, lineHeight: 1.2 }}>

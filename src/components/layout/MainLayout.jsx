@@ -97,7 +97,7 @@ const Navbar = ({ pathname }) => {
                             }
                         }}
                     >
-                        <BrandNetworkMark size={100} textColor="#F5F5F5" />
+                        <BrandNetworkMark size={100} textColor="#F5F5F5" motionLevel="subtle" />
 
                     </Box>
 
@@ -199,7 +199,7 @@ const Navbar = ({ pathname }) => {
             >
                 <Stack spacing={1.2}>
                     <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ pb: 1.2 }}>
-                        <BrandNetworkMark size={100} textColor="#F5F5F5" />
+                        <BrandNetworkMark size={100} textColor="#F5F5F5" motionLevel="subtle" />
 
                         <IconButton onClick={closeMobileMenu} sx={{ color: '#fff' }} aria-label="Fechar menu">
                             <TbX size={20} />

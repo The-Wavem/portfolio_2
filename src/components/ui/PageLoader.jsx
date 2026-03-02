@@ -15,7 +15,7 @@ export default function PageLoader() {
                 background: 'radial-gradient(circle at 50% 30%, rgba(124,58,237,0.16), rgba(5,5,5,0.98) 42%)'
             }}
         >
-            <BrandNetworkMark size={100} textColor="#F5F5F5" />
+            <BrandNetworkMark size={100} textColor="#F5F5F5" motionLevel="subtle" />
 
             <CircularProgress size={32} thickness={4.6} />
             <Typography sx={{ color: 'rgba(228,228,231,0.76)', fontSize: '0.9rem', letterSpacing: '0.01em' }}>

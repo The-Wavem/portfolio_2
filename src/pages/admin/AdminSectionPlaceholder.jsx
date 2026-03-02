@@ -427,15 +427,60 @@ function SectionPreview({ config, draft }) {
 
 function ContentEditor({ config }) {
     const [draft, setDraft] = useState(() => structuredClone(config.getContent()));
-    const [savedMessage, setSavedMessage] = useState(false);
+    const [savedMessage, setSavedMessage] = useState(null);
+    const [saveErrorMessage, setSaveErrorMessage] = useState('');
+    const [isLoadingRemote, setIsLoadingRemote] = useState(false);
+    const [isSavingRemote, setIsSavingRemote] = useState(false);
+    const [dataMode, setDataMode] = useState(config.loadRemote ? 'firebase' : 'local');
     const [memberModalIndex, setMemberModalIndex] = useState(null);
     const [projectModalIndex, setProjectModalIndex] = useState(null);
 
     useEffect(() => {
+        let isMounted = true;
         setDraft(structuredClone(config.getContent()));
-        setSavedMessage(false);
+        setSavedMessage(null);
+        setSaveErrorMessage('');
+        setDataMode(config.loadRemote ? 'firebase' : 'local');
         setMemberModalIndex(null);
         setProjectModalIndex(null);
+
+        async function loadRemoteContent() {
+            if (!config.loadRemote) {
+                return;
+            }
+
+            setIsLoadingRemote(true);
+
+            try {
+                const remoteData = await config.loadRemote();
+                if (!isMounted) {
+                    return;
+                }
+
+                if (remoteData) {
+                    setDraft(structuredClone(remoteData));
+                    setDataMode('firebase');
+                } else {
+                    setDataMode('local');
+                }
+            } catch {
+                if (!isMounted) {
+                    return;
+                }
+
+                setDataMode('local');
+            } finally {
+                if (isMounted) {
+                    setIsLoadingRemote(false);
+                }
+            }
+        }
+
+        loadRemoteContent();
+
+        return () => {
+            isMounted = false;
+        };
     }, [config]);
 
     function handleChange(field, rawValue) {
@@ -460,11 +505,40 @@ function ContentEditor({ config }) {
 
     function handleReloadFromSource() {
         setDraft(structuredClone(config.getContent()));
-        setSavedMessage(false);
+        setSavedMessage(null);
+        setSaveErrorMessage('');
     }
 
-    function handleSave() {
-        setSavedMessage(true);
+    async function handleSave() {
+        setSavedMessage(null);
+        setSaveErrorMessage('');
+
+        if (!config.saveRemote) {
+            setSavedMessage('local');
+            return;
+        }
+
+        setIsSavingRemote(true);
+
+        try {
+            const response = await config.saveRemote(draft);
+
+            if (response?.ok) {
+                setSavedMessage('firebase');
+                setDataMode('firebase');
+                return;
+            }
+
+            setSavedMessage('local');
+            setDataMode('local');
+            setSaveErrorMessage('Não foi possível salvar no Firebase agora. O rascunho continua local.');
+        } catch {
+            setSavedMessage('local');
+            setDataMode('local');
+            setSaveErrorMessage('Falha ao conectar com o Firebase. O rascunho continua local.');
+        } finally {
+            setIsSavingRemote(false);
+        }
     }
 
     function handleProjectChange(index, key, value) {
@@ -565,12 +639,18 @@ function ContentEditor({ config }) {
                     </Typography>
                 </Box>
                 <Chip
-                    label="Modo local (sem Firebase)"
+                    label={
+                        isLoadingRemote
+                            ? 'Carregando Firebase...'
+                            : dataMode === 'firebase'
+                                ? 'Modo Firebase (ativo)'
+                                : 'Modo local (fallback)'
+                    }
                     sx={{
                         alignSelf: 'flex-start',
-                        bgcolor: 'rgba(124,58,237,0.22)',
-                        border: '1px solid rgba(124,58,237,0.45)',
-                        color: '#DDD6FE',
+                        bgcolor: dataMode === 'firebase' ? 'rgba(16,185,129,0.18)' : 'rgba(124,58,237,0.22)',
+                        border: dataMode === 'firebase' ? '1px solid rgba(16,185,129,0.45)' : '1px solid rgba(124,58,237,0.45)',
+                        color: dataMode === 'firebase' ? '#D1FAE5' : '#DDD6FE',
                         fontWeight: 700
                     }}
                 />
@@ -806,6 +886,7 @@ function ContentEditor({ config }) {
                 <Button
                     variant="contained"
                     onClick={handleSave}
+                    disabled={isSavingRemote}
                     sx={{
                         borderRadius: '999px',
                         textTransform: 'none',
@@ -814,7 +895,7 @@ function ContentEditor({ config }) {
                         '&:hover': { bgcolor: '#6D28D9' }
                     }}
                 >
-                    Salvar alterações
+                    {isSavingRemote ? 'Salvando...' : 'Salvar alterações'}
                 </Button>
                 <Button
                     variant="outlined"
@@ -833,11 +914,29 @@ function ContentEditor({ config }) {
 
             {savedMessage ? (
                 <Alert
-                    severity="success"
-                    onClose={() => setSavedMessage(false)}
-                    sx={{ mt: 1.6, borderRadius: '12px', bgcolor: 'rgba(16,185,129,0.16)', color: '#D1FAE5', border: '1px solid rgba(16,185,129,0.38)' }}
+                    severity={savedMessage === 'firebase' ? 'success' : 'info'}
+                    onClose={() => setSavedMessage(null)}
+                    sx={{
+                        mt: 1.6,
+                        borderRadius: '12px',
+                        bgcolor: savedMessage === 'firebase' ? 'rgba(16,185,129,0.16)' : 'rgba(124,58,237,0.14)',
+                        color: savedMessage === 'firebase' ? '#D1FAE5' : '#DDD6FE',
+                        border: savedMessage === 'firebase' ? '1px solid rgba(16,185,129,0.38)' : '1px solid rgba(124,58,237,0.35)'
+                    }}
                 >
-                    Rascunho salvo localmente. No próximo passo, conectamos este botão ao Firebase.
+                    {savedMessage === 'firebase'
+                        ? 'Conteúdo salvo no Firebase com sucesso.'
+                        : 'Rascunho salvo localmente (fallback).'}
+                </Alert>
+            ) : null}
+
+            {saveErrorMessage ? (
+                <Alert
+                    severity="warning"
+                    onClose={() => setSaveErrorMessage('')}
+                    sx={{ mt: 1.1, borderRadius: '12px', bgcolor: 'rgba(245,158,11,0.12)', color: '#FDE68A', border: '1px solid rgba(245,158,11,0.35)' }}
+                >
+                    {saveErrorMessage}
                 </Alert>
             ) : null}
 

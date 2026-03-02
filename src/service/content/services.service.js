@@ -1,3 +1,5 @@
+import { getFirebaseContent, setFirebaseContent } from '@/service/firebase';
+
 export const servicesContent = {
   accent: {
     start: "#5E1624",
@@ -113,4 +115,22 @@ export const servicesContent = {
 
 export function getServicesContent() {
   return servicesContent;
+}
+
+export async function getServicesContentRemote() {
+  const response = await getFirebaseContent({
+    page: 'services',
+    section: 'main',
+    fallbackData: servicesContent,
+  });
+
+  return response.data;
+}
+
+export async function setServicesContentRemote(data) {
+  return setFirebaseContent({
+    page: 'services',
+    section: 'main',
+    data,
+  });
 }

@@ -2,8 +2,10 @@ import {
     getHomeContactContent,
     getHomeFaqContent,
     getHomeHeroContent,
+    getHomeHeroContentRemote,
     getHomePortfolioContent,
-    getHomeProcessContent
+    getHomeProcessContent,
+    setHomeHeroContentRemote
 } from '@/service/content';
 
 export const homeEditorConfig = {
@@ -12,6 +14,8 @@ export const homeEditorConfig = {
         navLabel: 'Hero & Perfil',
         description: 'Ajuste os textos principais da primeira dobra e chamadas de ação.',
         getContent: getHomeHeroContent,
+        loadRemote: getHomeHeroContentRemote,
+        saveRemote: setHomeHeroContentRemote,
         previewType: 'homeHero',
         fields: [
             { path: 'eyebrow', label: 'Eyebrow' },

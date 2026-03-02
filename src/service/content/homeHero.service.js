@@ -1,3 +1,5 @@
+import { getFirebaseContent, setFirebaseContent } from '@/service/firebase';
+
 export const homeHeroContent = {
     eyebrow: 'PRODUTOS DIGITAIS',
     titleStart: 'Tiramos seu rascunho do papel e entregamos',
@@ -30,4 +32,22 @@ export const homeHeroContent = {
 
 export function getHomeHeroContent() {
     return homeHeroContent;
+}
+
+export async function getHomeHeroContentRemote() {
+    const response = await getFirebaseContent({
+        page: 'home',
+        section: 'hero',
+        fallbackData: homeHeroContent
+    });
+
+    return response.data;
+}
+
+export async function setHomeHeroContentRemote(data) {
+    return setFirebaseContent({
+        page: 'home',
+        section: 'hero',
+        data
+    });
 }

@@ -25,7 +25,7 @@ export const aboutEditorConfig = {
     historia: {
         title: 'História',
         navLabel: 'História',
-        description: 'Narrativa da história da empresa e pilares da seção.',
+        description: 'Narrativa da história da empresa.',
         getContent: getAboutStoryContent,
         previewType: 'aboutStory',
         fields: [
@@ -33,15 +33,6 @@ export const aboutEditorConfig = {
             { path: 'title', label: 'Título', multiline: true, rows: 2, fullWidth: true },
             { path: 'paragraphs', label: 'Parágrafos (separados por ;)', arraySeparator: ';', multiline: true, rows: 6, fullWidth: true },
             { type: 'heading', label: 'Pilares' },
-            { path: 'pillars.0.id', label: 'Pilar 01 - id' },
-            { path: 'pillars.0.title', label: 'Pilar 01 - título' },
-            { path: 'pillars.0.description', label: 'Pilar 01 - descrição', multiline: true, rows: 2, fullWidth: true },
-            { path: 'pillars.1.id', label: 'Pilar 02 - id' },
-            { path: 'pillars.1.title', label: 'Pilar 02 - título' },
-            { path: 'pillars.1.description', label: 'Pilar 02 - descrição', multiline: true, rows: 2, fullWidth: true },
-            { path: 'pillars.2.id', label: 'Pilar 03 - id' },
-            { path: 'pillars.2.title', label: 'Pilar 03 - título' },
-            { path: 'pillars.2.description', label: 'Pilar 03 - descrição', multiline: true, rows: 2, fullWidth: true }
         ]
     },
     time: {

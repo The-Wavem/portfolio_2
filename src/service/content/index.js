@@ -7,12 +7,22 @@ export { getAboutHeroContent, aboutHeroContent } from './aboutHero.service';
 export { getAboutTeamContent, aboutTeamContent } from './aboutTeam.service';
 export { getFaqItems, faqItems } from './faq.service';
 export { getAboutStoryContent, aboutStoryContent } from './aboutStory.service';
-export { getServicesContent, servicesContent } from './services.service';
+export {
+	getServicesContent,
+	getServicesContentRemote,
+	setServicesContentRemote,
+	servicesContent
+} from './services.service';
 export { getProjectsHeroContent, projectsHeroContent } from './projectsHero.service';
 export { getProjectsCatalogContent, projectsCatalogContent } from './projectsCatalog.service';
 export { getAdminOverviewData, adminOverviewData } from './adminDashboard.service';
 export { getHomeLandingContent, homeLandingContent } from './homeLanding.service';
-export { getHomeHeroContent, homeHeroContent } from './homeHero.service';
+export {
+	getHomeHeroContent,
+	getHomeHeroContentRemote,
+	setHomeHeroContentRemote,
+	homeHeroContent
+} from './homeHero.service';
 export { getHomeProcessContent, homeProcessContent } from './homeProcess.service';
 export { getHomePortfolioContent, homePortfolioContent } from './homePortfolio.service';
 export { getHomeContactContent, homeContactContent } from './homeContact.service';

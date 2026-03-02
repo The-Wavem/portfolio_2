@@ -5,9 +5,9 @@ export const experienceItems = [
         role: 'Frontend & Design System',
         description: 'Não entregamos apenas telas, entregamos sistemas de design componentizados. Interfaces reativas que garantem consistência visual e manutenibilidade a longo prazo.',
         techs: [
-            { name: 'React / Next.js' },
+            { name: 'React' },
             { name: 'Figma' },
-            { name: 'Tailwind' }
+            { name: 'Material UI' }
         ],
         color: '#A78BFA',
         bgType: 'code'

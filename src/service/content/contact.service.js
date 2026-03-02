@@ -4,7 +4,7 @@ export const contactChannels = [
         title: 'WhatsApp direto',
         subtitle: 'Resposta rápida em horário comercial',
         cta: 'Conversar no WhatsApp',
-        href: 'https://wa.me/5500000000000?text=Ol%C3%A1%2C%20The%20Wavem!%20Quero%20falar%20sobre%20um%20projeto.',
+        href: 'https://wa.me/5541995424186?text=Ol%C3%A1%2C%20The%20Wavem!%20Quero%20falar%20sobre%20um%20projeto.',
         accent: '#25D366',
         kind: 'external'
     },

@@ -15,7 +15,7 @@ import { TbBrandWhatsapp, TbMail, TbCalendarEvent, TbCopy, TbArrowUpRight } from
 import { getContactAssurances, getContactChannels } from '@/service/content';
 
 const quickMessage = 'Olá, The Wavem! Quero conversar sobre um novo projeto e entender o melhor caminho para começar.';
-const contactEmail = 'contato@thewavem.com';
+const contactEmail = 'contato.thewavem@gmail.com';
 
 export default function Contact() {
 	const theme = useTheme();

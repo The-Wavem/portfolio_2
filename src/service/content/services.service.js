@@ -11,11 +11,6 @@ export const servicesContent = {
     "A The Wavem atua como time parceiro para tirar projetos do papel com clareza.",
     "Você acompanha decisões-chave e evolui o produto com segurança, sem surpresas.",
   ],
-  proofPoints: [
-    "6 especialistas atuando de forma integrada",
-    "Processo em 5 etapas com validações semanais",
-    "Comunicação direta e acompanhamento contínuo",
-  ],
   impactStats: [
     {
       id: "etapas",
@@ -48,29 +43,6 @@ export const servicesContent = {
       id: "participacao",
       label: "Seu papel",
       value: "Você participa das decisões importantes",
-    },
-  ],
-  highlights: [
-    {
-      id: "origem",
-      title: "Origem",
-      summary: "Começamos com projeto real e visão colaborativa.",
-      description:
-        "A ideia começou em um projeto real entre amigos e virou uma operação colaborativa com propósito claro: transformar boas ideias em produtos confiáveis.",
-    },
-    {
-      id: "como-pensamos",
-      title: "Como pensamos",
-      summary: "Escolhas guiadas pela experiência e resultado.",
-      description:
-        "Não escolhemos tecnologia por tendência. Escolhemos o que melhora a jornada, reduz fricção e sustenta o crescimento do negócio no longo prazo.",
-    },
-    {
-      id: "processo-com-parceria",
-      title: "Processo com parceria",
-      summary: "Você participa de cada etapa com transparência.",
-      description:
-        "Trabalhamos em cinco etapas: Café Virtual (Descoberta & Conexão), Rascunho & Escopo, Design & Contrato, Desenvolvimento Puro e Deploy & Evolução.",
     },
   ],
   firstWeekExpectations: [

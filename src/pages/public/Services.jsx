@@ -55,89 +55,6 @@ function HeroImpactStats({ items, accent }) {
     );
 }
 
-function HeroProofCards({ items, accent }) {
-    return (
-        <Box
-            sx={{
-                mt: { xs: 2, md: 2.4 },
-                display: 'grid',
-                gridTemplateColumns: { xs: '1fr', md: 'repeat(3, minmax(0, 1fr))' },
-                gap: 1.2
-            }}
-        >
-            {items.map((item, index) => (
-                <Box key={`${item}-${index}`}>
-                    <Box
-                        sx={{
-                            p: { xs: 1.7, md: 2 },
-                            borderRadius: '14px',
-                            border: `1px solid ${accent}4A`,
-                            background: `linear-gradient(145deg, ${accent}1A, rgba(10,10,10,0.72))`,
-                            minHeight: { xs: 100, md: 112 }
-                        }}
-                    >
-                        <Typography sx={{ color: accent, fontWeight: 800, fontSize: '0.76rem', letterSpacing: '0.08em' }}>
-                            CONCEITO {index + 1}
-                        </Typography>
-                        <Typography sx={{ mt: 0.55, color: '#fff', fontWeight: 800, fontSize: { xs: '0.98rem', md: '1.06rem' }, lineHeight: 1.38 }}>
-                            {item}
-                        </Typography>
-                    </Box>
-                </Box>
-            ))}
-        </Box>
-    );
-}
-
-function ServicesHighlightCards({ cards, accent }) {
-    return (
-        <Box
-            sx={{
-                mt: { xs: 3.2, md: 4 },
-                display: 'grid',
-                gridTemplateColumns: { xs: '1fr', md: 'repeat(3, minmax(0, 1fr))' },
-                gap: 1.2
-            }}
-        >
-            {cards.map((card, index) => (
-                <motion.div
-                    key={card.id}
-                    initial={{ opacity: 0, y: 12 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.2 }}
-                    transition={{ duration: 0.36, delay: index * 0.08, ease: 'easeOut' }}
-                >
-                    <Box
-                        sx={{
-                            p: 2,
-                            borderRadius: '14px',
-                            border: '1px solid rgba(255,255,255,0.12)',
-                            background: 'linear-gradient(160deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015))',
-                            minHeight: { xs: 172, md: 188 },
-                            transition: 'transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease',
-                            '&:hover': {
-                                transform: 'translateY(-4px)',
-                                borderColor: `${accent}8A`,
-                                boxShadow: `0 10px 26px ${accent}25`
-                            }
-                        }}
-                    >
-                        <Typography sx={{ color: '#fff', fontWeight: 800, fontSize: '1.14rem', letterSpacing: '-0.01em' }}>
-                            {card.title}
-                        </Typography>
-                        <Typography sx={{ mt: 0.65, color: 'rgba(228,228,231,0.8)', lineHeight: 1.6, fontSize: '0.9rem' }}>
-                            {card.summary}
-                        </Typography>
-                        <Typography sx={{ mt: 1.1, color: 'rgba(228,228,231,0.74)', lineHeight: 1.68, fontSize: '0.88rem' }}>
-                            {card.description}
-                        </Typography>
-                    </Box>
-                </motion.div>
-            ))}
-        </Box>
-    );
-}
-
 function VisualListContent({ items, accent, title }) {
     const [activeItem, setActiveItem] = useState(0);
 
@@ -154,23 +71,6 @@ function VisualListContent({ items, accent, title }) {
             <Typography sx={{ color: '#fff', fontWeight: 800, fontSize: { xs: '1.05rem', md: '1.2rem' } }}>
                 {title}
             </Typography>
-
-            <Box
-                sx={{
-                    mt: 1.2,
-                    p: 1.2,
-                    borderRadius: '12px',
-                    border: `1px solid ${accent}66`,
-                    background: `linear-gradient(145deg, ${accent}1A, rgba(255,255,255,0.015))`
-                }}
-            >
-                <Typography sx={{ color: accent, fontWeight: 800, fontSize: '0.74rem', letterSpacing: '0.08em' }}>
-                    ITEM EM FOCO
-                </Typography>
-                <Typography sx={{ mt: 0.45, color: '#fff', fontWeight: 700, fontSize: '0.95rem', lineHeight: 1.5 }}>
-                    {items[activeItem]}
-                </Typography>
-            </Box>
 
             <Stack spacing={1.05} sx={{ mt: 1.4 }}>
                 {items.map((item, index) => (
@@ -508,13 +408,6 @@ export default function Services() {
                     </Box>
                 </Box>
 
-                <HeroProofCards items={content.proofPoints ?? []} accent={accent} />
-
-                <ServicesHighlightCards
-                    cards={content.highlights}
-                    accent={accent}
-                />
-
                 <Box
                     sx={{
                         mt: { xs: 3.1, md: 4 },
@@ -538,9 +431,6 @@ export default function Services() {
                 <Box id="processo-parceria" sx={{ mt: { xs: 3.3, md: 4.4 } }}>
                     <Typography sx={{ color: '#fff', fontWeight: 800, fontSize: { xs: '1.2rem', md: '1.45rem' } }}>
                         Processo com parceria
-                    </Typography>
-                    <Typography sx={{ mt: 0.7, color: 'rgba(228,228,231,0.72)', lineHeight: 1.74, maxWidth: 920 }}>
-                        Trabalhamos em cinco etapas: Café Virtual (Descoberta & Conexão), Rascunho & Escopo, Design & Contrato, Desenvolvimento Puro e Deploy & Evolução.
                     </Typography>
 
                     <Box sx={{ mt: 1.5 }}>

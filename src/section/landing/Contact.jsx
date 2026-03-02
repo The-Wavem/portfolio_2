@@ -36,7 +36,7 @@ export default function Contact() {
 	};
 
 	return (
-		<Box component="section" sx={{ py: { xs: 10, md: 15 }, position: 'relative' }}>
+		<Box id="contato" component="section" sx={{ py: { xs: 10, md: 15 }, position: 'relative' }}>
 			<Container maxWidth="lg">
 				<Box mb={{ xs: 7, md: 9 }} textAlign="left">
 					<Typography variant="overline" color="primary" sx={{ letterSpacing: 4, fontWeight: 700, fontSize: '0.72rem', opacity: 0.95 }}>

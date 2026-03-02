@@ -1,28 +1,12 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link as RouterLink, Outlet, useLocation } from 'react-router-dom';
-import { Box, Container, AppBar, Toolbar, Typography, Button, Stack } from '@mui/material';
+import { Box, Container, AppBar, Toolbar, Typography, Button, Stack, IconButton, Drawer } from '@mui/material';
 import { motion } from 'framer-motion';
+import { TbMenu2, TbX } from 'react-icons/tb';
+import BrandIntroOverlay from '@/components/ui/BrandIntroOverlay';
+import { getRouteBrandTheme } from '@/theme/routeBrandTheme';
 import Footer from './Footer'; // Assumindo que você já tem ou vai criar o Footer.jsx
-
-const routeScrollThemeMap = {
-    '/': { start: '#7C3AED', end: '#A78BFA' },
-    '/servicos': { start: '#5E1624', end: '#8C2438' },
-    '/sobre': { start: '#06B6D4', end: '#38BDF8' },
-    '/projetos': { start: '#22C55E', end: '#4ADE80' },
-    '/contato': { start: '#F59E0B', end: '#FBBF24' }
-};
-
-function getScrollThemeByPath(pathname) {
-    const matchedRoute = Object.keys(routeScrollThemeMap)
-        .filter((route) => route !== '/')
-        .find((route) => pathname.startsWith(route));
-
-    if (matchedRoute) {
-        return routeScrollThemeMap[matchedRoute];
-    }
-
-    return routeScrollThemeMap['/'];
-}
+import BrandNetworkMark from '../ui/BrandNetworkMark';
 
 function isRouteActive(pathname, routePath) {
     if (routePath === '/') {
@@ -64,8 +48,21 @@ function prefetchRoute(route) {
 
 // Um Navbar simplificado para começar (podemos mover para um arquivo próprio depois)
 const Navbar = ({ pathname }) => {
-    const routeTheme = getScrollThemeByPath(pathname);
+    const routeTheme = getRouteBrandTheme(pathname);
     const activeColor = routeTheme.end;
+    const [mobileOpen, setMobileOpen] = useState(false);
+
+    useEffect(() => {
+        setMobileOpen(false);
+    }, [pathname]);
+
+    function toggleMobileMenu() {
+        setMobileOpen((prev) => !prev);
+    }
+
+    function closeMobileMenu() {
+        setMobileOpen(false);
+    }
 
     return (
         <AppBar
@@ -83,26 +80,26 @@ const Navbar = ({ pathname }) => {
         >
             <Container maxWidth="lg">
                 <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
-                    <Typography
-                        variant="h6"
+                    <Box
                         component={RouterLink}
                         to="/"
                         onMouseEnter={() => prefetchRoute('/')}
                         onFocus={() => prefetchRoute('/')}
                         sx={{
-                            fontWeight: 'bold',
-                            letterSpacing: 1,
                             color: isRouteActive(pathname, '/') ? activeColor : 'inherit',
                             textDecoration: 'none',
                             transition: 'color 0.25s ease, transform 0.25s ease',
+                            display: 'inline-flex',
+                            alignItems: 'center',
                             '&:hover': {
                                 color: activeColor,
                                 transform: 'translateY(-1px)'
                             }
                         }}
                     >
-                        THE WAVEM
-                    </Typography>
+                        <BrandNetworkMark size={100} textColor="#F5F5F5" />
+
+                    </Box>
 
                     <Stack direction="row" spacing={4} sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
                         {navLinks.map((link) => {
@@ -169,18 +166,115 @@ const Navbar = ({ pathname }) => {
                             Iniciar Projeto
                         </Button>
                     </Stack>
+
+                    <IconButton
+                        onClick={toggleMobileMenu}
+                        sx={{
+                            display: { xs: 'inline-flex', md: 'none' },
+                            color: '#fff',
+                            border: '1px solid rgba(255,255,255,0.16)',
+                            borderRadius: '10px'
+                        }}
+                        aria-label="Abrir menu"
+                    >
+                        {mobileOpen ? <TbX size={20} /> : <TbMenu2 size={20} />}
+                    </IconButton>
                 </Toolbar>
             </Container>
+
+            <Drawer
+                anchor="right"
+                open={mobileOpen}
+                onClose={closeMobileMenu}
+                PaperProps={{
+                    sx: {
+                        width: 'min(82vw, 320px)',
+                        background: 'rgba(8, 8, 8, 0.98)',
+                        borderLeft: '1px solid rgba(255,255,255,0.1)',
+                        pt: 2,
+                        px: 2,
+                        color: '#fff'
+                    }
+                }}
+            >
+                <Stack spacing={1.2}>
+                    <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ pb: 1.2 }}>
+                        <BrandNetworkMark size={100} textColor="#F5F5F5" />
+
+                        <IconButton onClick={closeMobileMenu} sx={{ color: '#fff' }} aria-label="Fechar menu">
+                            <TbX size={20} />
+                        </IconButton>
+                    </Stack>
+
+                    {navLinks.map((link) => {
+                        const active = isRouteActive(pathname, link.to);
+
+                        return (
+                            <Button
+                                key={`mobile-${link.to}`}
+                                component={RouterLink}
+                                to={link.to}
+                                onClick={closeMobileMenu}
+                                onMouseEnter={() => prefetchRoute(link.to)}
+                                onFocus={() => prefetchRoute(link.to)}
+                                sx={{
+                                    justifyContent: 'flex-start',
+                                    borderRadius: '10px',
+                                    py: 1.05,
+                                    px: 1.4,
+                                    color: active ? activeColor : 'rgba(255,255,255,0.86)',
+                                    border: `1px solid ${active ? `${activeColor}66` : 'rgba(255,255,255,0.1)'}`,
+                                    background: active ? `${activeColor}14` : 'transparent',
+                                    fontWeight: active ? 800 : 700,
+                                    textTransform: 'none',
+                                    '&:hover': {
+                                        background: active ? `${activeColor}1F` : 'rgba(255,255,255,0.05)'
+                                    }
+                                }}
+                            >
+                                {link.label}
+                            </Button>
+                        );
+                    })}
+
+                    <Button
+                        component={RouterLink}
+                        to="/projetos"
+                        onClick={closeMobileMenu}
+                        variant="contained"
+                        sx={{
+                            mt: 1,
+                            borderRadius: '12px',
+                            py: 1.2,
+                            fontWeight: 800,
+                            color: '#fff',
+                            backgroundColor: `${activeColor}D9`,
+                            boxShadow: `0 8px 20px ${activeColor}30`,
+                            '&:hover': {
+                                backgroundColor: activeColor,
+                                boxShadow: `0 10px 24px ${activeColor}4A`
+                            }
+                        }}
+                    >
+                        Iniciar Projeto
+                    </Button>
+                </Stack>
+            </Drawer>
         </AppBar>
     );
 };
 
 export default function MainLayout() {
     const location = useLocation();
+    const [showBrandIntro, setShowBrandIntro] = useState(true);
+
+    function handleBrandIntroDone() {
+        setShowBrandIntro(false);
+    }
 
     useEffect(() => {
         const rootStyle = document.documentElement.style;
-        const scrollTheme = getScrollThemeByPath(location.pathname);
+        const scrollTheme = getRouteBrandTheme(location.pathname);
 
         rootStyle.setProperty('--page-scroll-start', scrollTheme.start);
         rootStyle.setProperty('--page-scroll-end', scrollTheme.end);
@@ -192,6 +286,11 @@ export default function MainLayout() {
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: 'background.default' }}>
+            <BrandIntroOverlay
+                open={showBrandIntro}
+                onDone={handleBrandIntroDone}
+                duration={1650}
+            />
             <Navbar pathname={location.pathname} />
 
             {/* O Outlet renderiza a rota filha (no caso, a Home) */}

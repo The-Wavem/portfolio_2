@@ -11,6 +11,7 @@ export default defineConfig({
       "@section": '/src/section',
       "@pages": '/src/pages',
       "@theme": '/src/theme',
+      "@assets": '/src/assets',
     },
   },
 })

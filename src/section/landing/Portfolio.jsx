@@ -21,6 +21,14 @@ export default function Portfolio() {
 		<Box component="section" sx={{ py: { xs: 10, md: 15 }, position: 'relative' }}>
 			<Container maxWidth="lg">
 				<Box mb={{ xs: 7, md: 10 }} textAlign="left" position="relative" zIndex={2}>
+					<Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 0.6, sm: 1.3 }} sx={{ mb: 1.4 }}>
+						{['Cases publicados', 'Escopo orientado a negócio', 'Pós-lançamento ativo'].map((item) => (
+							<Typography key={item} sx={{ color: 'rgba(228,228,231,0.74)', fontSize: '0.75rem', letterSpacing: '0.04em', textTransform: 'uppercase', fontWeight: 700 }}>
+								{item}
+							</Typography>
+						))}
+					</Stack>
+
 					<Typography variant="overline" color="primary" sx={{ letterSpacing: 4, fontWeight: 700, fontSize: '0.72rem', opacity: 0.95 }}>
 						PORTFÓLIO SELECIONADO
 					</Typography>
@@ -41,13 +49,13 @@ export default function Portfolio() {
 					<Typography
 						sx={{
 							maxWidth: 660,
-							color: 'rgba(228,228,231,0.72)',
+							color: 'rgba(228,228,231,0.78)',
 							lineHeight: 1.75,
 							fontSize: { xs: '0.95rem', md: '1rem' },
 							letterSpacing: '0.01em'
 						}}
 					>
-						Uma amostra do que já colocamos no ar. Cada projeto combina estratégia, design e engenharia para entregar uma presença digital com alto padrão.
+						Uma vitrine de produtos que nasceram de problemas reais. Em cada entrega, equilibramos estética, clareza de fluxo e engenharia sólida para gerar resultado contínuo.
 					</Typography>
 
 					<Button

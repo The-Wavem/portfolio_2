@@ -35,7 +35,7 @@ export default function ProjectsCatalogSection() {
                     transition={{ duration: 0.46, ease: 'easeOut' }}
                 >
                     <Box sx={{ mb: { xs: 2.2, md: 2.8 }, maxWidth: 740, position: 'relative', zIndex: 2 }}>
-                        <Typography variant="overline" sx={{ color: theme.palette.primary.main, letterSpacing: 2.3, fontWeight: 700, fontSize: '0.68rem' }}>
+                        <Typography variant="overline" sx={{ color: '#4ADE80', letterSpacing: 2.3, fontWeight: 700, fontSize: '0.68rem' }}>
                             ESTUDOS DE PROJETO
                         </Typography>
                         <Typography sx={{ mt: 0.8, color: 'rgba(228,228,231,0.72)', lineHeight: 1.75, fontSize: { xs: '0.92rem', md: '0.97rem' } }}>

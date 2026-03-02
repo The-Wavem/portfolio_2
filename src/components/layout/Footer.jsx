@@ -2,6 +2,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { Box, Button, Container, Divider, IconButton, Stack, Typography } from '@mui/material';
 import { TbBrandGithub, TbBrandInstagram, TbBrandLinkedin, TbBrandWhatsapp, TbMail } from 'react-icons/tb';
 import { getContactChannels } from '@/service/content';
+import BrandNetworkMark from '../ui/BrandNetworkMark';
 
 const socialLinks = [
     { id: 'instagram', label: 'Instagram', href: 'https://instagram.com', icon: TbBrandInstagram },
@@ -38,9 +39,8 @@ export default function Footer() {
                     }}
                 >
                     <Box sx={{ gridColumn: { xs: '1 / -1', md: '1 / span 5' } }}>
-                        <Typography sx={{ color: '#fff', fontWeight: 800, letterSpacing: 1.1, fontSize: '1rem' }}>
-                            THE WAVEM
-                        </Typography>
+                        <BrandNetworkMark size={100} textColor="#F5F5F5" />
+
                         <Typography sx={{ mt: 1.1, color: 'rgba(228,228,231,0.72)', lineHeight: 1.75, maxWidth: 420, fontSize: '0.92rem' }}>
                             Criação e manutenção de aplicações digitais com foco em clareza técnica, performance e crescimento contínuo do negócio.
                         </Typography>

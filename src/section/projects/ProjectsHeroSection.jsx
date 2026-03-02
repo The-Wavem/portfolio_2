@@ -32,7 +32,7 @@ export default function ProjectsHeroSection() {
                         <Typography
                             variant="overline"
                             color="primary"
-                            sx={{ letterSpacing: 4, fontWeight: 700, fontSize: '0.72rem', opacity: 0.95 }}
+                            sx={{ letterSpacing: 4, fontWeight: 700, fontSize: '0.72rem', opacity: 0.95, color: '#4ADE80' }}
                         >
                             PROJETOS COMPLETOS
                         </Typography>
@@ -70,7 +70,7 @@ export default function ProjectsHeroSection() {
                                 width: { xs: 120, md: 160 },
                                 height: '2px',
                                 borderRadius: '999px',
-                                background: `linear-gradient(90deg, ${theme.palette.primary.main}, rgba(74,222,128,0.9))`
+                                background: `linear-gradient(90deg, #4ADE80, rgba(74,222,128,0.9))`
                             }}
                         />
                     </Box>

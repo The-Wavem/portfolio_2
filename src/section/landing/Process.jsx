@@ -165,6 +165,14 @@ export default function Process() {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                     >
+                        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 0.6, sm: 1.2 }} sx={{ mb: 1.3 }}>
+                            {['Método proprietário', 'Transparência em cada sprint', 'Entrega com acompanhamento'].map((item) => (
+                                <Typography key={item} sx={{ color: 'rgba(228,228,231,0.72)', fontSize: '0.74rem', letterSpacing: '0.04em', textTransform: 'uppercase', fontWeight: 700 }}>
+                                    {item}
+                                </Typography>
+                            ))}
+                        </Stack>
+
                         <Typography variant="overline" color="primary" sx={{ letterSpacing: 4, fontWeight: 700, fontSize: '0.72rem', opacity: 0.95 }}>
                             COMO TRABALHAMOS
                         </Typography>
@@ -186,13 +194,13 @@ export default function Process() {
                             variant="body1"
                             sx={{
                                 maxWidth: 620,
-                                color: 'rgba(228,228,231,0.7)',
+                                color: 'rgba(228,228,231,0.77)',
                                 lineHeight: 1.75,
                                 fontSize: { xs: '0.95rem', md: '1rem' },
                                 letterSpacing: '0.01em'
                             }}
                         >
-                            Nosso processo é transparente e sem surpresas. Você acompanha cada etapa, sabendo exatamente o que está acontecendo.
+                            Você acompanha o projeto de ponta a ponta, com checkpoints claros, decisões registradas e previsibilidade de entrega sem ruído.
                         </Typography>
                     </motion.div>
                 </Box>

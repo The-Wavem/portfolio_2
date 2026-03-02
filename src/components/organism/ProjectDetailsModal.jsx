@@ -1,6 +1,7 @@
 import { Box, Button, Chip, Dialog, DialogContent, IconButton, Stack, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
 import { TbExternalLink, TbX } from 'react-icons/tb';
+import { getStackIcon, getToolMeta } from '@/components/organism/aboutTeam.utils';
 
 export default function ProjectDetailsModal({
     project,
@@ -108,18 +109,25 @@ export default function ProjectDetailsModal({
 
                         <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mt: 2.2 }}>
                             {project.stack.map((item) => (
-                                <Chip
-                                    key={item}
-                                    label={item}
-                                    size="small"
-                                    sx={{
-                                        color: '#fff',
-                                        borderColor: 'rgba(255,255,255,0.22)',
-                                        background: 'rgba(255,255,255,0.03)',
-                                        '& .MuiChip-label': { px: 1.2, fontWeight: 600, fontSize: '0.72rem' }
-                                    }}
-                                    variant="outlined"
-                                />
+                                (() => {
+                                    const stackMeta = getToolMeta(item);
+                                    const Icon = getStackIcon(stackMeta);
+                                    return (
+                                        <Chip
+                                            key={item}
+                                            label={stackMeta.name}
+                                            icon={Icon ? <Icon size={14} /> : undefined}
+                                            size="small"
+                                            sx={{
+                                                color: '#fff',
+                                                borderColor: 'rgba(255,255,255,0.22)',
+                                                background: 'rgba(255,255,255,0.03)',
+                                                '& .MuiChip-label': { px: 1.2, fontWeight: 600, fontSize: '0.72rem' }
+                                            }}
+                                            variant="outlined"
+                                        />
+                                    );
+                                })()
                             ))}
                         </Stack>
 

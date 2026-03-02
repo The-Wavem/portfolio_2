@@ -30,7 +30,7 @@ export default function MemberStacks({ selectedMember }) {
                         >
                             {(() => {
                                 const toolMeta = getToolMeta(tool);
-                                const Icon = getStackIcon(toolMeta.key);
+                                const Icon = getStackIcon(toolMeta);
                                 return Icon ? (
                                     <Icon size={16} />
                                 ) : (

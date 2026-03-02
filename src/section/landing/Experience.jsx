@@ -1,22 +1,8 @@
 import { Box, Container, Typography, Stack, useTheme } from '@mui/material';
 import { motion } from 'framer-motion';
-import { SiReact, SiFigma, SiTailwindcss, SiFirebase, SiNodedotjs, SiGooglecloud, SiFlutter, SiSwift } from 'react-icons/si';
 import { VscJson, VscCode, VscSymbolRuler } from 'react-icons/vsc';
 import { getExperienceItems } from '@/service/content';
-
-const techIconMap = {
-    react: SiReact,
-    figma: SiFigma,
-    tailwind: SiTailwindcss,
-    firebase: SiFirebase,
-    node: SiNodedotjs,
-    gcp: SiGooglecloud,
-    swift: SiSwift,
-    flutter: SiFlutter,
-    ruler: VscSymbolRuler,
-    code: VscCode,
-    json: VscJson
-};
+import { getStackIcon, getToolMeta } from '@/components/organism/aboutTeam.utils';
 
 // Componente para desenhar "Artefatos Técnicos" no fundo
 const BackgroundArtifact = ({ type, color, intensity = 0.05 }) => {
@@ -165,7 +151,8 @@ const NeuralCard = ({ item, variant = 'small' }) => {
 
                 <Stack direction="row" gap={1.5} flexWrap="wrap" position="relative" zIndex={1}>
                     {item.techs.map((tech) => {
-                        const Icon = techIconMap[tech.iconKey] ?? VscCode;
+                        const techMeta = getToolMeta(tech);
+                        const Icon = getStackIcon(techMeta) ?? VscCode;
                         return (
                             <motion.div
                                 key={tech.name}
@@ -189,7 +176,7 @@ const NeuralCard = ({ item, variant = 'small' }) => {
                                 >
                                     <Icon size={16} color={item.color} />
                                     <Typography variant="caption" sx={{ color: '#E4E4E7', fontWeight: 600, fontSize: '0.72rem', letterSpacing: '0.01em' }}>
-                                        {tech.name}
+                                        {techMeta.name}
                                     </Typography>
                                 </Box>
                             </motion.div>

@@ -1,6 +1,6 @@
 import { Box, Button, Chip, Stack, Typography } from '@mui/material';
 import { TbExternalLink } from 'react-icons/tb';
-import { getToolMeta } from '@/components/organism/aboutTeam.utils';
+import { getStackIcon, getToolMeta } from '@/components/organism/aboutTeam.utils';
 
 export default function MemberProjects({ selectedMember }) {
     return (
@@ -33,10 +33,12 @@ export default function MemberProjects({ selectedMember }) {
                         <Stack direction="row" flexWrap="wrap" gap={0.8} sx={{ mt: 0.95 }}>
                             {(project.tools ?? []).map((tool) => {
                                 const toolMeta = getToolMeta(tool);
+                                const Icon = getStackIcon(toolMeta);
                                 return (
                                     <Chip
                                         key={`${project.name}-${toolMeta.key || toolMeta.name}`}
                                         label={toolMeta.name}
+                                        icon={Icon ? <Icon size={14} /> : undefined}
                                         size="small"
                                         variant="outlined"
                                         sx={{

@@ -7,6 +7,8 @@ const Home = lazy(() => import('@pages/public/Home'));
 const About = lazy(() => import('@pages/public/About'));
 const Projects = lazy(() => import('@pages/public/Projects'));
 const Services = lazy(() => import('@pages/public/Services'));
+const AdminAuthGuard = lazy(() => import('@pages/admin/AdminAuthGuard'));
+const AdminLogin = lazy(() => import('@pages/admin/AdminLogin'));
 const AdminLayout = lazy(() => import('@/components/layout/AdminLayout'));
 const AdminOverview = lazy(() => import('@pages/admin/AdminOverview'));
 const AdminSectionPlaceholder = lazy(() => import('@pages/admin/AdminSectionPlaceholder'));
@@ -43,24 +45,33 @@ export const router = createBrowserRouter([
         ],
     },
     {
+        path: '/admin/login',
+        element: withSuspense(AdminLogin)
+    },
+    {
         path: '/admin',
-        element: withSuspense(AdminLayout),
+        element: withSuspense(AdminAuthGuard),
         children: [
             {
-                index: true,
-                element: withSuspense(AdminOverview)
-            },
-            {
-                path: ':page',
-                element: withSuspense(AdminSectionPlaceholder)
-            },
-            {
-                path: ':page/:section',
-                element: withSuspense(AdminSectionPlaceholder)
-            },
-            {
-                path: '*',
-                element: <Navigate to="/admin" replace />
+                element: withSuspense(AdminLayout),
+                children: [
+                    {
+                        index: true,
+                        element: withSuspense(AdminOverview)
+                    },
+                    {
+                        path: ':page',
+                        element: withSuspense(AdminSectionPlaceholder)
+                    },
+                    {
+                        path: ':page/:section',
+                        element: withSuspense(AdminSectionPlaceholder)
+                    },
+                    {
+                        path: '*',
+                        element: <Navigate to="/admin" replace />
+                    }
+                ]
             }
         ]
     }

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, Typography } from '@mui/material';
 import {
     TbEye,
@@ -14,6 +14,7 @@ import {
     TbChevronRight
 } from 'react-icons/tb';
 import { AdminUnsavedChangesContext } from '@/pages/admin/adminUnsavedChanges.context';
+import { clearAdminSession } from '@/service/auth/adminAuth.service';
 
 const adminPageGroups = [
     {
@@ -68,6 +69,7 @@ export default function AdminLayout() {
     const [expandedPage, setExpandedPage] = useState(currentPage);
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
     const [pendingNavigationPath, setPendingNavigationPath] = useState(null);
+    const [pendingLogout, setPendingLogout] = useState(false);
     const currentPathRef = useRef(`${location.pathname}${location.search}${location.hash}`);
 
     useEffect(() => {
@@ -129,12 +131,33 @@ export default function AdminLayout() {
         }
 
         setHasUnsavedChanges(false);
+
+        if (pendingLogout) {
+            clearAdminSession();
+            navigate('/admin/login', { replace: true });
+            setPendingNavigationPath(null);
+            setPendingLogout(false);
+            return;
+        }
+
         navigate(pendingNavigationPath);
         setPendingNavigationPath(null);
     }
 
     function handleCancelNavigation() {
         setPendingNavigationPath(null);
+        setPendingLogout(false);
+    }
+
+    function handleLogoutClick() {
+        if (hasUnsavedChanges) {
+            setPendingNavigationPath('/admin/login');
+            setPendingLogout(true);
+            return;
+        }
+
+        clearAdminSession();
+        navigate('/admin/login', { replace: true });
     }
 
     return (
@@ -291,6 +314,7 @@ export default function AdminLayout() {
                     </Button>
                     <Button
                         startIcon={<TbLogout size={18} />}
+                        onClick={handleLogoutClick}
                         sx={{
                             width: '100%',
                             borderRadius: '999px',

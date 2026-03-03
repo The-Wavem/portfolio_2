@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Alert, Box, Button, Checkbox, Chip, Container, Dialog, DialogContent, DialogTitle, Stack, TextField, Typography } from '@mui/material';
-import { NavLink, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { editorConfigByPageSection, pageLabelByKey } from './editors';
+import { useAdminUnsavedChanges } from './adminUnsavedChanges.context';
 
 function getNestedValue(obj, path) {
     return path.split('.').reduce((acc, key) => (acc ? acc[key] : undefined), obj);
@@ -103,6 +104,14 @@ function createEmptyFaq(nextId) {
         question: 'Nova pergunta frequente',
         answer: 'Nova resposta.'
     };
+}
+
+function createContentSnapshot(data) {
+    try {
+        return JSON.stringify(data);
+    } catch {
+        return '';
+    }
 }
 
 function SectionPreview({ config, draft }) {
@@ -448,7 +457,9 @@ function SectionPreview({ config, draft }) {
 }
 
 function ContentEditor({ config }) {
+    const { setHasUnsavedChanges } = useAdminUnsavedChanges();
     const [draft, setDraft] = useState(() => structuredClone(config.getContent()));
+    const [savedSnapshot, setSavedSnapshot] = useState(() => createContentSnapshot(config.getContent()));
     const [savedMessage, setSavedMessage] = useState(null);
     const [saveErrorMessage, setSaveErrorMessage] = useState('');
     const [isLoadingRemote, setIsLoadingRemote] = useState(false);
@@ -461,7 +472,9 @@ function ContentEditor({ config }) {
 
     useEffect(() => {
         let isMounted = true;
-        setDraft(structuredClone(config.getContent()));
+        const initialData = structuredClone(config.getContent());
+        setDraft(initialData);
+        setSavedSnapshot(createContentSnapshot(initialData));
         setSavedMessage(null);
         setSaveErrorMessage('');
         setDataMode(config.loadRemote ? 'firebase' : 'local');
@@ -484,6 +497,7 @@ function ContentEditor({ config }) {
 
                 if (remoteData) {
                     setDraft(structuredClone(remoteData));
+                    setSavedSnapshot(createContentSnapshot(remoteData));
                     setDataMode('firebase');
                 } else {
                     setDataMode('local');
@@ -507,6 +521,34 @@ function ContentEditor({ config }) {
             isMounted = false;
         };
     }, [config]);
+
+    const currentSnapshot = useMemo(() => createContentSnapshot(draft), [draft]);
+    const hasUnsavedChanges = currentSnapshot !== savedSnapshot;
+
+    useEffect(() => {
+        setHasUnsavedChanges(hasUnsavedChanges);
+
+        return () => {
+            setHasUnsavedChanges(false);
+        };
+    }, [hasUnsavedChanges, setHasUnsavedChanges]);
+
+    useEffect(() => {
+        if (!hasUnsavedChanges) {
+            return undefined;
+        }
+
+        function handleBeforeUnload(event) {
+            event.preventDefault();
+            event.returnValue = '';
+        }
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+        };
+    }, [hasUnsavedChanges]);
 
     function handleChange(field, rawValue) {
         const value = field.arraySeparator
@@ -533,6 +575,7 @@ function ContentEditor({ config }) {
         setSaveErrorMessage('');
 
         if (!config.saveRemote) {
+            setSavedSnapshot(currentSnapshot);
             setSavedMessage('local');
             return;
         }
@@ -543,6 +586,7 @@ function ContentEditor({ config }) {
             const response = await config.saveRemote(draft);
 
             if (response?.ok) {
+                setSavedSnapshot(currentSnapshot);
                 setSavedMessage('firebase');
                 setDataMode('firebase');
                 return;
@@ -748,7 +792,20 @@ function ContentEditor({ config }) {
     }
 
     return (
-        <Box sx={{ p: { xs: 2.4, md: 3.2 }, borderRadius: '18px', border: '1px solid rgba(255,255,255,0.08)', background: 'linear-gradient(160deg, rgba(25,25,28,0.98), rgba(10,10,12,0.98))' }}>
+        <Box
+            sx={{
+                p: { xs: 2.4, md: 3.2 },
+                borderRadius: '18px',
+                border: hasUnsavedChanges
+                    ? '1px solid rgba(251,191,36,0.48)'
+                    : '1px solid rgba(255,255,255,0.08)',
+                background: hasUnsavedChanges
+                    ? 'linear-gradient(160deg, rgba(251,191,36,0.08), rgba(25,25,28,0.98) 28%, rgba(10,10,12,0.98) 100%)'
+                    : 'linear-gradient(160deg, rgba(25,25,28,0.98), rgba(10,10,12,0.98))',
+                boxShadow: hasUnsavedChanges ? '0 12px 28px rgba(251,191,36,0.08)' : 'none',
+                transition: 'border-color 180ms ease, background 180ms ease, box-shadow 180ms ease'
+            }}
+        >
             <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" spacing={1.2}>
                 <Box>
                     <Typography sx={{ color: '#fff', fontWeight: 900, fontSize: { xs: '1.35rem', md: '1.6rem' }, letterSpacing: '-0.02em' }}>
@@ -775,6 +832,21 @@ function ContentEditor({ config }) {
                     }}
                 />
             </Stack>
+
+            {hasUnsavedChanges ? (
+                <Alert
+                    severity="warning"
+                    sx={{
+                        mt: 1.2,
+                        borderRadius: '12px',
+                        bgcolor: 'rgba(251,191,36,0.14)',
+                        color: '#FDE68A',
+                        border: '1px solid rgba(251,191,36,0.35)'
+                    }}
+                >
+                    Você tem alterações não salvas nesta seção.
+                </Alert>
+            ) : null}
 
             <Box sx={{ mt: 2.2, display: 'grid', gridTemplateColumns: { xs: '1fr', xl: 'minmax(0, 1.55fr) minmax(280px, 0.75fr)' }, gap: 1.6 }}>
                 <Box
@@ -1523,6 +1595,7 @@ function ContentEditor({ config }) {
 }
 
 export default function AdminSectionPlaceholder() {
+    const { requestNavigation } = useAdminUnsavedChanges();
     const { page, section } = useParams();
     const pageLabel = pageLabelByKey[page] ?? 'Página';
     const pageConfig = editorConfigByPageSection[page] ?? {};
@@ -1557,8 +1630,7 @@ export default function AdminSectionPlaceholder() {
                         {sectionsList.map(([sectionKey, config]) => (
                             <Button
                                 key={sectionKey}
-                                component={NavLink}
-                                to={`/admin/${page}/${sectionKey}`}
+                                onClick={() => requestNavigation(`/admin/${page}/${sectionKey}`)}
                                 sx={{
                                     borderRadius: '999px',
                                     textTransform: 'none',

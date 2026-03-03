@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { Box, Button, Stack, Typography } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, Typography } from '@mui/material';
 import {
     TbEye,
     TbHome,
@@ -13,6 +13,7 @@ import {
     TbChevronDown,
     TbChevronRight
 } from 'react-icons/tb';
+import { AdminUnsavedChangesContext } from '@/pages/admin/adminUnsavedChanges.context';
 
 const adminPageGroups = [
     {
@@ -65,12 +66,52 @@ export default function AdminLayout() {
     const currentPage = pathParts[1] || null;
     const currentSection = pathParts[2] || null;
     const [expandedPage, setExpandedPage] = useState(currentPage);
+    const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+    const [pendingNavigationPath, setPendingNavigationPath] = useState(null);
+    const currentPathRef = useRef(`${location.pathname}${location.search}${location.hash}`);
 
     useEffect(() => {
         if (currentPage) {
             setExpandedPage(currentPage);
         }
     }, [currentPage]);
+
+    useEffect(() => {
+        currentPathRef.current = `${location.pathname}${location.search}${location.hash}`;
+    }, [location.pathname, location.search, location.hash]);
+
+    const requestNavigation = useCallback((to) => {
+        if (!to || location.pathname === to) {
+            return;
+        }
+
+        if (hasUnsavedChanges) {
+            setPendingNavigationPath(to);
+            return;
+        }
+
+        navigate(to);
+    }, [hasUnsavedChanges, location.pathname, navigate]);
+
+    useEffect(() => {
+        function handlePopState() {
+            const targetPath = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+            const currentPath = currentPathRef.current;
+
+            if (!hasUnsavedChanges || targetPath === currentPath) {
+                return;
+            }
+
+            window.history.pushState(window.history.state, '', currentPath);
+            setPendingNavigationPath(targetPath);
+        }
+
+        window.addEventListener('popstate', handlePopState);
+
+        return () => {
+            window.removeEventListener('popstate', handlePopState);
+        };
+    }, [hasUnsavedChanges]);
 
     function handlePageClick(pageKey) {
         if (expandedPage === pageKey) {
@@ -79,20 +120,35 @@ export default function AdminLayout() {
         }
 
         setExpandedPage(pageKey);
-        navigate(`/admin/${pageKey}`);
+        requestNavigation(`/admin/${pageKey}`);
+    }
+
+    function handleDiscardAndNavigate() {
+        if (!pendingNavigationPath) {
+            return;
+        }
+
+        setHasUnsavedChanges(false);
+        navigate(pendingNavigationPath);
+        setPendingNavigationPath(null);
+    }
+
+    function handleCancelNavigation() {
+        setPendingNavigationPath(null);
     }
 
     return (
-        <Box
-            sx={{
-                minHeight: '100vh',
-                position: 'relative',
-                bgcolor: '#050505',
-                display: 'grid',
-                gridTemplateColumns: { xs: '1fr', lg: '280px 1fr' },
-                overflow: 'hidden'
-            }}
-        >
+        <AdminUnsavedChangesContext.Provider value={{ hasUnsavedChanges, setHasUnsavedChanges, requestNavigation }}>
+            <Box
+                sx={{
+                    minHeight: '100vh',
+                    position: 'relative',
+                    bgcolor: '#050505',
+                    display: 'grid',
+                    gridTemplateColumns: { xs: '1fr', lg: '280px 1fr' },
+                    overflow: 'hidden'
+                }}
+            >
             <Box
                 aria-hidden
                 sx={{
@@ -123,9 +179,7 @@ export default function AdminLayout() {
 
                 <Stack spacing={1} sx={{ mt: 1.6 }}>
                     <Button
-                        component={NavLink}
-                        to="/admin"
-                        end
+                        onClick={() => requestNavigation('/admin')}
                         sx={{
                             justifyContent: 'flex-start',
                             gap: 1.2,
@@ -136,11 +190,11 @@ export default function AdminLayout() {
                             textTransform: 'none',
                             fontWeight: 700,
                             fontSize: '1rem',
-                            '&.active': {
+                            ...(location.pathname === '/admin' ? {
                                 bgcolor: 'rgba(124,58,237,0.78)',
                                 boxShadow: '0 10px 24px rgba(124,58,237,0.34)',
                                 color: '#FFFFFF'
-                            },
+                            } : {}),
                             '&:hover': {
                                 bgcolor: 'rgba(255,255,255,0.08)'
                             }
@@ -190,8 +244,7 @@ export default function AdminLayout() {
                                             return (
                                                 <Button
                                                     key={section.key}
-                                                    component={NavLink}
-                                                    to={`/admin/${group.key}/${section.key}`}
+                                                    onClick={() => requestNavigation(`/admin/${group.key}/${section.key}`)}
                                                     sx={{
                                                         justifyContent: 'flex-start',
                                                         borderRadius: '12px',
@@ -221,8 +274,7 @@ export default function AdminLayout() {
 
                 <Box sx={{ mt: 'auto', pt: 2 }}>
                     <Button
-                        component={NavLink}
-                        to="/"
+                        onClick={() => requestNavigation('/')}
                         startIcon={<TbArrowLeft size={18} />}
                         sx={{
                             width: '100%',
@@ -257,6 +309,45 @@ export default function AdminLayout() {
             <Box component="main" sx={{ minWidth: 0, position: 'relative', zIndex: 1 }}>
                 <Outlet />
             </Box>
-        </Box>
+            </Box>
+
+            <Dialog
+                open={Boolean(pendingNavigationPath)}
+                onClose={handleCancelNavigation}
+                maxWidth="xs"
+                fullWidth
+                PaperProps={{
+                    sx: {
+                        borderRadius: '18px',
+                        bgcolor: 'rgba(12,12,14,0.98)',
+                        border: '1px solid rgba(248,113,113,0.32)'
+                    }
+                }}
+            >
+                <DialogTitle sx={{ color: '#fff', fontWeight: 800 }}>
+                    Alterações não salvas
+                </DialogTitle>
+                <DialogContent>
+                    <Typography sx={{ color: 'rgba(228,228,231,0.82)', fontSize: '0.95rem' }}>
+                        Você possui modificações não salvas nesta edição. Deseja sair mesmo assim?
+                    </Typography>
+                </DialogContent>
+                <DialogActions sx={{ px: 2.2, pb: 1.8 }}>
+                    <Button
+                        onClick={handleCancelNavigation}
+                        sx={{ borderRadius: '999px', textTransform: 'none', fontWeight: 700, color: 'rgba(228,228,231,0.86)' }}
+                    >
+                        Continuar editando
+                    </Button>
+                    <Button
+                        onClick={handleDiscardAndNavigate}
+                        variant="contained"
+                        sx={{ borderRadius: '999px', textTransform: 'none', fontWeight: 700, bgcolor: '#DC2626', '&:hover': { bgcolor: '#B91C1C' } }}
+                    >
+                        Sair sem salvar
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </AdminUnsavedChangesContext.Provider>
     );
 }

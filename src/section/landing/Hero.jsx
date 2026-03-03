@@ -1,15 +1,37 @@
+import { useEffect, useState } from 'react';
 import { Box, Typography, Container, Button, Stack } from '@mui/material';
 import { motion } from 'framer-motion';
 import { Link as RouterLink } from 'react-router-dom';
 import BrandNetworkMark from '@components/ui/BrandNetworkMark';
-import { getHomeLandingContent } from '@/service/content';
+import { getHomeHeroContent, getHomeHeroContentRemote } from '@/service/content';
 import { trackAction } from '@/service/analytics/tracking.service';
 
 const MotionTypography = motion.create(Typography);
 const MotionBox = motion.create(Box);
 
 export default function Hero() {
-    const { hero } = getHomeLandingContent();
+    const [hero, setHero] = useState(() => getHomeHeroContent());
+
+    useEffect(() => {
+        let isMounted = true;
+
+        async function loadHeroRemote() {
+            try {
+                const remoteHero = await getHomeHeroContentRemote();
+                if (isMounted && remoteHero) {
+                    setHero(remoteHero);
+                }
+            } catch {
+                return;
+            }
+        }
+
+        loadHeroRemote();
+
+        return () => {
+            isMounted = false;
+        };
+    }, []);
 
     return (
         <Box

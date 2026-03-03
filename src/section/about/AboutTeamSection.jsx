@@ -1,16 +1,54 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Box, Container, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
-import { getAboutMembers, getAboutTeamContent } from '@/service/content';
+import {
+    getAboutMembers,
+    getAboutMembersRemote,
+    getAboutTeamContent,
+    getAboutTeamContentRemote
+} from '@/service/content';
 import TeamMemberCard from '@/components/organism/TeamMemberCard';
 import TeamMemberDetailsModal from '@/components/organism/TeamMemberDetailsModal';
 import { trackAction } from '@/service/analytics/tracking.service';
 
 export default function AboutTeamSection() {
-    const content = getAboutTeamContent();
+    const [content, setContent] = useState(() => getAboutTeamContent());
     const aboutAccent = content.accent ?? '#38BDF8';
-    const members = getAboutMembers();
+    const [members, setMembers] = useState(() => getAboutMembers());
     const [selectedMember, setSelectedMember] = useState(null);
+
+    useEffect(() => {
+        let isMounted = true;
+
+        async function loadRemoteContent() {
+            try {
+                const [remoteContent, remoteMembers] = await Promise.all([
+                    getAboutTeamContentRemote(),
+                    getAboutMembersRemote()
+                ]);
+
+                if (!isMounted) {
+                    return;
+                }
+
+                if (remoteContent) {
+                    setContent(remoteContent);
+                }
+
+                if (Array.isArray(remoteMembers)) {
+                    setMembers(remoteMembers);
+                }
+            } catch {
+                return;
+            }
+        }
+
+        loadRemoteContent();
+
+        return () => {
+            isMounted = false;
+        };
+    }, []);
 
     const handleOpenMember = (member) => {
         setSelectedMember(member);

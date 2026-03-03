@@ -19,7 +19,7 @@ export default function PageLoader() {
 
             <CircularProgress size={32} thickness={4.6} />
             <Typography sx={{ color: 'rgba(228,228,231,0.76)', fontSize: '0.9rem', letterSpacing: '0.01em' }}>
-                Carregando experiência...
+                Carregando...
             </Typography>
         </Box>
     );

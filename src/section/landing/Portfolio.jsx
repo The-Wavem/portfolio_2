@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
 	Box,
 	Button,
@@ -8,15 +8,60 @@ import {
 	useTheme
 } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
-import { getHomeLandingContent, getPortfolioProjects } from '@/service/content';
+import {
+	getHomePortfolioContent,
+	getHomePortfolioContentRemote,
+	getPortfolioProjects,
+	getPortfolioProjectsRemote
+} from '@/service/content';
 import ProjectCard from '@/components/organism/ProjectCard';
 import ProjectDetailsModal from '@/components/organism/ProjectDetailsModal';
 import { trackAction } from '@/service/analytics/tracking.service';
 
 export default function Portfolio() {
 	const theme = useTheme();
-	const projects = getPortfolioProjects();
-	const { portfolio } = getHomeLandingContent();
+	const [portfolio, setPortfolio] = useState(() => getHomePortfolioContent());
+	const [allProjects, setAllProjects] = useState(() => getPortfolioProjects());
+
+	useEffect(() => {
+		let isMounted = true;
+
+		async function loadRemotePortfolio() {
+			try {
+				const [remotePortfolio, remoteProjects] = await Promise.all([
+					getHomePortfolioContentRemote(),
+					getPortfolioProjectsRemote()
+				]);
+
+				if (!isMounted) {
+					return;
+				}
+
+				if (remotePortfolio) {
+					setPortfolio(remotePortfolio);
+				}
+
+				if (Array.isArray(remoteProjects)) {
+					setAllProjects(remoteProjects);
+				}
+			} catch {
+				return;
+			}
+		}
+
+		loadRemotePortfolio();
+
+		return () => {
+			isMounted = false;
+		};
+	}, []);
+
+	const selectedProjectIds = Array.isArray(portfolio?.selectedProjectIds)
+		? portfolio.selectedProjectIds.map((id) => Number(id)).filter(Number.isFinite)
+		: [];
+	const projects = selectedProjectIds.length
+		? allProjects.filter((project) => selectedProjectIds.includes(Number(project.id)))
+		: allProjects;
 	const [selectedProject, setSelectedProject] = useState(null);
 
 	const handleOpenProject = (project) => {

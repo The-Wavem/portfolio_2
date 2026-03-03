@@ -1,10 +1,32 @@
+import { useEffect, useState } from 'react';
 import { Box, Container, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
-import { getProjectsHeroContent } from '@/service/content';
+import { getProjectsHeroContent, getProjectsHeroContentRemote } from '@/service/content';
 
 export default function ProjectsHeroSection() {
-    const content = getProjectsHeroContent();
+    const [content, setContent] = useState(() => getProjectsHeroContent());
     const accent = content.accent ?? '#4ADE80';
+
+    useEffect(() => {
+        let isMounted = true;
+
+        async function loadRemoteContent() {
+            try {
+                const remoteContent = await getProjectsHeroContentRemote();
+                if (isMounted && remoteContent) {
+                    setContent(remoteContent);
+                }
+            } catch {
+                return;
+            }
+        }
+
+        loadRemoteContent();
+
+        return () => {
+            isMounted = false;
+        };
+    }, []);
 
     return (
         <Box component="section" sx={{ pt: { xs: 12, md: 16 }, position: 'relative', overflow: 'hidden' }}>

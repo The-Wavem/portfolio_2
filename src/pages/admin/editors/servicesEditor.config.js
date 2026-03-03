@@ -1,4 +1,8 @@
-import { getServicesContent } from '@/service/content';
+import {
+    getServicesContent,
+    getServicesContentRemote,
+    setServicesContentRemote
+} from '@/service/content';
 
 export const servicesEditorConfig = {
     hero: {
@@ -6,6 +10,8 @@ export const servicesEditorConfig = {
         navLabel: 'Hero',
         description: 'Campos reais da dobra principal da página de serviços.',
         getContent: getServicesContent,
+        loadRemote: getServicesContentRemote,
+        saveRemote: setServicesContentRemote,
         previewType: 'servicesHero',
         fields: [
             { path: 'accent.start', label: 'Accent inicial (hex)' },
@@ -27,6 +33,8 @@ export const servicesEditorConfig = {
         navLabel: 'Destaques',
         description: 'Listas de expectativa inicial e métricas de sucesso.',
         getContent: getServicesContent,
+        loadRemote: getServicesContentRemote,
+        saveRemote: setServicesContentRemote,
         previewType: 'servicesHighlights',
         fields: [
             { path: 'firstWeekExpectations', label: 'Primeira semana (separadas por ;)', arraySeparator: ';', multiline: true, rows: 5, fullWidth: true },
@@ -38,6 +46,8 @@ export const servicesEditorConfig = {
         navLabel: 'Processo',
         description: 'Etapas reais do accordion da página de serviços.',
         getContent: getServicesContent,
+        loadRemote: getServicesContentRemote,
+        saveRemote: setServicesContentRemote,
         previewType: 'servicesProcess',
         fields: [
             { type: 'heading', label: 'Etapa 01' },

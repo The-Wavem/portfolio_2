@@ -1,12 +1,56 @@
 import {
     getHomeContactContent,
+    getHomeContactContentRemote,
     getHomeFaqContent,
+    getHomeFaqContentRemote,
+    getFaqItems,
+    getFaqItemsRemote,
     getHomeHeroContent,
     getHomeHeroContentRemote,
     getHomePortfolioContent,
+    getHomePortfolioContentRemote,
+    getPortfolioProjects,
     getHomeProcessContent,
-    setHomeHeroContentRemote
+    getHomeProcessContentRemote,
+    setHomeContactContentRemote,
+    setHomeFaqContentRemote,
+    setFaqItemsRemote,
+    setHomeHeroContentRemote,
+    setHomePortfolioContentRemote,
+    setHomeProcessContentRemote
 } from '@/service/content';
+
+function getHomeFaqEditorContent() {
+    return {
+        ...getHomeFaqContent(),
+        faqs: structuredClone(getFaqItems())
+    };
+}
+
+async function loadHomeFaqEditorContentRemote() {
+    const [faqHeader, faqItems] = await Promise.all([
+        getHomeFaqContentRemote(),
+        getFaqItemsRemote()
+    ]);
+
+    return {
+        ...faqHeader,
+        faqs: structuredClone(Array.isArray(faqItems) ? faqItems : [])
+    };
+}
+
+async function saveHomeFaqEditorContentRemote(data) {
+    const { faqs = [], ...faqHeader } = data || {};
+
+    const [faqHeaderResult, faqItemsResult] = await Promise.all([
+        setHomeFaqContentRemote(faqHeader),
+        setFaqItemsRemote(faqs)
+    ]);
+
+    return {
+        ok: Boolean(faqHeaderResult?.ok && faqItemsResult?.ok)
+    };
+}
 
 export const homeEditorConfig = {
     hero: {
@@ -44,6 +88,8 @@ export const homeEditorConfig = {
         navLabel: 'Filosofia / Processo',
         description: 'Edite a proposta de método e narrativa da seção de processo.',
         getContent: getHomeProcessContent,
+        loadRemote: getHomeProcessContentRemote,
+        saveRemote: setHomeProcessContentRemote,
         previewType: 'homeProcess',
         fields: [
             { path: 'eyebrow', label: 'Eyebrow' },
@@ -58,7 +104,11 @@ export const homeEditorConfig = {
         navLabel: 'Portfólio',
         description: 'Controle o bloco de destaque que aponta para a página de projetos.',
         getContent: getHomePortfolioContent,
+        loadRemote: getHomePortfolioContentRemote,
+        saveRemote: setHomePortfolioContentRemote,
         previewType: 'homePortfolio',
+        selectableProjectsPath: 'selectedProjectIds',
+        selectableProjectsSource: getPortfolioProjects,
         fields: [
             { path: 'eyebrow', label: 'Eyebrow' },
             { path: 'titleStart', label: 'Título (início)' },
@@ -74,6 +124,8 @@ export const homeEditorConfig = {
         navLabel: 'Contato',
         description: 'Ajuste a copy de contato rápido e canais exibidos para o visitante.',
         getContent: getHomeContactContent,
+        loadRemote: getHomeContactContentRemote,
+        saveRemote: setHomeContactContentRemote,
         previewType: 'homeContact',
         fields: [
             { path: 'eyebrow', label: 'Eyebrow' },
@@ -81,6 +133,7 @@ export const homeEditorConfig = {
             { path: 'titleHighlight', label: 'Título (destaque)' },
             { path: 'description', label: 'Descrição', multiline: true, rows: 3, fullWidth: true },
             { path: 'quickMessage', label: 'Mensagem rápida', multiline: true, rows: 3, fullWidth: true },
+            { path: 'whatsappPhone', label: 'WhatsApp (somente números com DDI)' },
             { path: 'email', label: 'E-mail de contato' },
             { path: 'copiedFeedback', label: 'Feedback ao copiar e-mail' }
         ]
@@ -88,9 +141,12 @@ export const homeEditorConfig = {
     faq: {
         title: 'FAQ da Home',
         navLabel: 'FAQ / Dúvidas',
-        description: 'Edite o cabeçalho e explicação da seção de dúvidas frequentes.',
-        getContent: getHomeFaqContent,
+        description: 'Edite cabeçalho, perguntas e respostas que aparecem para os clientes.',
+        getContent: getHomeFaqEditorContent,
+        loadRemote: loadHomeFaqEditorContentRemote,
+        saveRemote: saveHomeFaqEditorContentRemote,
         previewType: 'homeFaq',
+        dynamicFaqPath: 'faqs',
         fields: [
             { path: 'eyebrow', label: 'Eyebrow' },
             { path: 'titleStart', label: 'Título (início)' },

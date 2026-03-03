@@ -1,3 +1,5 @@
+import { getFirebaseContent, setFirebaseContent } from '@/service/firebase';
+
 export const aboutMembers = [
   {
     id: 1,
@@ -293,4 +295,22 @@ export const aboutMembers = [
 
 export function getAboutMembers() {
   return aboutMembers;
+}
+
+export async function getAboutMembersRemote() {
+  const response = await getFirebaseContent({
+    page: 'about',
+    section: 'members',
+    fallbackData: aboutMembers,
+  });
+
+  return response.data;
+}
+
+export async function setAboutMembersRemote(data) {
+  return setFirebaseContent({
+    page: 'about',
+    section: 'members',
+    data,
+  });
 }

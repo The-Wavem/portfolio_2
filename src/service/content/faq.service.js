@@ -1,3 +1,5 @@
+import { getFirebaseContent, setFirebaseContent } from '@/service/firebase';
+
 export const faqItems = [
     {
         id: 'valor',
@@ -39,4 +41,22 @@ export const faqItems = [
 
 export function getFaqItems() {
     return faqItems;
+}
+
+export async function getFaqItemsRemote() {
+    const response = await getFirebaseContent({
+        page: 'home',
+        section: 'faqItems',
+        fallbackData: faqItems
+    });
+
+    return Array.isArray(response.data) ? response.data : faqItems;
+}
+
+export async function setFaqItemsRemote(items) {
+    return setFirebaseContent({
+        page: 'home',
+        section: 'faqItems',
+        data: items
+    });
 }

@@ -1,12 +1,34 @@
+import { useEffect, useState } from 'react';
 import { Box, Container, Typography } from "@mui/material";
 import { motion } from "framer-motion";
 import { useTheme } from "@mui/material/styles";
-import { getAboutHeroContent } from '@/service/content';
+import { getAboutHeroContent, getAboutHeroContentRemote } from '@/service/content';
 
 export default function AboutHeroSection() {
-  const content = getAboutHeroContent();
+  const [content, setContent] = useState(() => getAboutHeroContent());
   const aboutAccent = content.accent ?? "#38BDF8";
   const theme = useTheme();
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadRemoteContent() {
+      try {
+        const remoteContent = await getAboutHeroContentRemote();
+        if (isMounted && remoteContent) {
+          setContent(remoteContent);
+        }
+      } catch {
+        return;
+      }
+    }
+
+    loadRemoteContent();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return (
     <Box

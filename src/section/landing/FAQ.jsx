@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import {
     Accordion,
     AccordionDetails,
@@ -8,13 +9,51 @@ import {
     useTheme
 } from '@mui/material';
 import { TbChevronDown } from 'react-icons/tb';
-import { getFaqItems, getHomeLandingContent } from '@/service/content';
+import {
+    getFaqItems,
+    getFaqItemsRemote,
+    getHomeFaqContent,
+    getHomeFaqContentRemote
+} from '@/service/content';
 import { trackAction } from '@/service/analytics/tracking.service';
 
 export default function FAQ() {
     const theme = useTheme();
-    const faqItems = getFaqItems();
-    const { faq } = getHomeLandingContent();
+    const [faq, setFaq] = useState(() => getHomeFaqContent());
+    const [faqItems, setFaqItems] = useState(() => getFaqItems());
+
+    useEffect(() => {
+        let isMounted = true;
+
+        async function loadFaqRemote() {
+            try {
+                const [remoteFaqHeader, remoteFaqItems] = await Promise.all([
+                    getHomeFaqContentRemote(),
+                    getFaqItemsRemote()
+                ]);
+
+                if (!isMounted) {
+                    return;
+                }
+
+                if (remoteFaqHeader) {
+                    setFaq(remoteFaqHeader);
+                }
+
+                if (Array.isArray(remoteFaqItems)) {
+                    setFaqItems(remoteFaqItems);
+                }
+            } catch {
+                return;
+            }
+        }
+
+        loadFaqRemote();
+
+        return () => {
+            isMounted = false;
+        };
+    }, []);
 
     return (
         <Box id="faq" component="section" sx={{ py: { xs: 10, md: 14 } }}>

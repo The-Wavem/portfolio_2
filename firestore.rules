@@ -1,0 +1,54 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    function validAnalyticsCreate() {
+      return request.resource.data.keys().hasAll(['id', 'kind', 'ts', 'tsMs'])
+        && request.resource.data.id is string
+        && request.resource.data.id.size() > 0
+        && request.resource.data.id.size() <= 120
+        && request.resource.data.kind is string
+        && request.resource.data.kind.size() > 0
+        && request.resource.data.kind.size() <= 40
+        && request.resource.data.ts is string
+        && request.resource.data.ts.size() > 0
+        && request.resource.data.ts.size() <= 64
+        && request.resource.data.tsMs is int;
+    }
+
+    // Conteúdo do site: leitura pública, escrita apenas admin autenticado.
+    match /content/{docId} {
+      // Mantém documento legado de senha inacessível publicamente (não deve mais ser usado).
+      allow read: if docId != 'admin__auth';
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Eventos de analytics: público pode criar; leitura/gestão apenas admin.
+    match /analytics_events/{eventId} {
+      allow create: if validAnalyticsCreate();
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Tabela de admins: cada usuário autenticado só pode ler seu próprio doc.
+    // Escrita bloqueada via client (gerencie no Console/SDK administrativo).
+    match /admins/{uid} {
+      allow get: if isSignedIn() && request.auth.uid == uid;
+      allow list: if false;
+      allow create, update, delete: if false;
+    }
+
+    // Bloqueio padrão para qualquer outra coleção/documento.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

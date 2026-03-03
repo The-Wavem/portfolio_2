@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Alert, Box, Button, Checkbox, Chip, Container, Dialog, DialogContent, DialogTitle, Stack, TextField, Typography } from '@mui/material';
 import { useParams } from 'react-router-dom';
+import { TbArrowUpRight } from 'react-icons/tb';
 import { editorConfigByPageSection, pageLabelByKey } from './editors';
 import { useAdminUnsavedChanges } from './adminUnsavedChanges.context';
 
@@ -67,6 +68,7 @@ function createEmptyProject(nextId) {
         details: 'Detalhes do contexto, decisões e resultados esperados.',
         stack: ['React'],
         href: 'https://example.com',
+        coverImage: '',
         accent: '#7C3AED',
         cover: 'linear-gradient(145deg, rgba(124,58,237,0.35) 0%, rgba(8,8,8,0.35) 45%, rgba(8,8,8,0.9) 100%)',
         grid: { xs: '1 / -1', md: '1 / span 6' },
@@ -112,6 +114,155 @@ function createContentSnapshot(data) {
     } catch {
         return '';
     }
+}
+
+function ProjectCoverSurface({ project, height = 120 }) {
+    const [imageFailed, setImageFailed] = useState(false);
+    const coverImage = project?.coverImage?.trim();
+
+    useEffect(() => {
+        setImageFailed(false);
+    }, [coverImage]);
+
+    return (
+        <Box
+            sx={{
+                height,
+                borderRadius: '10px',
+                border: '1px solid rgba(255,255,255,0.12)',
+                backgroundColor: '#0A0A0A',
+                backgroundImage: project?.cover || 'none',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                position: 'relative',
+                overflow: 'hidden'
+            }}
+        >
+            {coverImage && !imageFailed ? (
+                <Box
+                    component="img"
+                    src={coverImage}
+                    alt={project?.title || 'Capa do projeto'}
+                    onError={() => setImageFailed(true)}
+                    onLoad={() => setImageFailed(false)}
+                    sx={{
+                        position: 'absolute',
+                        inset: 0,
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover'
+                    }}
+                />
+            ) : null}
+
+            <Box
+                sx={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: 'linear-gradient(180deg, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.66) 72%, rgba(0,0,0,0.85) 100%)'
+                }}
+            />
+
+            {coverImage && imageFailed ? (
+                <Chip
+                    label="Imagem indisponível"
+                    size="small"
+                    sx={{
+                        position: 'absolute',
+                        top: 8,
+                        right: 8,
+                        bgcolor: 'rgba(220,38,38,0.2)',
+                        border: '1px solid rgba(220,38,38,0.45)',
+                        color: '#FECACA',
+                        fontWeight: 700
+                    }}
+                />
+            ) : null}
+        </Box>
+    );
+}
+
+function CompactProjectPreviewCard({ project }) {
+    return (
+        <Box
+            sx={{
+                minHeight: 206,
+                position: 'relative',
+                borderRadius: '16px',
+                overflow: 'hidden',
+                border: '1px solid rgba(255,255,255,0.12)',
+                transition: 'border-color 180ms ease, transform 180ms ease',
+                '&:hover': {
+                    borderColor: project?.accent || 'rgba(124,58,237,0.48)',
+                    transform: 'translateY(-1px)'
+                }
+            }}
+        >
+            <ProjectCoverSurface project={project} height={206} />
+
+            <Box
+                sx={{
+                    position: 'absolute',
+                    inset: 0,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    p: 1.1
+                }}
+            >
+                <Typography
+                    sx={{
+                        color: 'rgba(255,255,255,0.88)',
+                        letterSpacing: 1.4,
+                        fontWeight: 700,
+                        textTransform: 'uppercase',
+                        fontSize: '0.62rem'
+                    }}
+                >
+                    {project?.tag || 'Projeto'}
+                </Typography>
+
+                <Box>
+                    <Typography
+                        sx={{
+                            color: '#fff',
+                            fontWeight: 800,
+                            lineHeight: 1.1,
+                            letterSpacing: '-0.02em',
+                            fontSize: '0.9rem',
+                            display: '-webkit-box',
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden'
+                        }}
+                    >
+                        {project?.title || 'Título do projeto'}
+                    </Typography>
+                    <Typography
+                        sx={{
+                            mt: 0.55,
+                            color: 'rgba(228,228,231,0.8)',
+                            fontSize: '0.72rem',
+                            lineHeight: 1.45,
+                            display: '-webkit-box',
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden'
+                        }}
+                    >
+                        {project?.summary || 'Resumo do projeto.'}
+                    </Typography>
+
+                    <Stack direction="row" alignItems="center" spacing={0.5} sx={{ mt: 0.8 }}>
+                        <Typography sx={{ color: '#fff', fontWeight: 700, fontSize: '0.74rem' }}>
+                            Ver detalhes
+                        </Typography>
+                        <TbArrowUpRight color="#fff" size={14} />
+                    </Stack>
+                </Box>
+            </Box>
+        </Box>
+    );
 }
 
 function SectionPreview({ config, draft }) {
@@ -206,14 +357,18 @@ function SectionPreview({ config, draft }) {
                 <Typography sx={{ color: '#fff', fontWeight: 700, fontSize: '0.8rem' }}>
                     Projetos no catálogo: {(draft.projects || []).length}
                 </Typography>
-                <Stack spacing={0.8}>
+
+                <Box
+                    sx={{
+                        display: 'grid',
+                        gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))' },
+                        gap: 0.9
+                    }}
+                >
                     {normalizePreviewList(draft.projects || []).map((item, index) => (
-                        <Box key={item.id || index} sx={{ p: 1, borderRadius: '10px', border: '1px solid rgba(255,255,255,0.14)', bgcolor: 'rgba(255,255,255,0.02)' }}>
-                            <Typography sx={{ color: '#fff', fontWeight: 700, fontSize: '0.8rem' }}>{item.title}</Typography>
-                            <Typography sx={{ color: 'rgba(228,228,231,0.68)', fontSize: '0.76rem', mt: 0.35 }}>{item.tag}</Typography>
-                        </Box>
+                        <CompactProjectPreviewCard key={item.id || index} project={item} />
                     ))}
-                </Stack>
+                </Box>
             </Stack>
         );
     }
@@ -1493,6 +1648,31 @@ function ContentEditor({ config }) {
                                                 onChange={(event) => handleProjectChange(projectModalIndex, 'href', event.target.value)}
                                                 sx={{ '& .MuiInputBase-root': { bgcolor: 'rgba(7,7,8,0.86)', borderRadius: '12px', color: '#F5F5F5' } }}
                                             />
+                                        </Box>
+                                        <Box sx={{ gridColumn: '1 / -1' }}>
+                                            <TextField
+                                                label="Imagem de capa (URL)"
+                                                fullWidth
+                                                value={project.coverImage ?? ''}
+                                                onChange={(event) => handleProjectChange(projectModalIndex, 'coverImage', event.target.value)}
+                                                sx={{ '& .MuiInputBase-root': { bgcolor: 'rgba(7,7,8,0.86)', borderRadius: '12px', color: '#F5F5F5' } }}
+                                            />
+                                        </Box>
+                                        <Box sx={{ gridColumn: '1 / -1' }}>
+                                            <Typography sx={{ color: 'rgba(228,228,231,0.76)', fontSize: '0.78rem', mb: 0.7 }}>
+                                                Pré-visualização da capa
+                                            </Typography>
+                                            <Box sx={{ position: 'relative' }}>
+                                                <ProjectCoverSurface project={project} height={150} />
+                                                <Box sx={{ position: 'absolute', left: 10, right: 10, bottom: 10 }}>
+                                                    <Typography sx={{ color: '#fff', fontWeight: 700, fontSize: '0.78rem', lineHeight: 1.2 }}>
+                                                        {project.title || 'Título do projeto'}
+                                                    </Typography>
+                                                    <Typography sx={{ color: 'rgba(228,228,231,0.78)', fontSize: '0.72rem', mt: 0.25 }}>
+                                                        {project.coverImage?.trim() ? 'Imagem via URL' : 'Fallback: gradiente configurado'}
+                                                    </Typography>
+                                                </Box>
+                                            </Box>
                                         </Box>
                                     </Box>
 

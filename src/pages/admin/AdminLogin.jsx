@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Alert, Box, Button, Container, Stack, TextField, Typography } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { createAdminSession, isAdminSessionValid, verifyAdminPassword } from '@/service/auth/adminAuth.service';
+import { isCurrentAdminAuthenticated, signInAdmin } from '@/service/auth/adminAuth.service';
 
 export default function AdminLogin() {
     const navigate = useNavigate();
     const location = useLocation();
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
@@ -15,13 +16,29 @@ export default function AdminLogin() {
         : '/admin';
 
     useEffect(() => {
-        if (isAdminSessionValid()) {
-            navigate('/admin', { replace: true });
+        let isMounted = true;
+
+        async function checkCurrentSession() {
+            const isAuthenticated = await isCurrentAdminAuthenticated();
+            if (isMounted && isAuthenticated) {
+                navigate('/admin', { replace: true });
+            }
         }
+
+        checkCurrentSession();
+
+        return () => {
+            isMounted = false;
+        };
     }, [navigate]);
 
     async function handleSubmit(event) {
         event.preventDefault();
+        if (!email.trim()) {
+            setErrorMessage('Informe o e-mail de admin.');
+            return;
+        }
+
         if (!password.trim()) {
             setErrorMessage('Informe a senha do admin.');
             return;
@@ -31,18 +48,27 @@ export default function AdminLogin() {
         setErrorMessage('');
 
         try {
-            const result = await verifyAdminPassword(password);
+            const result = await signInAdmin({ email, password });
 
             if (result.ok) {
-                createAdminSession();
                 navigate(destinationPath, { replace: true });
                 return;
             }
 
-            if (result.reason === 'not-configured') {
-                setErrorMessage('Senha de admin não configurada no Firebase. Crie o documento content/admin__auth com o campo data.passwordHash.');
-            } else {
+            if (result.reason === 'forbidden') {
+                setErrorMessage('Conta autenticada, mas sem permissão de admin. Cadastre o uid em admins/{uid}.');
+            } else if (result.reason === 'too-many-requests') {
+                setErrorMessage('Muitas tentativas. Aguarde e tente novamente.');
+            } else if (result.reason === 'firebase-not-configured') {
+                setErrorMessage('Firebase/Auth não configurado corretamente no ambiente.');
+            } else if (result.reason === 'missing-email') {
+                setErrorMessage('Informe o e-mail de admin.');
+            } else if (result.reason === 'missing-password') {
+                setErrorMessage('Informe a senha do admin.');
+            } else if (result.reason === 'invalid-credentials') {
                 setErrorMessage('Senha inválida.');
+            } else {
+                setErrorMessage('Falha ao autenticar agora.');
             }
         } catch {
             setErrorMessage('Falha ao validar credenciais agora.');
@@ -93,6 +119,30 @@ export default function AdminLogin() {
                     </Typography>
 
                     <Stack spacing={1.2} sx={{ mt: 2.1 }}>
+                        <TextField
+                            type="email"
+                            label="E-mail"
+                            value={email}
+                            onChange={(event) => setEmail(event.target.value)}
+                            fullWidth
+                            sx={{
+                                '& .MuiInputBase-root': {
+                                    bgcolor: 'rgba(7,7,8,0.88)',
+                                    borderRadius: '13px',
+                                    color: '#F5F5F5'
+                                },
+                                '& .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: 'rgba(255,255,255,0.16)'
+                                },
+                                '& .MuiInputLabel-root': {
+                                    color: 'rgba(228,228,231,0.74)'
+                                },
+                                '& .MuiInputLabel-root.Mui-focused': {
+                                    color: '#C4B5FD'
+                                }
+                            }}
+                        />
+
                         <TextField
                             type="password"
                             label="Senha"

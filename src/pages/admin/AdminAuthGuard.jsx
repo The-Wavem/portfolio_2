@@ -1,22 +1,38 @@
 import { useEffect, useState } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { isAdminSessionValid } from '@/service/auth/adminAuth.service';
+import { isCurrentAdminAuthenticated } from '@/service/auth/adminAuth.service';
 
 export default function AdminAuthGuard() {
     const location = useLocation();
-    const [isAuthenticated, setIsAuthenticated] = useState(() => isAdminSessionValid());
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isChecking, setIsChecking] = useState(true);
 
     useEffect(() => {
-        setIsAuthenticated(isAdminSessionValid());
+        let isMounted = true;
+
+        async function checkAuthentication() {
+            const authenticated = await isCurrentAdminAuthenticated();
+            if (isMounted) {
+                setIsAuthenticated(authenticated);
+                setIsChecking(false);
+            }
+        }
+
+        checkAuthentication();
 
         const intervalId = window.setInterval(() => {
-            setIsAuthenticated(isAdminSessionValid());
+            checkAuthentication();
         }, 60 * 1000);
 
         return () => {
+            isMounted = false;
             window.clearInterval(intervalId);
         };
     }, [location.pathname, location.search, location.hash]);
+
+    if (isChecking) {
+        return null;
+    }
 
     if (!isAuthenticated) {
         return (

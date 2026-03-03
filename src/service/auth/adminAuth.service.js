@@ -1,4 +1,6 @@
-import { getFirebaseContent } from '@/service/firebase';
+import { browserLocalPersistence, setPersistence, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
+import { getFirebaseAuth, getFirestoreDb } from '@/service/firebase';
 
 const ADMIN_SESSION_STORAGE_KEY = 'the_wavem.admin.session.v1';
 const ADMIN_SESSION_DURATION_MS = 36 * 60 * 60 * 1000;
@@ -7,43 +9,26 @@ function hasWindow() {
     return typeof window !== 'undefined';
 }
 
-function toHex(buffer) {
-    return Array.from(new Uint8Array(buffer))
-        .map((byte) => byte.toString(16).padStart(2, '0'))
-        .join('');
+async function ensureAuthPersistence(auth) {
+    try {
+        await setPersistence(auth, browserLocalPersistence);
+    } catch {
+        return;
+    }
 }
 
-export async function hashAdminPassword(rawPassword) {
-    const encoded = new TextEncoder().encode(String(rawPassword ?? ''));
-    const hashBuffer = await crypto.subtle.digest('SHA-256', encoded);
-    return toHex(hashBuffer);
-}
-
-export async function verifyAdminPassword(rawPassword) {
-    const response = await getFirebaseContent({
-        page: 'admin',
-        section: 'auth',
-        fallbackData: null
-    });
-
-    const remoteConfig = response?.data;
-    const expectedHash = typeof remoteConfig?.passwordHash === 'string'
-        ? remoteConfig.passwordHash.trim().toLowerCase()
-        : '';
-
-    if (!expectedHash) {
-        return {
-            ok: false,
-            reason: 'not-configured'
-        };
+async function isAdminUid(uid) {
+    const db = getFirestoreDb();
+    if (!db || !uid) {
+        return false;
     }
 
-    const providedHash = (await hashAdminPassword(rawPassword)).toLowerCase();
-
-    return {
-        ok: providedHash === expectedHash,
-        reason: providedHash === expectedHash ? null : 'invalid-password'
-    };
+    try {
+        const snapshot = await getDoc(doc(db, 'admins', uid));
+        return snapshot.exists();
+    } catch {
+        return false;
+    }
 }
 
 export function createAdminSession() {
@@ -92,4 +77,87 @@ export function isAdminSessionValid() {
         clearAdminSession();
         return false;
     }
+}
+
+export async function signInAdmin({ email, password }) {
+    const normalizedEmail = String(email ?? '').trim();
+    const normalizedPassword = String(password ?? '');
+
+    if (!normalizedEmail) {
+        return { ok: false, reason: 'missing-email' };
+    }
+
+    if (!normalizedPassword) {
+        return { ok: false, reason: 'missing-password' };
+    }
+
+    const auth = getFirebaseAuth();
+    const db = getFirestoreDb();
+    if (!auth || !db) {
+        return { ok: false, reason: 'firebase-not-configured' };
+    }
+
+    await ensureAuthPersistence(auth);
+
+    try {
+        const credential = await signInWithEmailAndPassword(auth, normalizedEmail, normalizedPassword);
+        const uid = credential?.user?.uid;
+        const adminAllowed = await isAdminUid(uid);
+
+        if (!adminAllowed) {
+            await signOut(auth);
+            clearAdminSession();
+            return { ok: false, reason: 'forbidden' };
+        }
+
+        createAdminSession();
+        return { ok: true, user: credential.user };
+    } catch (error) {
+        const code = error?.code || '';
+
+        if (code === 'auth/invalid-credential' || code === 'auth/wrong-password' || code === 'auth/user-not-found') {
+            return { ok: false, reason: 'invalid-credentials' };
+        }
+
+        if (code === 'auth/too-many-requests') {
+            return { ok: false, reason: 'too-many-requests' };
+        }
+
+        return { ok: false, reason: 'auth-error' };
+    }
+}
+
+export async function signOutAdmin() {
+    clearAdminSession();
+
+    const auth = getFirebaseAuth();
+    if (!auth) {
+        return;
+    }
+
+    try {
+        await signOut(auth);
+    } catch {
+        return;
+    }
+}
+
+export async function isCurrentAdminAuthenticated() {
+    if (!isAdminSessionValid()) {
+        await signOutAdmin();
+        return false;
+    }
+
+    const auth = getFirebaseAuth();
+    if (!auth?.currentUser?.uid) {
+        return false;
+    }
+
+    const adminAllowed = await isAdminUid(auth.currentUser.uid);
+    if (!adminAllowed) {
+        await signOutAdmin();
+        return false;
+    }
+
+    return true;
 }

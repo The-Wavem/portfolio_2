@@ -17,6 +17,16 @@ const variantStyles = {
 	}
 };
 
+function getProjectCoverBackground(project) {
+	const coverImage = project?.coverImage?.trim();
+
+	if (coverImage) {
+		return `url("${coverImage}")`;
+	}
+
+	return project?.cover || 'none';
+}
+
 export default function ProjectCard({
 	project,
 	index,
@@ -28,6 +38,7 @@ export default function ProjectCard({
 	summarySx
 }) {
 	const styles = variantStyles[variant] ?? variantStyles.home;
+	const coverBackground = getProjectCoverBackground(project);
 
 	return (
 		<motion.div
@@ -54,7 +65,7 @@ export default function ProjectCard({
 					borderRadius: styles.borderRadius,
 					overflow: 'hidden',
 					border: '1px solid rgba(255,255,255,0.08)',
-					backgroundImage: project.cover,
+					backgroundImage: coverBackground,
 					backgroundColor: '#0A0A0A',
 					backgroundSize: 'cover',
 					backgroundPosition: 'center',

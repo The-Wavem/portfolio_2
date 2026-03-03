@@ -3,6 +3,16 @@ import { motion } from 'framer-motion';
 import { TbExternalLink, TbX } from 'react-icons/tb';
 import { getStackIcon, getToolMeta } from '@/components/organism/aboutTeam.utils';
 
+function getProjectCoverBackground(project) {
+    const coverImage = project?.coverImage?.trim();
+
+    if (coverImage) {
+        return `url("${coverImage}")`;
+    }
+
+    return project?.cover || 'none';
+}
+
 export default function ProjectDetailsModal({
     project,
     open,
@@ -10,6 +20,8 @@ export default function ProjectDetailsModal({
     actionLabel = 'Acessar projeto',
     coverMinHeight = { xs: 250, md: 350 }
 }) {
+    const coverBackground = getProjectCoverBackground(project);
+
     return (
         <Dialog
             open={open}
@@ -36,7 +48,7 @@ export default function ProjectDetailsModal({
                             sx={{
                                 minHeight: coverMinHeight,
                                 position: 'relative',
-                                backgroundImage: project.cover,
+                                backgroundImage: coverBackground,
                                 borderBottom: '1px solid rgba(255,255,255,0.08)'
                             }}
                         >

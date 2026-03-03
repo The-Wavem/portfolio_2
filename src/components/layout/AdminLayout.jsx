@@ -14,7 +14,7 @@ import {
     TbChevronRight
 } from 'react-icons/tb';
 import { AdminUnsavedChangesContext } from '@/pages/admin/adminUnsavedChanges.context';
-import { clearAdminSession } from '@/service/auth/adminAuth.service';
+import { signOutAdmin } from '@/service/auth/adminAuth.service';
 
 const adminPageGroups = [
     {
@@ -125,7 +125,7 @@ export default function AdminLayout() {
         requestNavigation(`/admin/${pageKey}`);
     }
 
-    function handleDiscardAndNavigate() {
+    async function handleDiscardAndNavigate() {
         if (!pendingNavigationPath) {
             return;
         }
@@ -133,7 +133,7 @@ export default function AdminLayout() {
         setHasUnsavedChanges(false);
 
         if (pendingLogout) {
-            clearAdminSession();
+            await signOutAdmin();
             navigate('/admin/login', { replace: true });
             setPendingNavigationPath(null);
             setPendingLogout(false);
@@ -149,14 +149,14 @@ export default function AdminLayout() {
         setPendingLogout(false);
     }
 
-    function handleLogoutClick() {
+    async function handleLogoutClick() {
         if (hasUnsavedChanges) {
             setPendingNavigationPath('/admin/login');
             setPendingLogout(true);
             return;
         }
 
-        clearAdminSession();
+        await signOutAdmin();
         navigate('/admin/login', { replace: true });
     }
 

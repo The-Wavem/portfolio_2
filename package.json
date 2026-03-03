@@ -16,7 +16,8 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "admin:set-password": "node scripts/set-admin-password.mjs"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^5.1.2",

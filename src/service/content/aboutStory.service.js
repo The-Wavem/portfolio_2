@@ -1,3 +1,5 @@
+import { getFirebaseContent, setFirebaseContent } from '@/service/firebase';
+
 export const aboutStoryContent = {
     eyebrow: 'NOSSA HISTÓRIA',
     title: 'A The Wavem nasceu de uma conversa entre amigos programadores que decidiram construir algo maior juntos.',
@@ -27,4 +29,22 @@ export const aboutStoryContent = {
 
 export function getAboutStoryContent() {
     return aboutStoryContent;
+}
+
+export async function getAboutStoryContentRemote() {
+    const response = await getFirebaseContent({
+        page: 'about',
+        section: 'story',
+        fallbackData: aboutStoryContent
+    });
+
+    return response.data;
+}
+
+export async function setAboutStoryContentRemote(data) {
+    return setFirebaseContent({
+        page: 'about',
+        section: 'story',
+        data
+    });
 }

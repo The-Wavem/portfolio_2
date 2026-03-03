@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
 	Alert,
 	Box,
@@ -12,17 +12,47 @@ import {
 	useTheme
 } from '@mui/material';
 import { TbBrandWhatsapp, TbCopy } from 'react-icons/tb';
-import { getContactAssurances, getContactChannels, getHomeLandingContent } from '@/service/content';
+import {
+	getContactAssurances,
+	getContactChannels,
+	getHomeContactContent,
+	getHomeContactContentRemote
+} from '@/service/content';
 import { trackAction } from '@/service/analytics/tracking.service';
 
 export default function Contact() {
 	const theme = useTheme();
 	const channels = getContactChannels();
-	const { contact } = getHomeLandingContent();
+	const [contact, setContact] = useState(() => getHomeContactContent());
 	const assurances = getContactAssurances();
 	const whatsappChannel = channels.find((channel) => channel.id === 'whatsapp');
 	const contactEmail = contact.email;
+	const normalizedWhatsappPhone = String(contact.whatsappPhone || '').replace(/\D/g, '');
+	const whatsappHref = normalizedWhatsappPhone
+		? `https://wa.me/${normalizedWhatsappPhone}?text=${encodeURIComponent(contact.quickMessage || '')}`
+		: whatsappChannel?.href;
 	const [copied, setCopied] = useState(false);
+
+	useEffect(() => {
+		let isMounted = true;
+
+		async function loadRemoteContact() {
+			try {
+				const remoteContact = await getHomeContactContentRemote();
+				if (isMounted && remoteContact) {
+					setContact(remoteContact);
+				}
+			} catch {
+				return;
+			}
+		}
+
+		loadRemoteContact();
+
+		return () => {
+			isMounted = false;
+		};
+	}, []);
 
 	const handleCopyEmail = async () => {
 		try {
@@ -98,7 +128,7 @@ export default function Contact() {
 							<Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.2} sx={{ mt: 2.2 }}>
 								<Button
 									component="a"
-									href={whatsappChannel?.href}
+									href={whatsappHref}
 									onClick={() => trackAction({ page: 'home', section: 'contact', action: 'open_whatsapp', label: whatsappChannel?.cta ?? 'WhatsApp' })}
 									target="_blank"
 									rel="noreferrer"

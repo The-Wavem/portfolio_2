@@ -1,3 +1,5 @@
+import { getFirebaseContent, setFirebaseContent } from '@/service/firebase';
+
 export const portfolioProjects = [
     {
         id: 1,
@@ -55,4 +57,22 @@ export const portfolioProjects = [
 
 export function getPortfolioProjects() {
     return portfolioProjects;
+}
+
+export async function getPortfolioProjectsRemote() {
+    const response = await getFirebaseContent({
+        page: 'projects',
+        section: 'catalogItems',
+        fallbackData: portfolioProjects
+    });
+
+    return Array.isArray(response.data) ? response.data : portfolioProjects;
+}
+
+export async function setPortfolioProjectsRemote(projects) {
+    return setFirebaseContent({
+        page: 'projects',
+        section: 'catalogItems',
+        data: projects
+    });
 }

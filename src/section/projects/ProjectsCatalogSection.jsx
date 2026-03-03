@@ -1,16 +1,52 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Box, Container, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
-import { getPortfolioProjects, getProjectsCatalogContent } from '@/service/content';
+import {
+    getPortfolioProjects,
+    getPortfolioProjectsRemote,
+    getProjectsCatalogContent,
+    getProjectsCatalogContentRemote
+} from '@/service/content';
 import ProjectCard from '@/components/organism/ProjectCard';
 import ProjectDetailsModal from '@/components/organism/ProjectDetailsModal';
 import { trackAction } from '@/service/analytics/tracking.service';
 
 export default function ProjectsCatalogSection() {
-    const content = getProjectsCatalogContent();
+    const [content, setContent] = useState(() => getProjectsCatalogContent());
     const accent = content.accent ?? '#4ADE80';
-    const projects = useMemo(() => getPortfolioProjects(), []);
+    const [projects, setProjects] = useState(() => getPortfolioProjects());
     const [selectedProject, setSelectedProject] = useState(null);
+
+    useEffect(() => {
+        let isMounted = true;
+
+        async function loadRemoteContent() {
+            try {
+                const [remoteContent, remoteProjects] = await Promise.all([
+                    getProjectsCatalogContentRemote(),
+                    getPortfolioProjectsRemote()
+                ]);
+
+                if (!isMounted) return;
+
+                if (remoteContent) {
+                    setContent(remoteContent);
+                }
+
+                if (Array.isArray(remoteProjects) && remoteProjects.length) {
+                    setProjects(remoteProjects);
+                }
+            } catch {
+                return;
+            }
+        }
+
+        loadRemoteContent();
+
+        return () => {
+            isMounted = false;
+        };
+    }, []);
 
     const handleOpenProject = (project) => {
         setSelectedProject(project);

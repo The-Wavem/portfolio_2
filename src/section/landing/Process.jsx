@@ -1,8 +1,12 @@
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Box, Container, Typography, Stack, useTheme, useMediaQuery } from '@mui/material';
 import { motion, useScroll, useSpring } from 'framer-motion';
 import { TbCoffee, TbPencil, TbFileText, TbCode, TbRocket } from 'react-icons/tb';
-import { getHomeLandingContent, getProcessSteps } from '@/service/content';
+import {
+    getHomeProcessContent,
+    getHomeProcessContentRemote,
+    getProcessSteps
+} from '@/service/content';
 
 const processIconMap = {
     coffee: TbCoffee,
@@ -141,9 +145,30 @@ const ProcessStep = ({ step, index, isMobile }) => {
 export default function Process() {
     const theme = useTheme();
     const steps = getProcessSteps();
-    const { process } = getHomeLandingContent();
+    const [process, setProcess] = useState(() => getHomeProcessContent());
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const containerRef = useRef(null);
+
+    useEffect(() => {
+        let isMounted = true;
+
+        async function loadProcessRemote() {
+            try {
+                const remoteProcess = await getHomeProcessContentRemote();
+                if (isMounted && remoteProcess) {
+                    setProcess(remoteProcess);
+                }
+            } catch {
+                return;
+            }
+        }
+
+        loadProcessRemote();
+
+        return () => {
+            isMounted = false;
+        };
+    }, []);
 
     const { scrollYProgress } = useScroll({
         target: containerRef,

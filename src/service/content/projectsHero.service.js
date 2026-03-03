@@ -1,3 +1,5 @@
+import { getFirebaseContent, setFirebaseContent } from '@/service/firebase';
+
 export const projectsHeroContent = {
     accent: '#4ADE80',
     eyebrow: 'PROJETOS COMPLETOS',
@@ -9,4 +11,22 @@ export const projectsHeroContent = {
 
 export function getProjectsHeroContent() {
     return projectsHeroContent;
+}
+
+export async function getProjectsHeroContentRemote() {
+    const response = await getFirebaseContent({
+        page: 'projects',
+        section: 'hero',
+        fallbackData: projectsHeroContent
+    });
+
+    return response.data;
+}
+
+export async function setProjectsHeroContentRemote(data) {
+    return setFirebaseContent({
+        page: 'projects',
+        section: 'hero',
+        data
+    });
 }

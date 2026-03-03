@@ -1,3 +1,5 @@
+import { getFirebaseContent, setFirebaseContent } from '@/service/firebase';
+
 export const homeProcessContent = {
     topTags: ['Método proprietário', 'Transparência em cada sprint', 'Entrega com acompanhamento'],
     eyebrow: 'COMO TRABALHAMOS',
@@ -9,4 +11,22 @@ export const homeProcessContent = {
 
 export function getHomeProcessContent() {
     return homeProcessContent;
+}
+
+export async function getHomeProcessContentRemote() {
+    const response = await getFirebaseContent({
+        page: 'home',
+        section: 'process',
+        fallbackData: homeProcessContent
+    });
+
+    return response.data;
+}
+
+export async function setHomeProcessContentRemote(data) {
+    return setFirebaseContent({
+        page: 'home',
+        section: 'process',
+        data
+    });
 }

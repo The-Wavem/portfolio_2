@@ -1,9 +1,47 @@
-import { getAboutHeroContent, getAboutMembers, getAboutStoryContent, getAboutTeamContent } from '@/service/content';
+import {
+    getAboutHeroContent,
+    getAboutHeroContentRemote,
+    getAboutMembers,
+    getAboutMembersRemote,
+    getAboutStoryContent,
+    getAboutStoryContentRemote,
+    getAboutTeamContent,
+    getAboutTeamContentRemote,
+    setAboutHeroContentRemote,
+    setAboutMembersRemote,
+    setAboutStoryContentRemote,
+    setAboutTeamContentRemote
+} from '@/service/content';
 
 function getAboutTeamEditorContent() {
     return {
         ...getAboutTeamContent(),
         members: structuredClone(getAboutMembers())
+    };
+}
+
+async function loadAboutTeamEditorContentRemote() {
+    const [teamContent, members] = await Promise.all([
+        getAboutTeamContentRemote(),
+        getAboutMembersRemote()
+    ]);
+
+    return {
+        ...teamContent,
+        members: structuredClone(members || [])
+    };
+}
+
+async function saveAboutTeamEditorContentRemote(data) {
+    const { members = [], ...teamContent } = data || {};
+
+    const [teamResult, membersResult] = await Promise.all([
+        setAboutTeamContentRemote(teamContent),
+        setAboutMembersRemote(members)
+    ]);
+
+    return {
+        ok: Boolean(teamResult?.ok && membersResult?.ok)
     };
 }
 
@@ -13,6 +51,8 @@ export const aboutEditorConfig = {
         navLabel: 'Hero',
         description: 'Conteúdo principal de abertura da página Sobre.',
         getContent: getAboutHeroContent,
+        loadRemote: getAboutHeroContentRemote,
+        saveRemote: setAboutHeroContentRemote,
         previewType: 'aboutHero',
         fields: [
             { path: 'accent', label: 'Accent (hex)' },
@@ -27,6 +67,8 @@ export const aboutEditorConfig = {
         navLabel: 'História',
         description: 'Narrativa da história da empresa.',
         getContent: getAboutStoryContent,
+        loadRemote: getAboutStoryContentRemote,
+        saveRemote: setAboutStoryContentRemote,
         previewType: 'aboutStory',
         fields: [
             { path: 'eyebrow', label: 'Eyebrow' },
@@ -40,6 +82,8 @@ export const aboutEditorConfig = {
         navLabel: 'Time',
         description: 'Apresentação da seção de equipe e cards dos colaboradores.',
         getContent: getAboutTeamEditorContent,
+        loadRemote: loadAboutTeamEditorContentRemote,
+        saveRemote: saveAboutTeamEditorContentRemote,
         previewType: 'aboutTeam',
         dynamicMembersPath: 'members',
         fields: [

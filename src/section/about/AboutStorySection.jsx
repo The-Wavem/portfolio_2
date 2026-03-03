@@ -1,10 +1,32 @@
+import { useEffect, useState } from 'react';
 import { Box, Container, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
-import { getAboutStoryContent } from '@/service/content';
+import { getAboutStoryContent, getAboutStoryContentRemote } from '@/service/content';
 
 export default function AboutStorySection() {
     const aboutAccent = '#38BDF8';
-    const content = getAboutStoryContent();
+    const [content, setContent] = useState(() => getAboutStoryContent());
+
+    useEffect(() => {
+        let isMounted = true;
+
+        async function loadRemoteContent() {
+            try {
+                const remoteContent = await getAboutStoryContentRemote();
+                if (isMounted && remoteContent) {
+                    setContent(remoteContent);
+                }
+            } catch {
+                return;
+            }
+        }
+
+        loadRemoteContent();
+
+        return () => {
+            isMounted = false;
+        };
+    }, []);
 
     return (
         <Box component="section" sx={{ pb: { xs: 4, md: 6 }, position: 'relative' }}>

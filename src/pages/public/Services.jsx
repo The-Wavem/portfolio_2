@@ -1,17 +1,38 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { Box } from '@mui/material';
-import { getServicesContent } from '@/service/content';
+import { getServicesContent, getServicesContentRemote } from '@/service/content';
 import ServicesHeroSection from '@/section/services/ServicesHeroSection';
 import ServicesHighlightsSection from '@/section/services/ServicesHighlightsSection';
 import ServicesProcessSection from '@/section/services/ServicesProcessSection';
 import { trackPageView } from '@/service/analytics/tracking.service';
 
 export default function Services() {
-    const content = useMemo(() => getServicesContent(), []);
+    const [content, setContent] = useState(() => getServicesContent());
     const accent = content.accent?.end ?? '#8C2438';
 
     useEffect(() => {
         trackPageView('services');
+    }, []);
+
+    useEffect(() => {
+        let isMounted = true;
+
+        async function loadRemoteContent() {
+            try {
+                const remoteContent = await getServicesContentRemote();
+                if (isMounted && remoteContent) {
+                    setContent(remoteContent);
+                }
+            } catch {
+                return;
+            }
+        }
+
+        loadRemoteContent();
+
+        return () => {
+            isMounted = false;
+        };
     }, []);
 
     return (

@@ -1,3 +1,5 @@
+import { listAnalyticsEvents, listAnalyticsEventsPage, persistAnalyticsEvent } from '@/service/firebase';
+
 const STORAGE_KEY = 'the_wavem.analytics.events.v1';
 const MAX_EVENTS = 5000;
 const PAGE_VIEW_DEDUP_WINDOW_MS = 3500;
@@ -76,10 +78,18 @@ function getSessionId() {
     }
 }
 
+function queueRemoteEvent(event) {
+    persistAnalyticsEvent(event).catch(() => {
+        return;
+    });
+}
+
 function pushEvent(payload) {
     const events = readStoredEvents();
-    const nextEvents = [...events, createEvent(payload)];
+    const event = createEvent(payload);
+    const nextEvents = [...events, event];
     writeStoredEvents(nextEvents);
+    queueRemoteEvent(event);
 }
 
 function mapPathToPage(pathname) {
@@ -274,6 +284,26 @@ export function getAnalyticsEvents() {
     return readStoredEvents();
 }
 
+export async function getAnalyticsEventsRemote(limitCount = MAX_EVENTS) {
+    const remoteEvents = await listAnalyticsEvents(limitCount);
+    return Array.isArray(remoteEvents) ? remoteEvents : [];
+}
+
+export async function getAnalyticsEventsRemotePage(options = {}) {
+    const pageOptions = {
+        limitCount: options.limitCount,
+        cursor: options.cursor ?? null,
+        endTsMs: Number.isFinite(options.endTsMs)
+            ? options.endTsMs
+            : null,
+        startTsMs: Number.isFinite(options.startTsMs)
+            ? options.startTsMs
+            : getPeriodStartTsMs(options.periodDays)
+    };
+
+    return listAnalyticsEventsPage(pageOptions);
+}
+
 function normalizeEventsForAggregation(events) {
     const sorted = [...events].sort((a, b) => new Date(a.ts).getTime() - new Date(b.ts).getTime());
     const lastPageViewByKey = {};
@@ -333,6 +363,18 @@ function filterEventsByPeriod(events, periodDays) {
     const startTime = start.getTime();
 
     return events.filter((event) => new Date(event.ts).getTime() >= startTime);
+}
+
+function getPeriodStartTsMs(periodDays) {
+    if (!Number.isFinite(periodDays) || periodDays <= 0) {
+        return null;
+    }
+
+    const start = new Date();
+    start.setHours(0, 0, 0, 0);
+    start.setDate(start.getDate() - (periodDays - 1));
+
+    return start.getTime();
 }
 
 function buildChartSeries(events, periodDays) {
@@ -472,17 +514,20 @@ function getActionTimeline(actionEvents) {
             action: event.action,
             page: event.page,
             section: event.section,
+            ts: event.ts,
             date: formatDateTime(event.ts)
         }));
 }
 
-export function getAnalyticsOverviewData(periodDays = 7) {
-    const options = typeof periodDays === 'object' && periodDays !== null
+function resolveOverviewOptions(periodDays) {
+    return typeof periodDays === 'object' && periodDays !== null
         ? periodDays
         : { generalPeriodDays: periodDays, chartPeriodDays: periodDays };
+}
+
+function buildOverviewData(normalizedEvents, options) {
     const generalPeriodDays = options.generalPeriodDays;
     const chartPeriodDays = Number.isFinite(options.chartPeriodDays) ? options.chartPeriodDays : 7;
-    const normalizedEvents = normalizeEventsForAggregation(getAnalyticsEvents());
     const events = filterEventsByPeriod(normalizedEvents, generalPeriodDays);
     const chartEvents = filterEventsByPeriod(normalizedEvents, chartPeriodDays);
     const views = events.filter((event) => event.kind === 'page_view');
@@ -546,6 +591,34 @@ export function getAnalyticsOverviewData(periodDays = 7) {
         periodDays: generalPeriodDays,
         chartPeriodDays
     };
+}
+
+export function getAnalyticsOverviewDataFromEvents(events, periodDays = 7) {
+    const options = resolveOverviewOptions(periodDays);
+    const normalizedEvents = normalizeEventsForAggregation(events || []);
+    return buildOverviewData(normalizedEvents, options);
+}
+
+export function getAnalyticsOverviewData(periodDays = 7) {
+    const options = resolveOverviewOptions(periodDays);
+    const normalizedEvents = normalizeEventsForAggregation(getAnalyticsEvents());
+    return buildOverviewData(normalizedEvents, options);
+}
+
+export async function getAnalyticsOverviewDataRemote(periodDays = 7) {
+    const options = resolveOverviewOptions(periodDays);
+    const remoteResponse = await getAnalyticsEventsRemotePage({
+        limitCount: MAX_EVENTS,
+        periodDays: options.generalPeriodDays
+    });
+    const remoteEvents = Array.isArray(remoteResponse?.events) ? remoteResponse.events : [];
+
+    if (remoteEvents.length === 0) {
+        return getAnalyticsOverviewData(options);
+    }
+
+    const normalizedEvents = normalizeEventsForAggregation(remoteEvents);
+    return buildOverviewData(normalizedEvents, options);
 }
 
 export function clearAnalyticsEvents() {

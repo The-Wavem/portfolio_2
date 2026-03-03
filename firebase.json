@@ -3,6 +3,7 @@
     "rules": "firestore.rules"
   },
   "hosting": {
+    "site": "thewavem",
     "public": "dist",
     "ignore": [
       "firebase.json",

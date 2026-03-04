@@ -159,7 +159,7 @@ export default function ServicesHeroSection({ content, accent }) {
                         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.1} sx={{ mt: 2 }}>
                             <Button
                                 component={RouterLink}
-                                to="/projetos"
+                                to="/#contato"
                                 onClick={() => trackAction({ page: 'services', section: 'hero', action: 'click_primary_cta', label: 'Iniciar meu projeto' })}
                                 variant="contained"
                                 sx={{

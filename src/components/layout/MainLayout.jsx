@@ -153,10 +153,10 @@ const Navbar = ({ pathname, onNavigate }) => {
                         })}
                         <Button
                             component={RouterLink}
-                            to="/projetos"
-                            onClick={() => onNavigate({ to: '/projetos', label: 'Iniciar Projeto' })}
-                            onMouseEnter={() => prefetchRoute('/projetos')}
-                            onFocus={() => prefetchRoute('/projetos')}
+                            to="/#contato"
+                            onClick={() => onNavigate({ to: '/#contato', label: 'Iniciar Projeto' })}
+                            onMouseEnter={() => prefetchRoute('/')}
+                            onFocus={() => prefetchRoute('/')}
                             variant="contained"
                             sx={{
                                 borderRadius: '20px',
@@ -252,9 +252,9 @@ const Navbar = ({ pathname, onNavigate }) => {
 
                     <Button
                         component={RouterLink}
-                        to="/projetos"
+                        to="/#contato"
                         onClick={() => {
-                            onNavigate({ to: '/projetos', label: 'Menu mobile iniciar projeto' });
+                            onNavigate({ to: '/#contato', label: 'Menu mobile iniciar projeto' });
                             closeMobileMenu();
                         }}
                         variant="contained"
@@ -299,8 +299,33 @@ export default function MainLayout() {
     }, [location.pathname]);
 
     useEffect(() => {
+        if (location.hash) {
+            return;
+        }
+
         window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
     }, [location.pathname]);
+
+    useEffect(() => {
+        if (!location.hash) {
+            return;
+        }
+
+        const anchorId = decodeURIComponent(location.hash.replace('#', ''));
+        const scrollToAnchor = () => {
+            const anchorElement = document.getElementById(anchorId);
+            if (!anchorElement) {
+                return;
+            }
+
+            anchorElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        };
+
+        const rafId = window.requestAnimationFrame(scrollToAnchor);
+        return () => {
+            window.cancelAnimationFrame(rafId);
+        };
+    }, [location.pathname, location.hash]);
 
     useEffect(() => {
         const previousPath = previousPathRef.current;

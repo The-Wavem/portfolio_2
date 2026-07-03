@@ -7,6 +7,7 @@ import {
     getHomeProcessContentRemote,
     getProcessSteps
 } from '@/service/content';
+import styles from './Process.module.css';
 
 const processIconMap = {
     coffee: TbCoffee,
@@ -185,51 +186,20 @@ export default function Process() {
         <Box component="section" ref={containerRef} sx={{ py: { xs: 10, md: 15 }, position: 'relative', overflow: 'hidden' }}>
             <Container maxWidth="lg">
                 {/* Header da Seção */}
-                <Box mb={{ xs: 7, md: 10 }} textAlign="left" position="relative" zIndex={2}>
+                <div className={styles.headerWrapper}>
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                     >
-                        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 0.6, sm: 1.2 }} sx={{ mb: 1.3 }}>
-                            {process.topTags.map((item) => (
-                                <Typography key={item} sx={{ color: 'rgba(228,228,231,0.72)', fontSize: '0.74rem', letterSpacing: '0.04em', textTransform: 'uppercase', fontWeight: 700 }}>
-                                    {item}
-                                </Typography>
-                            ))}
-                        </Stack>
-
-                        <Typography variant="overline" color="primary" sx={{ letterSpacing: 4, fontWeight: 700, fontSize: '0.72rem', opacity: 0.95 }}>
-                            {process.eyebrow}
+                        <Typography variant="overline" color="primary" className={styles.eyebrow}>
+                            {process?.eyebrow || 'METODOLOGIA'}
                         </Typography>
-                        <Typography
-                            variant="h3"
-                            fontWeight={800}
-                            sx={{
-                                mt: 1.4,
-                                mb: 2.4,
-                                maxWidth: 760,
-                                fontSize: { xs: '2rem', sm: '2.35rem', md: '3.1rem' },
-                                lineHeight: 1.06,
-                                letterSpacing: '-0.03em'
-                            }}
-                        >
-                            {process.titleStart} <span style={{ color: theme.palette.primary.main }}>{process.titleHighlight}</span>
-                        </Typography>
-                        <Typography
-                            variant="body1"
-                            sx={{
-                                maxWidth: 620,
-                                color: 'rgba(228,228,231,0.77)',
-                                lineHeight: 1.75,
-                                fontSize: { xs: '0.95rem', md: '1rem' },
-                                letterSpacing: '0.01em'
-                            }}
-                        >
-                            {process.description}
+                        <Typography variant="h2" component="h2" className={styles.title}>
+                            {process?.titlePrefix || process?.titleStart} <span className={styles.titleHighlight}>{process?.titleHighlight}</span>
                         </Typography>
                     </motion.div>
-                </Box>
+                </div>
 
                 <Box sx={{ position: 'relative' }}>
                     {/* Linha do Tempo Conectora */}

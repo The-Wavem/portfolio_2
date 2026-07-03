@@ -12,7 +12,7 @@
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 100px;
+    width: 80px; /* Coluna Central */
     z-index: 1;
     display: flex;
     justify-content: center;
@@ -21,7 +21,7 @@
 
 @media (max-width: 900px) {
     .svgContainer {
-        left: 40px;
+        left: 40px; /* Metade da coluna central de 80px */
         transform: translateX(-50%);
     }
 }
@@ -45,7 +45,7 @@
 
 .timelineRow {
     display: grid;
-    grid-template-columns: 1fr 100px 1fr;
+    grid-template-columns: 1fr 80px 1fr; /* Fonte da Verdade Estrita */
     gap: 0;
     align-items: center;
     position: relative;
@@ -64,42 +64,12 @@
     }
 }
 
-/* MICRO-CONECTORES */
-.connectorLeft {
-    position: absolute;
-    right: calc(50% + 26px);
-    width: 64px;
-    height: 2px;
-    opacity: 0.15;
-    transition: opacity 0.5s ease, box-shadow 0.5s ease, background-color 0.5s ease;
-    z-index: 1;
-}
-
-.connectorRight {
-    position: absolute;
-    left: calc(50% + 26px);
-    width: 64px;
-    height: 2px;
-    opacity: 0.15;
-    transition: opacity 0.5s ease, box-shadow 0.5s ease, background-color 0.5s ease;
-    z-index: 1;
-}
-
-@media (max-width: 900px) {
-    .connectorLeft {
-        display: none;
-    }
-    .connectorRight {
-        left: 66px;
-        width: 14px;
-    }
-}
-
 .nodeWrapper {
     grid-column: 2;
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 10;
 }
 
 @media (max-width: 900px) {
@@ -142,6 +112,7 @@
     width: 100%;
     max-width: 480px;
     transition: background 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
+    position: relative; /* OBRIGATÓRIO PARA A PONTE ABSOLUTA */
 }
 
 .card:hover {
@@ -160,6 +131,41 @@
     font-size: 1.1rem;
     color: rgba(255,255,255,0.4);
     border: 2px solid rgba(255,255,255,0.1);
-    z-index: 3;
+    z-index: 10; /* Sempre por cima do SVG e Conectores */
     transition: color 0.5s ease, background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
+}
+
+/* MICRO-CONECTORES (Ancorados no Card) */
+.connectorLeft {
+    position: absolute;
+    right: -54px; /* Atravessa o padding de 40px + 14px até o limite do nó */
+    top: 50%;
+    transform: translateY(-50%);
+    width: 54px;
+    height: 2px;
+    opacity: 0.15;
+    transition: opacity 0.5s ease, box-shadow 0.5s ease, background-color 0.5s ease;
+    z-index: 5;
+}
+
+.connectorRight {
+    position: absolute;
+    left: -54px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 54px;
+    height: 2px;
+    opacity: 0.15;
+    transition: opacity 0.5s ease, box-shadow 0.5s ease, background-color 0.5s ease;
+    z-index: 5;
+}
+
+@media (max-width: 900px) {
+    .connectorLeft {
+        display: none;
+    }
+    .connectorRight {
+        left: -14px;
+        width: 14px;
+    }
 }

@@ -105,7 +105,7 @@ function TimelineStep({
     if (distance > radius) return 0;
 
     const intensity = Math.pow(1 - distance / radius, 2);
-    return (cx - 50) * intensity;
+    return (cx - 40) * intensity;
   });
 
   return (
@@ -125,15 +125,16 @@ function TimelineStep({
             }}
           >
             <CardContent step={step} Icon={Icon} />
+
+            <div
+              className={styles.connectorLeft}
+              style={{
+                backgroundColor: isActive ? step.color : "#ffffff",
+                opacity: isActive ? 0.8 : 0.15,
+                boxShadow: isActive ? `0 0 12px ${step.color}` : "none",
+              }}
+            />
           </motion.div>
-          <div
-            className={styles.connectorLeft}
-            style={{
-              backgroundColor: isActive ? step.color : "#ffffff",
-              opacity: isActive ? 0.8 : 0.15,
-              boxShadow: isActive ? `0 0 12px ${step.color}` : "none",
-            }}
-          />
         </div>
       ) : (
         !isMobile && <div className={styles.contentLeft} />
@@ -162,14 +163,6 @@ function TimelineStep({
 
       {isMobile || !isEven ? (
         <div className={styles.contentRight}>
-          <div
-            className={styles.connectorRight}
-            style={{
-              backgroundColor: isActive ? step.color : "#ffffff",
-              opacity: isActive ? 0.8 : 0.15,
-              boxShadow: isActive ? `0 0 12px ${step.color}` : "none",
-            }}
-          />
           <motion.div
             initial={{ opacity: 0, x: isMobile ? 40 : 40 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -183,6 +176,15 @@ function TimelineStep({
             }}
           >
             <CardContent step={step} Icon={Icon} />
+
+            <div
+              className={styles.connectorRight}
+              style={{
+                backgroundColor: isActive ? step.color : "#ffffff",
+                opacity: isActive ? 0.8 : 0.15,
+                boxShadow: isActive ? `0 0 12px ${step.color}` : "none",
+              }}
+            />
           </motion.div>
         </div>
       ) : (
@@ -209,15 +211,17 @@ export default function ElasticTimeline({ steps = [] }) {
     restDelta: 0.001,
   });
 
-  const ctrlX = useSpring(50, { stiffness: 300, damping: 10, mass: 0.8 });
-  const ctrlY = useSpring(svgHeight / 2, { stiffness: 400, damping: 20 });
+  // FÍSICA FLUIDA (Onda Aquática):
+  const ctrlX = useSpring(40, { stiffness: 40, damping: 8, mass: 2 });
+  // Y precisa ser responsivo para a onda acompanhar a altura do cursor rapidamente sem delay indesejado
+  const ctrlY = useSpring(svgHeight / 2, { stiffness: 600, damping: 25 });
 
   useEffect(() => {
     if (!containerRef.current) return;
 
     const observer = new ResizeObserver((entries) => {
       for (let entry of entries) {
-        const height = entry.contentRect.height;
+        const height = entry.target.clientHeight;
         setSvgHeight(height);
         ctrlY.set(height / 2);
       }
@@ -233,21 +237,33 @@ export default function ElasticTimeline({ steps = [] }) {
     const lineX = isMobile ? 40 : rect.width / 2;
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
+
     const diffX = mouseX - lineX;
-    const tensionX = 50 + Math.max(-50, Math.min(50, diffX));
+
+    const tensionX = 40 + Math.max(-150, Math.min(150, diffX * 0.8));
+
     ctrlX.set(tensionX);
     ctrlY.set(mouseY);
   };
 
   const handleMouseLeave = () => {
-    ctrlX.set(50);
+    ctrlX.set(40);
     ctrlY.set(svgHeight / 2);
   };
 
-  const pathD = useTransform(
-    [ctrlX, ctrlY],
-    ([x, y]) => `M 50 0 Q ${x} ${y} 50 ${svgHeight}`,
-  );
+  // CONSTRUÇÃO DO PATH SEGMENTADO (Onda Local)
+  const pathD = useTransform([ctrlX, ctrlY], ([cx, cy]) => {
+    const WAVE_RADIUS = 150;
+
+    // Garantimos que a reta conectora nunca ultrapasse o SVG
+    const startY = cy - WAVE_RADIUS;
+    const endY = cy + WAVE_RADIUS;
+
+    // Passo 1: Reta até o início do raio de ação
+    // Passo 2: Curva de Bezier (Q) usando o mouse como control point
+    // Passo 3: Reta até o final do container
+    return `M 40 0 L 40 ${startY} Q ${cx} ${cy} 40 ${endY} L 40 ${svgHeight}`;
+  });
 
   return (
     <div
@@ -259,9 +275,10 @@ export default function ElasticTimeline({ steps = [] }) {
       <div className={styles.svgContainer}>
         <div className={styles.hitbox} />
         <svg
-          width="100px"
+          width="100%"
           height="100%"
-          viewBox={`0 0 100 ${svgHeight}`}
+          preserveAspectRatio="none"
+          viewBox={`0 0 80 ${svgHeight}`}
           className={styles.svgLine}
         >
           <defs>

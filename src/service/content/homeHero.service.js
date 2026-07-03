@@ -1,33 +1,23 @@
 import { getFirebaseContent, setFirebaseContent } from '@/service/firebase';
 
 export const homeHeroContent = {
-    eyebrow: 'PRODUTOS DIGITAIS',
-    titleStart: 'Tiramos seu rascunho do papel e entregamos',
-    titleHighlight: 'produto real em produção.',
+    titleStart: 'Engenharia Sólida e',
+    titleHighlight: 'Design para Problemas Reais.',
     description:
-        'Construímos aplicações web e mobile, com manutenção contínua e evolução técnica para o negócio crescer com segurança.',
+        'Equilibramos estética, clareza de fluxo e arquitetura de ponta para gerar resultados contínuos.',
     primaryCta: {
-        label: 'Quero começar meu projeto',
+        label: 'Iniciar Projeto',
         href: '#contato'
     },
     secondaryCta: {
-        label: 'Ver projetos publicados',
-        to: '/projetos'
+        label: 'Ver Portfolio',
+        to: '/portfolio'
     },
     trustPills: [
-        'Entrega com contexto de negócio',
-        'Qualidade técnica e manutenção',
-        'Comunicação direta com especialistas'
-    ],
-    executionContext: {
-        eyebrow: 'Contexto de execução',
-        title: 'Da estratégia ao deploy com acompanhamento contínuo.',
-        steps: [
-            { id: '01', text: 'Descoberta e escopo realista' },
-            { id: '02', text: 'Design + arquitetura técnica' },
-            { id: '03', text: 'Build, publicação e evolução' }
-        ]
-    }
+        'Comunicação direta',
+        'Arquitetura escalável',
+        'Pós-lançamento ativo'
+    ]
 };
 
 export function getHomeHeroContent() {

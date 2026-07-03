@@ -51,3 +51,37 @@
     position: relative;
     display: inline-block;
 }
+
+/* BG Blobs */
+.bgBlob1, .bgBlob2 {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.15;
+}
+
+.bgBlob1 {
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(124, 58, 237, 0.8) 0%, rgba(124, 58, 237, 0) 70%);
+    top: -100px;
+    left: -200px;
+}
+
+.bgBlob2 {
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(56, 189, 248, 0.6) 0%, rgba(56, 189, 248, 0) 70%);
+    bottom: 20%;
+    right: -150px;
+}
+
+.cardHover {
+    transition: border-color 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
+}
+
+.cardHover:hover {
+    background: rgba(20, 20, 22, 0.85);
+}

@@ -3,48 +3,28 @@
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 40px 0;
+    padding: 40px 0; /* Padding superior e inferior ditam o respiro onde a linha começa e termina */
 }
 
-.timelineGrid {
-    display: grid;
-    grid-template-columns: 1fr 100px 1fr;
-    gap: 80px 0;
-    align-items: center;
-    position: relative;
-}
-
-@media (max-width: 900px) {
-    .timelineGrid {
-        grid-template-columns: 60px 1fr;
-        gap: 60px 0;
-    }
-}
-
+/* O container do SVG agora cobre absolutamente a altura total do wrapper */
 .svgContainer {
-    grid-column: 2;
-    grid-row: 1 / -1;
-    align-self: stretch;
-    position: relative;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    z-index: 1;
     display: flex;
     justify-content: center;
-    cursor: crosshair; /* UX para indicar interação */
+    cursor: crosshair;
 }
 
 @media (max-width: 900px) {
     .svgContainer {
-        grid-column: 1;
+        left: 40px; /* Alinhado ao centro da primeira coluna mobile (80px / 2) */
+        transform: translateX(-50%);
     }
-}
-
-/* Área superdimensionada para detectar o mouse confortavelmente */
-.hitbox {
-    position: absolute;
-    top: -40px;
-    bottom: -40px;
-    left: -60px;
-    right: -60px;
-    z-index: 0;
 }
 
 .svgLine {
@@ -55,7 +35,36 @@
     height: 100%;
     overflow: visible;
     z-index: 1;
-    pointer-events: none; /* MouseEvents lidado pelo container/hitbox */
+    pointer-events: none;
+}
+
+/* Hitbox não precisa mais ser um div separado se atrelarmos o evento ao container raiz, mas podemos manter p/ garantia */
+.hitbox {
+    position: absolute;
+    inset: 0 -100px;
+    z-index: 0;
+}
+
+/* Cada row é independente, garantindo alinhamento horizontal perfeito */
+.timelineRow {
+    display: grid;
+    grid-template-columns: 1fr 100px 1fr;
+    gap: 0;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+    margin-bottom: 60px;
+}
+
+.timelineRow:last-child {
+    margin-bottom: 0;
+}
+
+@media (max-width: 900px) {
+    .timelineRow {
+        grid-template-columns: 80px 1fr;
+        margin-bottom: 40px;
+    }
 }
 
 .nodeWrapper {
@@ -63,7 +72,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 2;
 }
 
 @media (max-width: 900px) {
@@ -89,7 +97,8 @@
 @media (max-width: 900px) {
     .contentLeft, .contentRight {
         grid-column: 2;
-        padding: 0 0 0 20px;
+        padding-left: 0;
+        padding-right: 0;
         justify-content: flex-start;
     }
 }

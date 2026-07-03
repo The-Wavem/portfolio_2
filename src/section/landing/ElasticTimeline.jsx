@@ -12,7 +12,6 @@ const processIconMap = {
     rocket: TbRocket
 };
 
-// Componente para o conteúdo do Card (Evita repetição no Grid ZigZag)
 function CardContent({ step, Icon }) {
     return (
         <>
@@ -69,190 +68,185 @@ function CardContent({ step, Icon }) {
 
 export default function ElasticTimeline({ steps = [] }) {
     const containerRef = useRef(null);
-    const svgContainerRef = useRef(null);
     const [svgHeight, setSvgHeight] = useState(800);
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-    // Scroll tracking do container inteiro (Grid)
     const { scrollYProgress } = useScroll({
         target: containerRef,
-        offset: ["start center", "end center"]
+        offset: ["start center", "end center"] // Quando o topo passa pelo centro, linha inicia preenchimento. Termina no bottom center.
     });
 
-    // Mola para suavizar o preenchimento Neon
     const scaleY = useSpring(scrollYProgress, { 
         stiffness: 100, 
         damping: 30, 
         restDelta: 0.001 
     });
 
-    // Física da Corda de Violão
     const ctrlX = useSpring(50, { stiffness: 300, damping: 10, mass: 0.8 });
     const ctrlY = useSpring(svgHeight / 2, { stiffness: 400, damping: 20 });
 
     useEffect(() => {
-        if (!svgContainerRef.current) return;
+        if (!containerRef.current) return;
         
-        // Pega a altura exata que o CSS Grid gerou para a trilha
+        // Monitoramos a altura real de TODO o wrapper para calcular a reta completa.
         const observer = new ResizeObserver((entries) => {
             for (let entry of entries) {
-                setSvgHeight(entry.contentRect.height);
-                // Restaura o Y base pro meio da nova altura
-                ctrlY.set(entry.contentRect.height / 2);
+                const height = entry.contentRect.height;
+                setSvgHeight(height);
+                // Centralizamos o ponto de mola Y na metade real do layout
+                ctrlY.set(height / 2);
             }
         });
         
-        observer.observe(svgContainerRef.current);
+        observer.observe(containerRef.current);
         return () => observer.disconnect();
     }, [ctrlY]);
 
     const handleMouseMove = (e) => {
-        if (!svgContainerRef.current) return;
-        const rect = svgContainerRef.current.getBoundingClientRect();
+        if (!containerRef.current) return;
+        const rect = containerRef.current.getBoundingClientRect();
+        
+        // Calculamos a posição central X absoluta da linha
+        const lineX = isMobile ? 40 : rect.width / 2;
         
         const mouseX = e.clientX - rect.left;
         const mouseY = e.clientY - rect.top;
         
-        // A trilha no SVG (viewBox largura 100) está em X=50. 
-        // Limitamos a força para a corda não quebrar visualmente
-        const tensionX = Math.max(-50, Math.min(150, mouseX));
+        // Subtraímos para saber o quão longe o mouse está da linha
+        const diffX = mouseX - lineX;
+        
+        // O viewBox SVG tem 100 de largura (centro 50). Somamos o 50 à força puxada e limitamos o arco.
+        const tensionX = 50 + Math.max(-50, Math.min(50, diffX));
         
         ctrlX.set(tensionX);
         ctrlY.set(mouseY);
     };
 
     const handleMouseLeave = () => {
-        // Solta a corda, disparando a mola de volta pro centro (50px)
         ctrlX.set(50);
         ctrlY.set(svgHeight / 2);
     };
 
-    // Monta o SVG Path dinamicamente observando os motion values em 60fps sem renderizar React.
     const pathD = useTransform(
         [ctrlX, ctrlY],
         ([x, y]) => `M 50 0 Q ${x} ${y} 50 ${svgHeight}`
     );
 
     return (
-        <div className={styles.timelineWrapper} ref={containerRef}>
-            <div className={styles.timelineGrid}>
+        <div 
+            className={styles.timelineWrapper} 
+            ref={containerRef}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+        >
+            {/* SVG Container: Agora flutua absolutamente do Top 0 ao Bottom 0 da seção inteira */}
+            <div className={styles.svgContainer}>
+                <div className={styles.hitbox} />
                 
-                {/* 1. Coluna Central (SVG e Interação) */}
-                <div 
-                    className={styles.svgContainer} 
-                    ref={svgContainerRef}
-                    onMouseMove={handleMouseMove}
-                    onMouseLeave={handleMouseLeave}
-                >
-                    <div className={styles.hitbox} />
+                {/* ViewBox flexível combinando o X(0-100) real com o Y do container */}
+                <svg width="100px" height="100%" viewBox={`0 0 100 ${svgHeight}`} className={styles.svgLine}>
+                    <defs>
+                        <linearGradient id="neonTimelineGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#F59E0B" />
+                            <stop offset="50%" stopColor="#EC4899" />
+                            <stop offset="100%" stopColor="#8B5CF6" />
+                        </linearGradient>
+                    </defs>
                     
-                    <svg width="100px" height="100%" viewBox={`0 0 100 ${svgHeight}`} className={styles.svgLine}>
-                        <defs>
-                            <linearGradient id="neonTimelineGrad" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stopColor="#F59E0B" />
-                                <stop offset="50%" stopColor="#EC4899" />
-                                <stop offset="100%" stopColor="#8B5CF6" />
-                            </linearGradient>
-                        </defs>
-                        
-                        {/* Trilha de Fundo (Base apagada) */}
-                        <motion.path
-                            d={pathD}
-                            vectorEffect="non-scaling-stroke"
-                            fill="none"
-                            stroke="rgba(255,255,255,0.06)"
-                            strokeWidth="2"
-                        />
-                        
-                        {/* Progresso Animado Neon */}
-                        <motion.path
-                            d={pathD}
-                            vectorEffect="non-scaling-stroke"
-                            fill="none"
-                            stroke="url(#neonTimelineGrad)"
-                            strokeWidth="4"
-                            style={{ pathLength: scaleY }}
-                        />
-                        
-                        {/* Glow Neon (Sombra vibrante ao redor da linha) */}
-                        <motion.path
-                            d={pathD}
-                            vectorEffect="non-scaling-stroke"
-                            fill="none"
-                            stroke="#A78BFA"
-                            strokeWidth="8"
-                            style={{ pathLength: scaleY, filter: 'blur(8px)', opacity: 0.6 }}
-                        />
-                    </svg>
-                </div>
-
-                {/* 2. Conteúdo Grid (Nós e Cards) */}
-                {steps.map((step, index) => {
-                    const isEven = index % 2 === 0;
-                    const Icon = processIconMap[step.iconKey] ?? TbCode;
+                    <motion.path
+                        d={pathD}
+                        vectorEffect="non-scaling-stroke"
+                        fill="none"
+                        stroke="rgba(255,255,255,0.06)"
+                        strokeWidth="2"
+                    />
                     
-                    return (
-                        <div key={step.id} style={{ display: 'contents' }}>
-                            
-                            {/* Esquerda: Cards nos Índices Pares (0, 2, 4...) */}
-                            {(!isMobile && isEven) ? (
-                                <div className={styles.contentLeft}>
-                                    <motion.div 
-                                        initial={{ opacity: 0, x: -40 }}
-                                        whileInView={{ opacity: 1, x: 0 }}
-                                        viewport={{ once: true, margin: "-100px" }}
-                                        className={styles.card}
-                                        whileHover={{
-                                            borderColor: step.color,
-                                            boxShadow: `0 8px 34px ${step.color}16`
-                                        }}
-                                    >
-                                        <CardContent step={step} Icon={Icon} />
-                                    </motion.div>
-                                </div>
-                            ) : (!isMobile && <div className={styles.contentLeft} />)}
+                    <motion.path
+                        d={pathD}
+                        vectorEffect="non-scaling-stroke"
+                        fill="none"
+                        stroke="url(#neonTimelineGrad)"
+                        strokeWidth="4"
+                        style={{ pathLength: scaleY }}
+                    />
+                    
+                    <motion.path
+                        d={pathD}
+                        vectorEffect="non-scaling-stroke"
+                        fill="none"
+                        stroke="#A78BFA"
+                        strokeWidth="8"
+                        style={{ pathLength: scaleY, filter: 'blur(8px)', opacity: 0.6 }}
+                    />
+                </svg>
+            </div>
 
-                            {/* Centro: Nó numérico */}
-                            <div className={styles.nodeWrapper}>
-                                <motion.div
-                                    initial={{ scale: 0, opacity: 0 }}
-                                    whileInView={{ scale: 1, opacity: 1 }}
-                                    viewport={{ once: true }}
-                                    transition={{ type: "spring", stiffness: 200, delay: 0.1 }}
-                                    className={styles.node}
-                                    style={{ 
+            {/* Renderização individual de cada Passo em sua própria Row/Grid */}
+            {steps.map((step, index) => {
+                const isEven = index % 2 === 0;
+                const Icon = processIconMap[step.iconKey] ?? TbCode;
+                
+                return (
+                    <div key={step.id} className={styles.timelineRow}>
+                        
+                        {/* Esquerda */}
+                        {(!isMobile && isEven) ? (
+                            <div className={styles.contentLeft}>
+                                <motion.div 
+                                    initial={{ opacity: 0, x: -40 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    viewport={{ once: true, margin: "-100px" }}
+                                    className={styles.card}
+                                    whileHover={{
                                         borderColor: step.color,
-                                        boxShadow: `0 0 20px ${step.color}40`,
-                                        color: step.color
+                                        boxShadow: `0 8px 34px ${step.color}16`
                                     }}
                                 >
-                                    {step.id}
+                                    <CardContent step={step} Icon={Icon} />
                                 </motion.div>
                             </div>
+                        ) : (!isMobile && <div className={styles.contentLeft} />)}
 
-                            {/* Direita: Cards nos Índices Ímpares (1, 3...) E no Mobile */}
-                            {(isMobile || !isEven) ? (
-                                <div className={styles.contentRight}>
-                                    <motion.div 
-                                        initial={{ opacity: 0, x: isMobile ? 40 : 40 }}
-                                        whileInView={{ opacity: 1, x: 0 }}
-                                        viewport={{ once: true, margin: "-100px" }}
-                                        className={styles.card}
-                                        whileHover={{
-                                            borderColor: step.color,
-                                            boxShadow: `0 8px 34px ${step.color}16`
-                                        }}
-                                    >
-                                        <CardContent step={step} Icon={Icon} />
-                                    </motion.div>
-                                </div>
-                            ) : (!isMobile && <div className={styles.contentRight} />)}
-                            
+                        {/* Centro */}
+                        <div className={styles.nodeWrapper}>
+                            <motion.div
+                                initial={{ scale: 0, opacity: 0 }}
+                                whileInView={{ scale: 1, opacity: 1 }}
+                                viewport={{ once: true }}
+                                transition={{ type: "spring", stiffness: 200, delay: 0.1 }}
+                                className={styles.node}
+                                style={{ 
+                                    borderColor: step.color,
+                                    boxShadow: `0 0 20px ${step.color}40`,
+                                    color: step.color
+                                }}
+                            >
+                                {step.id}
+                            </motion.div>
                         </div>
-                    );
-                })}
-            </div>
+
+                        {/* Direita */}
+                        {(isMobile || !isEven) ? (
+                            <div className={styles.contentRight}>
+                                <motion.div 
+                                    initial={{ opacity: 0, x: isMobile ? 40 : 40 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    viewport={{ once: true, margin: "-100px" }}
+                                    className={styles.card}
+                                    whileHover={{
+                                        borderColor: step.color,
+                                        boxShadow: `0 8px 34px ${step.color}16`
+                                    }}
+                                >
+                                    <CardContent step={step} Icon={Icon} />
+                                </motion.div>
+                            </div>
+                        ) : (!isMobile && <div className={styles.contentRight} />)}
+                        
+                    </div>
+                );
+            })}
         </div>
     );
 }

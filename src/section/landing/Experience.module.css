@@ -1,0 +1,37 @@
+.cardWrapper {
+  height: 100%;
+}
+
+.neuralCard {
+  --mouse-x: 50%;
+  --mouse-y: 50%;
+}
+
+.neuralCard::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(
+    circle 350px at var(--mouse-x) var(--mouse-y),
+    var(--card-color) 0%,
+    transparent 80%
+  );
+  z-index: 0;
+  opacity: 0.15;
+  transition: opacity 0.3s ease;
+}
+
+.neuralCard:not(:hover)::before {
+  animation: idlePulse 4s infinite alternate ease-in-out;
+}
+
+@keyframes idlePulse {
+  0% {
+    opacity: 0.04;
+  }
+  100% {
+    opacity: 0.12;
+  }
+}

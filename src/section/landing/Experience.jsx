@@ -2,7 +2,8 @@ import { Box, Container, Typography, Stack, useTheme } from '@mui/material';
 import { motion } from 'framer-motion';
 import { VscJson, VscCode, VscSymbolRuler } from 'react-icons/vsc';
 import { getExperienceItems } from '@/service/content';
-import { getStackIcon, getToolMeta } from '@/components/organism/aboutTeam.utils';
+import { useRef } from 'react';
+import styles from './Experience.module.css';
 
 function hexToRgba(hex, alpha) {
     if (typeof hex !== 'string') {
@@ -132,6 +133,17 @@ const NeuralCard = ({ item, variant = 'small' }) => {
     const itemChipBg = hexToRgba(item.color, 0.06);
     const itemChipBorder = hexToRgba(item.color, 0.2);
 
+    const cardRef = useRef(null);
+
+    const handleMouseMove = (e) => {
+        if (!cardRef.current) return;
+        const rect = cardRef.current.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        cardRef.current.style.setProperty('--mouse-x', `${x}px`);
+        cardRef.current.style.setProperty('--mouse-y', `${y}px`);
+    };
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 32 }}
@@ -139,12 +151,19 @@ const NeuralCard = ({ item, variant = 'small' }) => {
             viewport={{ once: true, amount: 0.3 }}
             whileHover={{ y: -6, scale: 1.01 }}
             transition={{ type: 'spring', stiffness: 260, damping: 24 }}
+            className={styles.cardWrapper}
         >
             <Box
-                sx={{
+                ref={cardRef}
+                onMouseMove={handleMouseMove}
+                className={styles.neuralCard}
+                style={{
+                    '--card-color': item.color,
                     background: isHero
                         ? `linear-gradient(140deg, ${itemGlowSoft} 0%, rgba(10,10,10,0.72) 32%, rgba(10,10,10,0.72) 100%)`
                         : `linear-gradient(140deg, ${hexToRgba(item.color, 0.08)} 0%, rgba(10,10,10,0.62) 30%, rgba(10,10,10,0.62) 100%)`,
+                }}
+                sx={{
                     backdropFilter: 'blur(16px)',
                     border: `1px solid ${hexToRgba(item.color, 0.18)}`,
                     borderRadius: '18px',
@@ -157,16 +176,6 @@ const NeuralCard = ({ item, variant = 'small' }) => {
                     '&:hover': {
                         borderColor: item.color,
                         boxShadow: `0 8px 34px ${item.color}16`,
-                    },
-                    '&::before': {
-                        content: '""',
-                        position: 'absolute',
-                        inset: 0,
-                        borderRadius: '18px',
-                        pointerEvents: 'none',
-                        background: `radial-gradient(circle at 88% 12%, ${itemGlowEdge} 0%, transparent 48%)`,
-                        opacity: isHero ? 0.95 : 0.78,
-                        zIndex: 0
                     }
                 }}
             >
@@ -238,44 +247,6 @@ const NeuralCard = ({ item, variant = 'small' }) => {
                 >
                     {item.description}
                 </Typography>
-
-                <Stack direction="row" gap={{ xs: 1, md: 1.2 }} flexWrap="wrap" position="relative" zIndex={1}>
-                    {item.techs.map((tech) => {
-                        const techMeta = getToolMeta(tech);
-                        const Icon = getStackIcon(techMeta) ?? VscCode;
-                        return (
-                            <motion.div
-                                key={tech.name}
-                                whileHover={{ scale: 1.04, y: -2 }}
-                                transition={{ type: 'spring', stiffness: 320, damping: 20 }}
-                            >
-                                <Box
-                                    sx={{
-                                        display: 'flex', alignItems: 'center', gap: 1,
-                                        px: { xs: 1.25, md: 1.45 }, py: { xs: 0.62, md: 0.74 },
-                                        borderRadius: '999px',
-                                        minWidth: { xs: 104, md: 112 },
-                                        minHeight: { xs: 32, md: 34 },
-                                        justifyContent: 'center',
-                                        background: itemChipBg,
-                                        border: `1px solid ${hexToRgba(item.color, 0.16)}`,
-                                        transition: 'all 0.24s ease',
-                                        '&:hover': {
-                                            background: hexToRgba(item.color, 0.12),
-                                            borderColor: item.color,
-                                            boxShadow: `0 0 0 1px ${item.color}22 inset`
-                                        }
-                                    }}
-                                >
-                                    <Icon size={15} color={item.color} />
-                                    <Typography variant="caption" sx={{ color: '#E4E4E7', fontWeight: 600, fontSize: { xs: '0.68rem', md: '0.72rem' }, letterSpacing: '0.01em' }}>
-                                        {techMeta.name}
-                                    </Typography>
-                                </Box>
-                            </motion.div>
-                        )
-                    })}
-                </Stack>
             </Box>
         </motion.div>
     );

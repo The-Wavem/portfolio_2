@@ -35,3 +35,37 @@
     opacity: 0.12;
   }
 }
+
+.tagsContainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: auto;
+  position: relative;
+  z-index: 1;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--badge-border, rgba(255, 255, 255, 0.1));
+  color: #fff;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(8px);
+  cursor: default;
+}
+
+.badge:hover {
+  background: var(--badge-bg-hover, rgba(255, 255, 255, 0.08));
+  border-color: var(--badge-border-hover, rgba(255, 255, 255, 0.3));
+  box-shadow: 0 0 12px var(--badge-glow, transparent);
+  transform: scale(1.05);
+}

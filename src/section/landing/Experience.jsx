@@ -164,6 +164,8 @@ const NeuralCard = ({ item, variant = 'small' }) => {
                         : `linear-gradient(140deg, ${hexToRgba(item.color, 0.08)} 0%, rgba(10,10,10,0.62) 30%, rgba(10,10,10,0.62) 100%)`,
                 }}
                 sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
                     backdropFilter: 'blur(16px)',
                     border: `1px solid ${hexToRgba(item.color, 0.18)}`,
                     borderRadius: '18px',
@@ -241,12 +243,30 @@ const NeuralCard = ({ item, variant = 'small' }) => {
                         display: '-webkit-box',
                         WebkitLineClamp: isHero ? 4 : 5,
                         WebkitBoxOrient: 'vertical',
-                        overflow: 'hidden',
-                        minHeight: isHero ? { xs: '6.6em', md: '6.2em' } : { xs: '7.7em', md: '7.2em' }
+                        overflow: 'hidden'
                     }}
                 >
                     {item.description}
                 </Typography>
+
+                {item.tags && item.tags.length > 0 && (
+                    <div className={styles.tagsContainer}>
+                        {item.tags.map(tag => (
+                            <div
+                                key={tag}
+                                className={styles.badge}
+                                style={{
+                                    '--badge-border': hexToRgba(item.color, 0.25),
+                                    '--badge-bg-hover': hexToRgba(item.color, 0.08),
+                                    '--badge-border-hover': item.color,
+                                    '--badge-glow': hexToRgba(item.color, 0.3)
+                                }}
+                            >
+                                {tag}
+                            </div>
+                        ))}
+                    </div>
+                )}
             </Box>
         </motion.div>
     );

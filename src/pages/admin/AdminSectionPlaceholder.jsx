@@ -1,9 +1,11 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { Alert, Box, Button, Checkbox, Chip, Container, Dialog, DialogContent, DialogTitle, Stack, TextField, Typography } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import { TbArrowUpRight } from 'react-icons/tb';
 import { editorConfigByPageSection, pageLabelByKey } from './editors';
 import { useAdminUnsavedChanges } from './adminUnsavedChanges.context';
+import Hero from '@/section/landing/Hero';
+import ServicesHeroSection from '@/section/services/ServicesHeroSection';
 
 function getNestedValue(obj, path) {
     return path.split('.').reduce((acc, key) => (acc ? acc[key] : undefined), obj);
@@ -611,8 +613,31 @@ function SectionPreview({ config, draft }) {
     );
 }
 
+const componentMap = {
+    homeHero: Hero,
+    servicesHero: ServicesHeroSection,
+};
+
+function LivePreviewWrapper({ config, draft }) {
+    const Component = componentMap[config.previewType];
+
+    if (!Component) {
+        return (
+            <Box sx={{ p: 4, textAlign: 'center', bgcolor: 'rgba(255,255,255,0.02)', borderRadius: '16px' }}>
+                <Typography sx={{ color: 'rgba(255,255,255,0.5)' }}>Preview indisponível para {config.previewType}</Typography>
+            </Box>
+        );
+    }
+
+    return (
+        <Box sx={{ transform: 'scale(0.85)', transformOrigin: 'top center', width: '117%', pointerEvents: 'none' }}>
+            <Component content={draft} accent={draft.accent || '#7C3AED'} />
+        </Box>
+    );
+}
+
 function ContentEditor({ config }) {
-    const { setHasUnsavedChanges } = useAdminUnsavedChanges();
+    const { setHasUnsavedChanges, registerSaveAction, setIsSaving } = useAdminUnsavedChanges();
     const [draft, setDraft] = useState(() => structuredClone(config.getContent()));
     const [savedSnapshot, setSavedSnapshot] = useState(() => createContentSnapshot(config.getContent()));
     const [savedMessage, setSavedMessage] = useState(null);
@@ -725,7 +750,7 @@ function ContentEditor({ config }) {
         return value ?? '';
     }
 
-    async function handleSave() {
+    const handleSave = useCallback(async () => {
         setSavedMessage(null);
         setSaveErrorMessage('');
 
@@ -736,6 +761,7 @@ function ContentEditor({ config }) {
         }
 
         setIsSavingRemote(true);
+        setIsSaving(true);
 
         try {
             const response = await config.saveRemote(draft);
@@ -756,8 +782,13 @@ function ContentEditor({ config }) {
             setSaveErrorMessage('Falha ao conectar com o Firebase. O rascunho continua local.');
         } finally {
             setIsSavingRemote(false);
+            setIsSaving(false);
         }
-    }
+    }, [config, draft, currentSnapshot, setIsSaving]);
+
+    useEffect(() => {
+        registerSaveAction(handleSave);
+    }, [registerSaveAction, handleSave]);
 
     function handleProjectChange(index, key, value) {
         if (!config.dynamicProjectsPath) {
@@ -947,6 +978,7 @@ function ContentEditor({ config }) {
     }
 
     return (
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: '40% 60%' }, gap: 3, alignItems: 'start' }}>
         <Box
             sx={{
                 p: { xs: 2.4, md: 3.2 },
@@ -1386,9 +1418,9 @@ function ContentEditor({ config }) {
                         top: { xl: 18 }
                     }}
                 >
-                    <Typography sx={{ color: '#fff', fontWeight: 800, fontSize: '0.92rem' }}>Preview ao vivo</Typography>
+                    <Typography sx={{ color: '#fff', fontWeight: 800, fontSize: '0.92rem' }}>Fallback de Preview</Typography>
                     <Typography sx={{ mt: 0.4, color: 'rgba(228,228,231,0.68)', fontSize: '0.78rem' }}>
-                        Atualiza conforme você edita.
+                        Usado caso o componente Live Preview não esteja disponível.
                     </Typography>
                     <Box sx={{ mt: 1.1 }}>
                         <SectionPreview config={config} draft={draft} />
@@ -1396,22 +1428,7 @@ function ContentEditor({ config }) {
                 </Box>
             </Box>
 
-            <Stack direction="row" spacing={1.1} sx={{ mt: 2 }}>
-                <Button
-                    variant="contained"
-                    onClick={handleSave}
-                    disabled={isSavingRemote}
-                    sx={{
-                        borderRadius: '999px',
-                        textTransform: 'none',
-                        fontWeight: 700,
-                        bgcolor: '#7C3AED',
-                        '&:hover': { bgcolor: '#6D28D9' }
-                    }}
-                >
-                    {isSavingRemote ? 'Salvando...' : 'Salvar alterações'}
-                </Button>
-            </Stack>
+            {/* Old save button removed */}
 
             {savedMessage ? (
                 <Alert
@@ -1770,6 +1787,10 @@ function ContentEditor({ config }) {
                     </DialogContent>
                 </Dialog>
             ) : null}
+        </Box>
+        <Box sx={{ position: 'sticky', top: 24 }}>
+            <LivePreviewWrapper config={config} draft={draft} />
+        </Box>
         </Box>
     );
 }

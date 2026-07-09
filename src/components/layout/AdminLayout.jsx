@@ -15,6 +15,7 @@ import {
 } from 'react-icons/tb';
 import { AdminUnsavedChangesContext } from '@/pages/admin/adminUnsavedChanges.context';
 import { signOutAdmin } from '@/service/auth/adminAuth.service';
+import AdminGlobalSave from '@/pages/admin/components/AdminGlobalSave';
 
 const adminPageGroups = [
     {
@@ -67,10 +68,17 @@ export default function AdminLayout() {
     const currentPage = pathParts[1] || null;
     const currentSection = pathParts[2] || null;
     const [expandedPage, setExpandedPage] = useState(currentPage);
+    const [isCmsExpanded, setIsCmsExpanded] = useState(true);
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+    const [triggerSaveAction, setTriggerSaveAction] = useState(null);
     const [pendingNavigationPath, setPendingNavigationPath] = useState(null);
     const [pendingLogout, setPendingLogout] = useState(false);
     const currentPathRef = useRef(`${location.pathname}${location.search}${location.hash}`);
+
+    const registerSaveAction = useCallback((action) => {
+        setTriggerSaveAction(() => action);
+    }, []);
 
     useEffect(() => {
         if (currentPage) {
@@ -161,7 +169,15 @@ export default function AdminLayout() {
     }
 
     return (
-        <AdminUnsavedChangesContext.Provider value={{ hasUnsavedChanges, setHasUnsavedChanges, requestNavigation }}>
+        <AdminUnsavedChangesContext.Provider value={{
+            hasUnsavedChanges,
+            setHasUnsavedChanges,
+            requestNavigation,
+            isSaving,
+            setIsSaving,
+            registerSaveAction,
+            triggerSaveAction
+        }}>
             <Box
                 sx={{
                     minHeight: '100vh',
@@ -227,7 +243,32 @@ export default function AdminLayout() {
                         Visão Geral
                     </Button>
 
-                    {adminPageGroups.map((group) => {
+                    <Button
+                        onClick={() => setIsCmsExpanded(!isCmsExpanded)}
+                        sx={{
+                            width: '100%',
+                            justifyContent: 'space-between',
+                            px: 1.4,
+                            py: 1.15,
+                            mt: 1,
+                            borderRadius: '12px',
+                            color: 'rgba(244,244,245,0.7)',
+                            textTransform: 'none',
+                            fontWeight: 700,
+                            fontSize: '0.85rem',
+                            letterSpacing: '0.05em',
+                            '&:hover': {
+                                bgcolor: 'rgba(255,255,255,0.04)'
+                            }
+                        }}
+                    >
+                        <span>EDITOR DE SITE (CMS)</span>
+                        {isCmsExpanded ? <TbChevronDown size={18} /> : <TbChevronRight size={18} />}
+                    </Button>
+
+                    {isCmsExpanded && (
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, pl: 1, borderLeft: '1px solid rgba(255,255,255,0.06)', ml: 1.2 }}>
+                            {adminPageGroups.map((group) => {
                         const Icon = group.icon;
                         const isExpanded = expandedPage === group.key;
                         const isPageActive = currentPage === group.key;
@@ -293,6 +334,8 @@ export default function AdminLayout() {
                             </Box>
                         );
                     })}
+                        </Box>
+                    )}
                 </Stack>
 
                 <Box sx={{ mt: 'auto', pt: 2 }}>
@@ -372,6 +415,8 @@ export default function AdminLayout() {
                     </Button>
                 </DialogActions>
             </Dialog>
+
+            <AdminGlobalSave />
         </AdminUnsavedChangesContext.Provider>
     );
 }

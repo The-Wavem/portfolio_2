@@ -5,6 +5,8 @@ import {
   useSpring,
   useTransform,
   useInView,
+  useMotionValue,
+  animate,
 } from "framer-motion";
 import { Box, Typography, Stack, useTheme, useMediaQuery } from "@mui/material";
 import {
@@ -197,8 +199,10 @@ function TimelineStep({
 export default function ElasticTimeline({ steps = [] }) {
   const containerRef = useRef(null);
   const [svgHeight, setSvgHeight] = useState(800);
+  const [isHovering, setIsHovering] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const ghostMouseY = useMotionValue(0);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -231,6 +235,36 @@ export default function ElasticTimeline({ steps = [] }) {
     return () => observer.disconnect();
   }, [ctrlY]);
 
+  // IDLE STATE (Ghost Mouse Animation)
+  useEffect(() => {
+    if (isHovering || svgHeight === 0) return;
+
+    // A onda fantasma patrulha de 0 a svgHeight
+    const animation = animate(ghostMouseY, [0, svgHeight], {
+      duration: 8,
+      ease: "linear",
+      repeat: Infinity,
+      repeatType: "reverse",
+    });
+
+    const unsubscribe = ghostMouseY.on("change", (val) => {
+      ctrlY.set(val);
+      
+      // Distorção Fantasma: Cria uma oscilação contínua e muito sutil (max 8px)
+      const pull = Math.sin(val / 50) * 8;
+      ctrlX.set(40 + pull);
+    });
+
+    return () => {
+      animation.stop();
+      unsubscribe();
+    };
+  }, [isHovering, svgHeight, ghostMouseY, ctrlX, ctrlY]);
+
+  const handleMouseEnter = () => {
+    setIsHovering(true);
+  };
+
   const handleMouseMove = (e) => {
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
@@ -259,8 +293,9 @@ export default function ElasticTimeline({ steps = [] }) {
   };
 
   const handleMouseLeave = () => {
-    ctrlX.set(40);
-    ctrlY.set(svgHeight / 2);
+    setIsHovering(false);
+    // A transição de volta para o patrulhamento fantasma
+    // será suavizada automaticamente pelo useSpring do ctrlX e ctrlY
   };
 
   // CONSTRUÇÃO DO PATH SEGMENTADO (Onda Local)
@@ -281,6 +316,7 @@ export default function ElasticTimeline({ steps = [] }) {
     <div
       className={styles.timelineWrapper}
       ref={containerRef}
+      onMouseEnter={handleMouseEnter}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
@@ -314,14 +350,6 @@ export default function ElasticTimeline({ steps = [] }) {
             stroke="url(#neonTimelineGrad)"
             strokeWidth="4"
             style={{ pathLength: scaleY }}
-          />
-          <motion.path
-            d={pathD}
-            vectorEffect="non-scaling-stroke"
-            fill="none"
-            stroke="#A78BFA"
-            strokeWidth="8"
-            style={{ pathLength: scaleY, filter: "blur(8px)", opacity: 0.6 }}
           />
         </svg>
       </div>

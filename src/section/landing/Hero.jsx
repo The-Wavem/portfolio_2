@@ -12,11 +12,16 @@ import NetworkBackground from "./NetworkBackground";
 const MotionTypography = motion.create(Typography);
 const MotionBox = motion.create(Box);
 
-export default function Hero() {
-  const [hero, setHero] = useState(() => getHomeHeroContent());
+export default function Hero({ content }) {
+  const [hero, setHero] = useState(() => content || getHomeHeroContent());
 
   useEffect(() => {
     let isMounted = true;
+
+    if (content) {
+      setHero(content);
+      return;
+    }
 
     async function loadHeroRemote() {
       try {
@@ -34,13 +39,9 @@ export default function Hero() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [content]);
 
-  const badges = [
-    "Comunicação direta",
-    "Arquitetura escalável",
-    "Pós-lançamento ativo",
-  ];
+  const badges = hero?.badges || [];
 
   return (
     <Box
@@ -131,7 +132,7 @@ export default function Hero() {
                 mb: 3,
               }}
             >
-              Engenharia Sólida e{" "}
+              {hero?.titlePrefix || ""} {" "}
               <span
                 style={{
                   color: "#7C3AED",
@@ -140,7 +141,7 @@ export default function Hero() {
                   WebkitBackgroundClip: "text",
                 }}
               >
-                Design para Problemas Reais.
+                {hero?.titleHighlight || ""}
               </span>
             </MotionTypography>
 
@@ -156,8 +157,8 @@ export default function Hero() {
                 mb: 4,
               }}
             >
-              Equilibramos estética, clareza de fluxo e arquitetura de ponta
-              para gerar resultados contínuos.
+              {hero?.description || ""}
+
             </Typography>
 
             <Stack
@@ -168,13 +169,13 @@ export default function Hero() {
             >
               <Button
                 component="a"
-                href={hero?.primaryCta?.href || "#"}
+                href={hero?.primaryCTA?.link || "#"}
                 onClick={() =>
                   trackAction({
                     page: "home",
                     section: "hero",
                     action: "click_primary_cta",
-                    label: hero?.primaryCta?.label || "Iniciar Projeto",
+                    label: hero?.primaryCTA?.label || "Iniciar Projeto",
                   })
                 }
                 variant="contained"
@@ -191,18 +192,18 @@ export default function Hero() {
                   },
                 }}
               >
-                {hero?.primaryCta?.label || "Iniciar Projeto"}
+                {hero?.primaryCTA?.label || "Iniciar Projeto"}
               </Button>
 
               <Button
                 component={RouterLink}
-                to={hero?.secondaryCta?.to || "/portfolio"}
+                to={hero?.secondaryCTA?.link || "/portfolio"}
                 onClick={() =>
                   trackAction({
                     page: "home",
                     section: "hero",
                     action: "click_secondary_cta",
-                    label: hero?.secondaryCta?.label || "Ver Portfolio",
+                    label: hero?.secondaryCTA?.label || "Ver Portfolio",
                   })
                 }
                 variant="outlined"
@@ -210,8 +211,8 @@ export default function Hero() {
                 sx={{
                   px: 4,
                   py: 1.5,
-                  fontSize: "0.95rem",
-                  fontWeight: 700,
+                  fontSize: "1rem",
+                  fontWeight: 800,
                   borderRadius: "999px",
                   borderColor: "rgba(255,255,255,0.35)",
                   color: "#fff",
@@ -221,7 +222,7 @@ export default function Hero() {
                   },
                 }}
               >
-                {hero?.secondaryCta?.label || "Ver Portfolio"}
+                {hero?.secondaryCTA?.label || "Ver Portfolio"}
               </Button>
             </Stack>
           </Box>

@@ -1308,10 +1308,7 @@ function ContentEditor({ config }) {
 
   function handleChange(field, rawValue) {
     const value = field.arraySeparator
-      ? rawValue
-          .split(field.arraySeparator)
-          .map((item) => item.trim())
-          .filter(Boolean)
+      ? rawValue.split(field.arraySeparator)
       : rawValue;
 
     setDraft((current) => setNestedValue(current, field.path, value));
@@ -1320,7 +1317,7 @@ function ContentEditor({ config }) {
   function displayValue(field) {
     const value = getNestedValue(draft, field.path);
     if (Array.isArray(value)) {
-      return value.join(`${field.arraySeparator || ";"} `);
+      return value.join(field.arraySeparator || ";");
     }
 
     return value ?? "";
@@ -1340,8 +1337,16 @@ function ContentEditor({ config }) {
     setIsSaving(true);
 
     try {
-      const response = await config.saveRemote(draft);
-
+      const draftToSave = structuredClone(draft);
+      config.fields?.forEach(field => {
+        if (field.arraySeparator) {
+          const val = getNestedValue(draftToSave, field.path);
+          if (Array.isArray(val)) {
+            setNestedValue(draftToSave, field.path, val.map(v => v.trim()).filter(Boolean));
+          }
+        }
+      });
+      const response = await config.saveRemote(draftToSave);
       if (response?.ok) {
         setSavedSnapshot(currentSnapshot);
         setSavedMessage("firebase");

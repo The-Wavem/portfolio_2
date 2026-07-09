@@ -1,23 +1,19 @@
 import { getFirebaseContent, setFirebaseContent } from '@/service/firebase';
 
 export const homeHeroContent = {
-    titleStart: 'Engenharia Sólida e',
+    badges: ['Design', 'Engenharia', 'Performance'],
+    titlePrefix: 'Engenharia Sólida e',
     titleHighlight: 'Design para Problemas Reais.',
     description:
         'Equilibramos estética, clareza de fluxo e arquitetura de ponta para gerar resultados contínuos.',
-    primaryCta: {
+    primaryCTA: {
         label: 'Iniciar Projeto',
-        href: '#contato'
+        link: '#contato'
     },
-    secondaryCta: {
+    secondaryCTA: {
         label: 'Ver Portfolio',
-        to: '/portfolio'
-    },
-    trustPills: [
-        'Comunicação direta',
-        'Arquitetura escalável',
-        'Pós-lançamento ativo'
-    ]
+        link: '/portfolio'
+    }
 };
 
 export function getHomeHeroContent() {

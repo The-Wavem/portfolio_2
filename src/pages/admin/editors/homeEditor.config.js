@@ -10,6 +10,7 @@ import {
     getHomePortfolioContent,
     getHomePortfolioContentRemote,
     getPortfolioProjects,
+    getPortfolioProjectsRemote,
     getHomeProcessContent,
     getHomeProcessContentRemote,
     setHomeContactContentRemote,
@@ -97,15 +98,12 @@ export const homeEditorConfig = {
         saveRemote: setHomePortfolioContentRemote,
         previewType: 'homePortfolio',
         selectableProjectsPath: 'selectedProjectIds',
-        selectableProjectsSource: getPortfolioProjects,
+        selectableProjectsSource: getPortfolioProjectsRemote,
         fields: [
-            { path: 'eyebrow', label: 'Eyebrow' },
+            { path: 'topTitle', label: 'Título Superior' },
             { path: 'titleStart', label: 'Título (início)' },
             { path: 'titleHighlight', label: 'Título (destaque)' },
-            { path: 'description', label: 'Descrição', multiline: true, rows: 3, fullWidth: true },
-            { path: 'cta.label', label: 'CTA - texto' },
-            { path: 'cta.to', label: 'CTA - rota' },
-            { path: 'topTags', label: 'Tags do topo (separadas por ;)', arraySeparator: ';', multiline: true, rows: 3, fullWidth: true }
+            { path: 'buttonText', label: 'Texto do Botão', fullWidth: true }
         ]
     },
     contato: {

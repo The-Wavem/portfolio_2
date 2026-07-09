@@ -19,13 +19,21 @@ import ProjectDetailsModal from "@/components/organism/ProjectDetailsModal";
 import { trackAction } from "@/service/analytics/tracking.service";
 import styles from "./Portfolio.module.css";
 
-export default function Portfolio() {
+export default function Portfolio({ content }) {
   const theme = useTheme();
-  const [portfolio, setPortfolio] = useState(() => getHomePortfolioContent());
+  const [portfolio, setPortfolio] = useState(() => content || getHomePortfolioContent());
   const [allProjects, setAllProjects] = useState(() => getPortfolioProjects());
 
   useEffect(() => {
     let isMounted = true;
+
+    if (content) {
+      setPortfolio(content);
+      if (content.projects) {
+        setAllProjects(content.projects);
+      }
+      return;
+    }
 
     async function loadRemotePortfolio() {
       try {
@@ -55,7 +63,7 @@ export default function Portfolio() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [content]);
 
   const selectedProjectIds = Array.isArray(portfolio?.selectedProjectIds)
     ? portfolio.selectedProjectIds
@@ -63,9 +71,9 @@ export default function Portfolio() {
         .filter(Number.isFinite)
     : [];
   const projects = selectedProjectIds.length
-    ? allProjects.filter((project) =>
-        selectedProjectIds.includes(Number(project.id)),
-      )
+    ? selectedProjectIds
+        .map((id) => allProjects.find((project) => Number(project.id) === id))
+        .filter(Boolean)
     : allProjects;
   const [selectedProject, setSelectedProject] = useState(null);
 
@@ -91,7 +99,7 @@ export default function Portfolio() {
             color="primary"
             className={styles.eyebrow}
           >
-            {portfolio?.eyebrow}
+            {portfolio?.topTitle}
           </Typography>
 
           <Typography variant="h2" component="h2" className={styles.title}>
@@ -103,32 +111,25 @@ export default function Portfolio() {
 
           <Button
             component={RouterLink}
-            to={portfolio?.cta?.to || "/projetos"}
+            to="/projetos"
             onClick={() =>
               trackAction({
                 page: "home",
                 section: "portfolio",
                 action: "click_portfolio_cta",
-                label: portfolio?.cta?.label,
+                label: portfolio?.buttonText,
               })
             }
             variant="outlined"
             className={styles.ctaButton}
           >
-            {portfolio?.cta?.label}
+            {portfolio?.buttonText}
           </Button>
         </div>
 
-        <Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: "repeat(12, minmax(0, 1fr))",
-            gap: { xs: 2.4, sm: 2.8, md: 3.2 },
-            alignItems: "stretch",
-          }}
-        >
+        <div className={styles.bentoGrid}>
           {projects.map((project, index) => (
-            <Box key={project.id} sx={{ gridColumn: project.grid }}>
+            <div key={project.id} className={styles.bentoItem}>
               <ProjectCard
                 project={project}
                 index={index}
@@ -143,9 +144,9 @@ export default function Portfolio() {
                 }}
                 summarySx={{ maxWidth: { xs: "98%", md: "86%" } }}
               />
-            </Box>
+            </div>
           ))}
-        </Box>
+        </div>
       </Container>
 
       <ProjectDetailsModal

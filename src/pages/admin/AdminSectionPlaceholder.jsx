@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
 import {
   Alert,
+  Autocomplete,
   Box,
   Button,
   Checkbox,
@@ -18,6 +19,7 @@ import { TbArrowUpRight } from "react-icons/tb";
 import { editorConfigByPageSection, pageLabelByKey } from "./editors";
 import { useAdminUnsavedChanges } from "./adminUnsavedChanges.context";
 import Hero from "@/section/landing/Hero";
+import Portfolio from "@/section/landing/Portfolio";
 import ServicesHeroSection from "@/section/services/ServicesHeroSection";
 
 function getNestedValue(obj, path) {
@@ -1175,10 +1177,11 @@ function SectionPreview({ config, draft }) {
 
 const componentMap = {
   homeHero: Hero,
+  homePortfolio: Portfolio,
   servicesHero: ServicesHeroSection,
 };
 
-function LivePreviewWrapper({ config, draft }) {
+function LivePreviewWrapper({ config, draft, selectableOptions }) {
   const Component = componentMap[config.previewType];
 
   if (!Component) {
@@ -1198,9 +1201,24 @@ function LivePreviewWrapper({ config, draft }) {
     );
   }
 
+  let previewContent = draft;
+
+  if (config.previewType === 'homePortfolio' && selectableOptions && selectableOptions.length > 0) {
+      const allProjects = selectableOptions;
+      const selectedIds = Array.isArray(draft.selectedProjectIds) ? draft.selectedProjectIds : [];
+      const computedProjects = selectedIds
+          .map(id => allProjects.find(p => String(p.id) === String(id)))
+          .filter(Boolean);
+      
+      previewContent = {
+          ...draft,
+          projects: computedProjects
+      };
+  }
+
   return (
     <Box sx={{ width: "100%", pointerEvents: "none" }}>
-      <Component content={draft} accent={draft.accent || "#7C3AED"} />
+      <Component content={previewContent} accent={previewContent.accent || "#7C3AED"} />
     </Box>
   );
 }
@@ -1214,6 +1232,7 @@ function ContentEditor({ config }) {
   const [savedSnapshot, setSavedSnapshot] = useState(() =>
     createContentSnapshot(config.getContent()),
   );
+  const [selectableOptions, setSelectableOptions] = useState([]);
   const [savedMessage, setSavedMessage] = useState(null);
   const [saveErrorMessage, setSaveErrorMessage] = useState("");
   const [isLoadingRemote, setIsLoadingRemote] = useState(false);
@@ -1273,8 +1292,23 @@ function ContentEditor({ config }) {
 
     loadRemoteContent();
 
+    let isSourceMounted = true;
+    if (config.selectableProjectsSource) {
+      const source = config.selectableProjectsSource();
+      if (source instanceof Promise) {
+        source.then(data => {
+            if (isSourceMounted) setSelectableOptions(data || []);
+        });
+      } else {
+        setSelectableOptions(source || []);
+      }
+    } else {
+      setSelectableOptions([]);
+    }
+
     return () => {
       isMounted = false;
+      isSourceMounted = false;
     };
   }, [config]);
 
@@ -1552,8 +1586,8 @@ function ContentEditor({ config }) {
       return;
     }
 
-    const draggedId = Number(draggedProjectId);
-    const targetId = Number(targetProjectId);
+    const draggedId = String(draggedProjectId);
+    const targetId = String(targetProjectId);
 
     if (draggedId === targetId) {
       return;
@@ -1562,7 +1596,7 @@ function ContentEditor({ config }) {
     setDraft((current) => {
       const currentIds = getNestedValue(current, config.selectableProjectsPath);
       const normalizedIds = Array.isArray(currentIds)
-        ? currentIds.map((id) => Number(id)).filter(Number.isFinite)
+        ? currentIds.map((id) => String(id))
         : [];
 
       const draggedIndex = normalizedIds.indexOf(draggedId);
@@ -2074,142 +2108,134 @@ function ContentEditor({ config }) {
                   sx={{
                     color: "rgba(228,228,231,0.68)",
                     fontSize: "0.8rem",
-                    mb: 0.9,
+                    mb: 1.6,
                   }}
                 >
-                  Selecione com checkbox e arraste os itens selecionados para
-                  ordenar.
+                  Selecione e ordene os projetos exibidos. A ordem das tags reflete a tela.
                 </Typography>
 
-                <Stack spacing={0.55} sx={{ mb: 1.2 }}>
-                  {config.selectableProjectsSource().map((project) => {
-                    const selectedIds = getNestedValue(
-                      draft,
-                      config.selectableProjectsPath,
-                    );
-                    const normalizedSelectedIds = Array.isArray(selectedIds)
-                      ? selectedIds
-                          .map((id) => Number(id))
-                          .filter(Number.isFinite)
-                      : [];
-                    const isSelected = normalizedSelectedIds.includes(
-                      Number(project.id),
-                    );
-
-                    return (
-                      <Box
-                        key={`checkbox-${project.id}`}
-                        sx={{
-                          px: 1,
-                          py: 0.55,
-                          borderRadius: "10px",
-                          border: "1px solid rgba(255,255,255,0.12)",
-                          bgcolor: "rgba(255,255,255,0.02)",
-                        }}
-                      >
-                        <Stack
-                          direction="row"
-                          alignItems="center"
-                          spacing={0.7}
-                        >
-                          <Checkbox
-                            checked={isSelected}
-                            onChange={() =>
-                              handleToggleSelectedProject(project.id)
-                            }
-                            sx={{
-                              color: "rgba(228,228,231,0.62)",
-                              "&.Mui-checked": { color: "#A78BFA" },
-                              p: 0.4,
-                            }}
-                          />
-                          <Typography
-                            sx={{
-                              color: "#E4E4E7",
-                              fontSize: "0.84rem",
-                              fontWeight: 600,
-                            }}
-                          >
-                            {project.title}
-                          </Typography>
-                        </Stack>
-                      </Box>
-                    );
-                  })}
-                </Stack>
+                <Autocomplete
+                  multiple
+                  options={selectableOptions}
+                  getOptionLabel={(option) => option.title}
+                  value={
+                    (Array.isArray(getNestedValue(draft, config.selectableProjectsPath)) ? getNestedValue(draft, config.selectableProjectsPath) : [])
+                      .map(id => selectableOptions.find(p => String(p.id) === String(id)))
+                      .filter(Boolean)
+                  }
+                  onChange={(event, newValue) => {
+                    const newIds = newValue.map(project => String(project.id));
+                    handleChange({ path: config.selectableProjectsPath, arraySeparator: null }, newIds);
+                  }}
+                  isOptionEqualToValue={(option, value) => String(option.id) === String(value.id)}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      placeholder="Buscar e selecionar..."
+                      sx={{
+                        "& .MuiOutlinedInput-root": {
+                          color: "#F5F5F5",
+                          borderRadius: "14px",
+                          bgcolor: "rgba(255,255,255,0.03)",
+                        }
+                      }}
+                    />
+                  )}
+                  renderTags={(value, getTagProps) =>
+                    value.map((option, index) => {
+                      const tagProps = getTagProps({ index });
+                      return (
+                        <Chip
+                          {...tagProps}
+                          key={option.id}
+                          label={option.title}
+                          sx={{ bgcolor: "rgba(255,255,255,0.05)", color: "#fff", border: "1px solid rgba(255,255,255,0.1)" }}
+                        />
+                      );
+                    })
+                  }
+                />
 
                 <Typography
                   sx={{
                     color: "#fff",
                     fontWeight: 700,
                     fontSize: "0.84rem",
-                    mb: 0.7,
+                    mb: 1,
+                    mt: 3,
                   }}
                 >
-                  Ordem de exibição
+                  Ordem de Exibição (Arraste horizontalmente)
                 </Typography>
 
-                <Stack spacing={0.7}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: 1.5,
+                    overflowX: "auto",
+                    pb: 2,
+                    "&::-webkit-scrollbar": { height: "6px" },
+                    "&::-webkit-scrollbar-thumb": { bgcolor: "rgba(255,255,255,0.1)", borderRadius: "3px" }
+                  }}
+                >
                   {(() => {
                     const selectedIds = getNestedValue(
                       draft,
                       config.selectableProjectsPath,
                     );
                     const normalizedSelectedIds = Array.isArray(selectedIds)
-                      ? selectedIds
-                          .map((id) => Number(id))
-                          .filter(Number.isFinite)
+                      ? selectedIds.map(String)
                       : [];
-                    const projectsById = new Map(
-                      config
-                        .selectableProjectsSource()
-                        .map((project) => [Number(project.id), project]),
-                    );
+                    
+                    return normalizedSelectedIds.map((projectId, index) => {
+                      const project = selectableOptions.find(p => String(p.id) === projectId);
 
-                    return normalizedSelectedIds.map((projectId) => {
-                      const project = projectsById.get(Number(projectId));
-
-                      if (!project) {
-                        return null;
-                      }
+                      if (!project) return null;
 
                       return (
                         <Box
-                          key={`selected-${project.id}`}
+                          key={`drag-card-${project.id}`}
                           draggable
-                          onDragStart={() => setDraggedProjectId(project.id)}
+                          onDragStart={(event) => {
+                            setDraggedProjectId(project.id);
+                            event.dataTransfer.effectAllowed = "move";
+                          }}
                           onDragOver={(event) => event.preventDefault()}
-                          onDrop={() => {
+                          onDrop={(event) => {
+                            event.preventDefault();
                             handleDropSelectedProject(project.id);
                             setDraggedProjectId(null);
                           }}
                           onDragEnd={() => setDraggedProjectId(null)}
                           sx={{
-                            px: 1.1,
-                            py: 0.9,
-                            borderRadius: "10px",
-                            border:
-                              draggedProjectId === project.id
-                                ? "1px solid rgba(124,58,237,0.7)"
-                                : "1px solid rgba(255,255,255,0.14)",
-                            bgcolor: "rgba(124,58,237,0.16)",
+                            flex: "0 0 auto",
+                            width: "220px",
+                            p: 1.5,
+                            borderRadius: "12px",
+                            bgcolor: draggedProjectId === project.id ? "rgba(124,58,237,0.25)" : "rgba(255,255,255,0.03)",
+                            border: draggedProjectId === project.id ? "1px dashed rgba(124,58,237,0.8)" : "1px solid rgba(255,255,255,0.1)",
                             cursor: "grab",
+                            "&:active": { cursor: "grabbing" },
+                            transition: "all 0.2s"
                           }}
                         >
-                          <Typography
-                            sx={{
-                              color: "#DDD6FE",
-                              fontSize: "0.82rem",
-                              fontWeight: 700,
-                            }}
-                          >
-                            ↕ {project.title}
+                          <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
+                            <Box sx={{ width: 24, height: 24, borderRadius: "50%", bgcolor: "rgba(124,58,237,0.2)", color: "#A78BFA", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.75rem", fontWeight: 800 }}>
+                              {index + 1}
+                            </Box>
+                            <Typography sx={{ color: "rgba(255,255,255,0.5)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase" }}>
+                              Arrastar
+                            </Typography>
+                          </Stack>
+                          <Typography sx={{ color: "#fff", fontSize: "0.85rem", fontWeight: 600, lineHeight: 1.3, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                            {project.title}
                           </Typography>
                         </Box>
                       );
                     });
                   })()}
-                </Stack>
+                </Box>
+
               </Box>
             ) : null}
           </Box>
@@ -2962,7 +2988,7 @@ function ContentEditor({ config }) {
             Live Preview
           </Typography>
         </Box>
-        <LivePreviewWrapper config={config} draft={draft} />
+        <LivePreviewWrapper config={config} draft={draft} selectableOptions={selectableOptions} />
       </Box>
     </Stack>
   );

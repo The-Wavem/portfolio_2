@@ -54,3 +54,59 @@
     border-color: #7C3AED;
     background-color: rgba(124, 58, 237, 0.08);
 }
+
+/* Bento Grid Strict Layout */
+.bentoGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    align-items: stretch;
+}
+
+.bentoItem {
+    height: 100%;
+    min-height: 380px;
+}
+
+@media (min-width: 900px) {
+    .bentoGrid {
+        grid-template-columns: repeat(12, 1fr);
+        gap: 32px;
+        /* We don't force row heights so they can adapt naturally, but we span rows */
+    }
+
+    .bentoItem {
+        min-height: 300px;
+    }
+
+    /* Item 1: Destaque na esquerda, ocupando 2 linhas */
+    .bentoItem:nth-child(1) {
+        grid-column: 1 / 8;
+        grid-row: span 2;
+    }
+
+    /* Item 2: Célula menor na direita, topo */
+    .bentoItem:nth-child(2) {
+        grid-column: 8 / 13;
+        grid-row: span 1;
+    }
+
+    /* Item 3: Célula menor na direita, base */
+    .bentoItem:nth-child(3) {
+        grid-column: 8 / 13;
+        grid-row: span 1;
+    }
+
+    /* Item 4: Linha inteira (se houver) */
+    .bentoItem:nth-child(4) {
+        grid-column: 1 / 13;
+        grid-row: span 1;
+        min-height: 380px;
+    }
+
+    /* Item 5 em diante: Dividem o espaço em 2 colunas */
+    .bentoItem:nth-child(n+5) {
+        grid-column: span 6;
+        grid-row: span 1;
+    }
+}

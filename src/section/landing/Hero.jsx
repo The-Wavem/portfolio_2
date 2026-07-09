@@ -7,6 +7,7 @@ import {
   getHomeHeroContentRemote,
 } from "@/service/content";
 import { trackAction } from "@/service/analytics/tracking.service";
+import NetworkBackground from "./NetworkBackground";
 
 const MotionTypography = motion.create(Typography);
 const MotionBox = motion.create(Box);
@@ -71,10 +72,13 @@ export default function Hero() {
             "radial-gradient(circle, rgba(124,58,237,0.46) 0%, rgba(124,58,237,0) 70%)",
           filter: "blur(46px)",
           pointerEvents: "none",
+          zIndex: 0,
         }}
       />
 
-      <Container maxWidth="md">
+      <NetworkBackground />
+
+      <Container maxWidth="md" sx={{ position: "relative", zIndex: 1 }}>
         <MotionBox
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}

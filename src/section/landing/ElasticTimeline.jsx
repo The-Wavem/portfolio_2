@@ -6,7 +6,7 @@ import {
   useTransform,
   useInView,
   useMotionValue,
-  animate,
+  useAnimationFrame,
 } from "framer-motion";
 import { Box, Typography, Stack, useTheme, useMediaQuery } from "@mui/material";
 import {
@@ -84,9 +84,8 @@ function TimelineStep({
   step,
   index,
   isMobile,
-  ctrlX,
-  ctrlY,
-  svgHeight,
+  waveX,
+  waveY,
   totalSteps,
 }) {
   const rowRef = useRef(null);
@@ -98,7 +97,7 @@ function TimelineStep({
     once: false,
   });
 
-  const nodeX = useTransform([ctrlX, ctrlY], ([cx, cy]) => {
+  const nodeX = useTransform([waveX, waveY], ([cx, cy]) => {
     if (!rowRef.current) return 0;
     const nodeY = rowRef.current.offsetTop + rowRef.current.offsetHeight / 2;
     const distance = Math.abs(nodeY - cy);
@@ -199,10 +198,11 @@ function TimelineStep({
 export default function ElasticTimeline({ steps = [] }) {
   const containerRef = useRef(null);
   const [svgHeight, setSvgHeight] = useState(800);
-  const [isHovering, setIsHovering] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const ghostMouseY = useMotionValue(0);
+
+  const waveY = useMotionValue(-200);
+  const waveX = useMotionValue(40);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -215,110 +215,62 @@ export default function ElasticTimeline({ steps = [] }) {
     restDelta: 0.001,
   });
 
-  // FÍSICA FLUIDA (Onda Aquática):
-  const ctrlX = useSpring(40, { stiffness: 80, damping: 30, mass: 1 });
-  // Y precisa ser responsivo para a onda acompanhar a altura do cursor rapidamente sem delay indesejado
-  const ctrlY = useSpring(svgHeight / 2, { stiffness: 600, damping: 25 });
-
   useEffect(() => {
     if (!containerRef.current) return;
 
     const observer = new ResizeObserver((entries) => {
       for (let entry of entries) {
-        const height = entry.target.clientHeight;
-        setSvgHeight(height);
-        ctrlY.set(height / 2);
+        setSvgHeight(entry.target.clientHeight);
       }
     });
 
     observer.observe(containerRef.current);
     return () => observer.disconnect();
-  }, [ctrlY]);
+  }, []);
 
-  // IDLE STATE (Ghost Mouse Animation)
-  useEffect(() => {
-    if (isHovering || svgHeight === 0) return;
+  // AMBIENT MOTION CONTÍNUO
+  useAnimationFrame((t) => {
+    if (!svgHeight) return;
 
-    // A onda fantasma patrulha de 0 a svgHeight
-    const animation = animate(ghostMouseY, [0, svgHeight], {
-      duration: 8,
-      ease: "linear",
-      repeat: Infinity,
-      repeatType: "reverse",
-    });
-
-    const unsubscribe = ghostMouseY.on("change", (val) => {
-      ctrlY.set(val);
-      
-      // Distorção Fantasma: Cria uma oscilação contínua e muito sutil (max 8px)
-      const pull = Math.sin(val / 50) * 8;
-      ctrlX.set(40 + pull);
-    });
-
-    return () => {
-      animation.stop();
-      unsubscribe();
-    };
-  }, [isHovering, svgHeight, ghostMouseY, ctrlX, ctrlY]);
-
-  const handleMouseEnter = () => {
-    setIsHovering(true);
-  };
-
-  const handleMouseMove = (e) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const lineX = isMobile ? 40 : rect.width / 2;
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-
-    const diffX = mouseX - lineX;
-    const distanceX = Math.abs(diffX);
-
-    // Hitbox estreita: só interage se o cursor passar a até 50px da linha
-    if (distanceX > 50) {
-      ctrlX.set(40);
-    } else {
-      // Edge Damping (Fator de Resistência nas Pontas)
-      const WAVE_RADIUS = 80;
-      const edgeDistance = Math.min(mouseY, rect.height - mouseY);
-      const edgeFactor = Math.max(0, Math.min(1, edgeDistance / WAVE_RADIUS));
-
-      // Clamp de Amplitude: limita a distorção entre -20px e +20px
-      const pull = Math.max(-20, Math.min(20, diffX * 0.8)) * edgeFactor;
-      ctrlX.set(40 + pull);
-    }
+    // A onda percorre de cima a baixo ao longo de 2.5 segundos, sumindo nas bordas
+    const duration = 5500;
+    const padding = 0; // Espaço invisível para a onda entrar e sair fluidamente
+    const totalDistance = svgHeight + (padding * 2); 
     
-    ctrlY.set(mouseY);
-  };
+    // Progresso linear de 0 a 1 que repete (sawtooth)
+    const progress = (t % duration) / duration;
+    
+    // Calculamos o Y deslizando da margem superior para a margem inferior
+    const cy = -padding + (progress * totalDistance);
+    waveY.set(cy);
 
-  const handleMouseLeave = () => {
-    setIsHovering(false);
-    // A transição de volta para o patrulhamento fantasma
-    // será suavizada automaticamente pelo useSpring do ctrlX e ctrlY
-  };
+    // Oscilação rápida no X gerando a onda contida, max 14px
+    const pull = Math.sin(t / 150) * 14; 
+    waveX.set(40 + pull);
+  });
 
-  // CONSTRUÇÃO DO PATH SEGMENTADO (Onda Local)
-  const pathD = useTransform([ctrlX, ctrlY], ([cx, cy]) => {
-    const WAVE_RADIUS = 80;
+  // CONSTRUÇÃO DO PATH SEGMENTADO (Onda Contínua)
+  const pathD = useTransform([waveX, waveY], ([cx, cy]) => {
+    const WAVE_RADIUS = 100;
 
-    // Garantimos que a reta conectora nunca ultrapasse o SVG (Clamping Severo dos Eixos Y)
+    // Garantimos que a reta conectora nunca ultrapasse o SVG
     const startY = Math.max(0, cy - WAVE_RADIUS);
     const endY = Math.min(svgHeight, cy + WAVE_RADIUS);
 
-    // Passo 1: Reta até o início do raio de ação
-    // Passo 2: Curva de Bezier (Q) usando o mouse como control point
-    // Passo 3: Reta até o final do container
-    return `M 40 0 L 40 ${startY} Q ${cx} ${cy} 40 ${endY} L 40 ${svgHeight}`;
+    // Damping nas extremidades para que a onda desapareça graciosamente nas pontas do SVG
+    const edgeDistance = Math.min(cy, svgHeight - cy);
+    const edgeFactor = Math.max(0, Math.min(1, edgeDistance / WAVE_RADIUS));
+    
+    // Multiplicamos o deslocamento real do X pelo damping
+    const dampedCx = 40 + ((cx - 40) * edgeFactor);
+
+    return `M 40 0 L 40 ${startY} Q ${dampedCx} ${cy} 40 ${endY} L 40 ${svgHeight}`;
   });
 
   return (
     <div
       className={styles.timelineWrapper}
       ref={containerRef}
-      onMouseEnter={handleMouseEnter}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
     >
       <div className={styles.svgContainer}>
         <div className={styles.hitbox} />
@@ -360,9 +312,8 @@ export default function ElasticTimeline({ steps = [] }) {
           step={step}
           index={index}
           isMobile={isMobile}
-          ctrlX={ctrlX}
-          ctrlY={ctrlY}
-          svgHeight={svgHeight}
+          waveX={waveX}
+          waveY={waveY}
           totalSteps={steps.length}
         />
       ))}

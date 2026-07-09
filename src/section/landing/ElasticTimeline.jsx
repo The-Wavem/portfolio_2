@@ -101,7 +101,7 @@ function TimelineStep({
     const nodeY = rowRef.current.offsetTop + rowRef.current.offsetHeight / 2;
     const distance = Math.abs(nodeY - cy);
 
-    const radius = 250;
+    const radius = 90;
     if (distance > radius) return 0;
 
     const intensity = Math.pow(1 - distance / radius, 2);
@@ -212,7 +212,7 @@ export default function ElasticTimeline({ steps = [] }) {
   });
 
   // FÍSICA FLUIDA (Onda Aquática):
-  const ctrlX = useSpring(40, { stiffness: 40, damping: 8, mass: 2 });
+  const ctrlX = useSpring(40, { stiffness: 80, damping: 30, mass: 1 });
   // Y precisa ser responsivo para a onda acompanhar a altura do cursor rapidamente sem delay indesejado
   const ctrlY = useSpring(svgHeight / 2, { stiffness: 600, damping: 25 });
 
@@ -239,10 +239,22 @@ export default function ElasticTimeline({ steps = [] }) {
     const mouseY = e.clientY - rect.top;
 
     const diffX = mouseX - lineX;
+    const distanceX = Math.abs(diffX);
 
-    const tensionX = 40 + Math.max(-150, Math.min(150, diffX * 0.8));
+    // Hitbox estreita: só interage se o cursor passar a até 50px da linha
+    if (distanceX > 50) {
+      ctrlX.set(40);
+    } else {
+      // Edge Damping (Fator de Resistência nas Pontas)
+      const WAVE_RADIUS = 80;
+      const edgeDistance = Math.min(mouseY, rect.height - mouseY);
+      const edgeFactor = Math.max(0, Math.min(1, edgeDistance / WAVE_RADIUS));
 
-    ctrlX.set(tensionX);
+      // Clamp de Amplitude: limita a distorção entre -20px e +20px
+      const pull = Math.max(-20, Math.min(20, diffX * 0.8)) * edgeFactor;
+      ctrlX.set(40 + pull);
+    }
+    
     ctrlY.set(mouseY);
   };
 
@@ -253,11 +265,11 @@ export default function ElasticTimeline({ steps = [] }) {
 
   // CONSTRUÇÃO DO PATH SEGMENTADO (Onda Local)
   const pathD = useTransform([ctrlX, ctrlY], ([cx, cy]) => {
-    const WAVE_RADIUS = 150;
+    const WAVE_RADIUS = 80;
 
-    // Garantimos que a reta conectora nunca ultrapasse o SVG
-    const startY = cy - WAVE_RADIUS;
-    const endY = cy + WAVE_RADIUS;
+    // Garantimos que a reta conectora nunca ultrapasse o SVG (Clamping Severo dos Eixos Y)
+    const startY = Math.max(0, cy - WAVE_RADIUS);
+    const endY = Math.min(svgHeight, cy + WAVE_RADIUS);
 
     // Passo 1: Reta até o início do raio de ação
     // Passo 2: Curva de Bezier (Q) usando o mouse como control point

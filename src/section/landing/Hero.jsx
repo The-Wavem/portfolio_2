@@ -122,9 +122,8 @@ export default function Hero() {
               variant="h2"
               component="h1"
               sx={{
-                background: "linear-gradient(90deg, #FFF 0%, #A1A1AA 100%)",
+                color: "#fff",
                 WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
                 fontSize: { xs: "2.2rem", sm: "2.7rem", md: "3.3rem" },
                 lineHeight: 1.05,
                 letterSpacing: "-0.03em",
@@ -134,7 +133,12 @@ export default function Hero() {
             >
               Engenharia Sólida e{" "}
               <span
-                style={{ color: "#7C3AED", WebkitTextFillColor: "#7C3AED" }}
+                style={{
+                  color: "#7C3AED",
+                  WebkitTextFillColor: "#7C3AED",
+                  textBackgroundClip: "text",
+                  WebkitBackgroundClip: "text",
+                }}
               >
                 Design para Problemas Reais.
               </span>

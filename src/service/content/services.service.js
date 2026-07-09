@@ -8,10 +8,9 @@ export const servicesContent = {
   heroVideoUrl: "https://samplelib.com/lib/preview/mp4/sample-20s.mp4",
   eyebrow: "NOSSOS SERVIÇOS",
   title:
-    "Estratégia, design e engenharia para transformar ideia em produto com resultado.",
+    "Da estratégia ao produto final. Sem ruídos.",
   contextLines: [
-    "A The Wavem atua como time parceiro para tirar projetos do papel com clareza.",
-    "Você acompanha decisões-chave e evolui o produto com segurança, sem surpresas.",
+    "Atuamos como um parceiro técnico sênior para tirar seu projeto do papel com clareza e previsibilidade.",
   ],
   impactStats: [
     {

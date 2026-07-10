@@ -144,13 +144,13 @@ export default function BrandNetworkMark({
                         fill="url(#wavemNodeGradient)"
                         initial={{ scale: 0.6, opacity: 0.35 }}
                         animate={{
-                            scale: [1, 1 + motionConfig.scaleBoost, 1],
+                            scale: [1, 1 + (motionConfig?.scaleBoost || 0.05), 1],
                             opacity: [0.72, 1, 0.72],
                             cy: [
-                                node.y,
-                                node.y - (motionConfig.waveAmplitude * (index % 2 === 0 ? 1 : 0.75)),
-                                node.y + (motionConfig.waveAmplitude * (index % 3 === 0 ? 0.65 : 1.1)),
-                                node.y
+                                node.y || 0,
+                                (node.y || 0) - ((motionConfig?.waveAmplitude || 0) * (index % 2 === 0 ? 1 : 0.75)),
+                                (node.y || 0) + ((motionConfig?.waveAmplitude || 0) * (index % 3 === 0 ? 0.65 : 1.1)),
+                                node.y || 0
                             ]
                         }}
                         transition={{

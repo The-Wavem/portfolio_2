@@ -3,6 +3,9 @@ import { motion } from 'framer-motion';
 import { TbArrowUpRight } from 'react-icons/tb';
 
 export default function TeamMemberCard({ member, index, onOpen }) {
+    const defaultAccent = '#38BDF8';
+    const accent = member.accent || defaultAccent;
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 24 }}
@@ -33,14 +36,14 @@ export default function TeamMemberCard({ member, index, onOpen }) {
                     overflow: 'hidden',
                     transition: 'border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease',
                     '&:hover': {
-                        borderColor: member.accent,
-                        boxShadow: `0 10px 34px ${member.accent}18`,
+                        borderColor: accent,
+                        boxShadow: `0 10px 34px ${accent}18`,
                         transform: 'translateY(-4px)'
                     },
                     '&:focus-visible': {
                         outline: 'none',
-                        borderColor: member.accent,
-                        boxShadow: `0 0 0 2px ${member.accent}44`
+                        borderColor: accent,
+                        boxShadow: `0 0 0 2px ${accent}44`
                     }
                 }}
             >
@@ -48,7 +51,7 @@ export default function TeamMemberCard({ member, index, onOpen }) {
                     sx={{
                         position: 'absolute',
                         inset: 0,
-                        backgroundImage: `url(${member.photo})`,
+                        backgroundImage: `url(${member.image})`,
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                         filter: 'grayscale(1) saturate(0.45) brightness(0.5)',
@@ -69,7 +72,7 @@ export default function TeamMemberCard({ member, index, onOpen }) {
                 />
 
                 <Stack direction="row" justifyContent="flex-end" alignItems="flex-start" spacing={1.5} sx={{ position: 'relative', zIndex: 2 }}>
-                    <Typography variant="caption" sx={{ color: member.accent, letterSpacing: 1.8, fontWeight: 700, textTransform: 'uppercase', fontSize: '0.68rem' }}>
+                    <Typography variant="caption" sx={{ color: accent, letterSpacing: 1.8, fontWeight: 700, textTransform: 'uppercase', fontSize: '0.68rem' }}>
                         {member.role}
                     </Typography>
                 </Stack>
@@ -93,8 +96,8 @@ export default function TeamMemberCard({ member, index, onOpen }) {
                     <Typography sx={{ mt: 0.7, color: 'rgba(255,255,255,0.92)', fontWeight: 700, fontSize: '0.76rem', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
                         Especialização
                     </Typography>
-                    <Typography sx={{ mt: 0.2, color: member.accent, fontWeight: 700, fontSize: '0.92rem', letterSpacing: '0.01em' }}>
-                        {member.specialties?.[0] ?? member.role}
+                    <Typography sx={{ mt: 0.2, color: accent, fontWeight: 700, fontSize: '0.92rem', letterSpacing: '0.01em' }}>
+                        {member.stacks?.[0] ?? member.role}
                     </Typography>
 
                     <Stack direction="row" alignItems="center" spacing={0.8} sx={{ mt: 1.35 }}>

@@ -10,6 +10,7 @@ import {
     getHomePortfolioContent,
     getHomePortfolioContentRemote,
     getPortfolioProjects,
+    getPortfolioProjectsRemote,
     getHomeProcessContent,
     getHomeProcessContentRemote,
     setHomeContactContentRemote,
@@ -17,7 +18,10 @@ import {
     setFaqItemsRemote,
     setHomeHeroContentRemote,
     setHomePortfolioContentRemote,
-    setHomeProcessContentRemote
+    setHomeProcessContentRemote,
+    getServicesContent,
+    getServicesContentRemote,
+    setServicesContentRemote
 } from '@/service/content';
 
 function getHomeFaqEditorContent() {
@@ -62,41 +66,14 @@ export const homeEditorConfig = {
         saveRemote: setHomeHeroContentRemote,
         previewType: 'homeHero',
         fields: [
-            { path: 'eyebrow', label: 'Eyebrow' },
-            { path: 'titleStart', label: 'Título (início)' },
+            { path: 'badges', label: 'Badges (separados por vírgula)', arraySeparator: ',', fullWidth: true },
+            { path: 'titlePrefix', label: 'Título (início)' },
             { path: 'titleHighlight', label: 'Título (destaque)' },
             { path: 'description', label: 'Descrição', multiline: true, rows: 3, fullWidth: true },
-            { path: 'primaryCta.label', label: 'CTA primário - texto' },
-            { path: 'primaryCta.href', label: 'CTA primário - link' },
-            { path: 'secondaryCta.label', label: 'CTA secundário - texto' },
-            { path: 'secondaryCta.to', label: 'CTA secundário - rota' },
-            { path: 'trustPills', label: 'Pílulas de confiança (separadas por ;)', arraySeparator: ';', multiline: true, rows: 3, fullWidth: true },
-
-            { type: 'heading', label: 'Contexto de Execução' },
-            { path: 'executionContext.eyebrow', label: 'Contexto - eyebrow' },
-            { path: 'executionContext.title', label: 'Contexto - título', fullWidth: true },
-            { path: 'executionContext.steps.0.id', label: 'Passo 01 - id' },
-            { path: 'executionContext.steps.0.text', label: 'Passo 01 - texto', fullWidth: true },
-            { path: 'executionContext.steps.1.id', label: 'Passo 02 - id' },
-            { path: 'executionContext.steps.1.text', label: 'Passo 02 - texto', fullWidth: true },
-            { path: 'executionContext.steps.2.id', label: 'Passo 03 - id' },
-            { path: 'executionContext.steps.2.text', label: 'Passo 03 - texto', fullWidth: true }
-        ]
-    },
-    processo: {
-        title: 'Processo da Home',
-        navLabel: 'Filosofia / Processo',
-        description: 'Edite a proposta de método e narrativa da seção de processo.',
-        getContent: getHomeProcessContent,
-        loadRemote: getHomeProcessContentRemote,
-        saveRemote: setHomeProcessContentRemote,
-        previewType: 'homeProcess',
-        fields: [
-            { path: 'eyebrow', label: 'Eyebrow' },
-            { path: 'titleStart', label: 'Título (início)' },
-            { path: 'titleHighlight', label: 'Título (destaque)' },
-            { path: 'description', label: 'Descrição', multiline: true, rows: 3, fullWidth: true },
-            { path: 'topTags', label: 'Tags do topo (separadas por ;)', arraySeparator: ';', multiline: true, rows: 3, fullWidth: true }
+            { path: 'primaryCTA.label', label: 'CTA primário - texto' },
+            { path: 'primaryCTA.link', label: 'CTA primário - link' },
+            { path: 'secondaryCTA.label', label: 'CTA secundário - texto' },
+            { path: 'secondaryCTA.link', label: 'CTA secundário - rota' }
         ]
     },
     portfolio: {
@@ -108,15 +85,42 @@ export const homeEditorConfig = {
         saveRemote: setHomePortfolioContentRemote,
         previewType: 'homePortfolio',
         selectableProjectsPath: 'selectedProjectIds',
-        selectableProjectsSource: getPortfolioProjects,
+        selectableProjectsSource: getPortfolioProjectsRemote,
         fields: [
-            { path: 'eyebrow', label: 'Eyebrow' },
+            { path: 'topTitle', label: 'Título Superior' },
             { path: 'titleStart', label: 'Título (início)' },
             { path: 'titleHighlight', label: 'Título (destaque)' },
-            { path: 'description', label: 'Descrição', multiline: true, rows: 3, fullWidth: true },
-            { path: 'cta.label', label: 'CTA - texto' },
-            { path: 'cta.to', label: 'CTA - rota' },
-            { path: 'topTags', label: 'Tags do topo (separadas por ;)', arraySeparator: ';', multiline: true, rows: 3, fullWidth: true }
+            { path: 'buttonText', label: 'Texto do Botão', fullWidth: true }
+        ]
+    },
+    processo: {
+        title: 'Processo da Home',
+        navLabel: 'Filosofia / Processo',
+        description: 'Edite a proposta de método e narrativa da seção de processo.',
+        getContent: getHomeProcessContent,
+        loadRemote: getHomeProcessContentRemote,
+        saveRemote: setHomeProcessContentRemote,
+        previewType: 'homeProcess',
+        dynamicStepsPath: 'steps',
+        fields: [
+            { path: 'eyebrow', label: 'Título superior', fullWidth: true },
+            { path: 'titlePrefix', label: 'Título (início)' },
+            { path: 'titleHighlight', label: 'Título (destaque)' }
+        ]
+    },
+    especialidades: {
+        title: 'Especialidades / Serviços',
+        navLabel: 'Especialidades',
+        description: 'Gerencie a lista dinâmica de serviços, ferramentas e descrições.',
+        getContent: getServicesContent,
+        loadRemote: getServicesContentRemote,
+        saveRemote: setServicesContentRemote,
+        previewType: 'servicesHighlights',
+        dynamicServicesPath: 'servicesList',
+        fields: [
+            { path: 'highlightsEyebrow', label: 'Eyebrow (Texto Superior)', fullWidth: true },
+            { path: 'highlightsTitle', label: 'Título Principal da Seção', fullWidth: true },
+            { path: 'highlightsTitleHighlight', label: 'Título em Destaque (Cor Primária)', fullWidth: true }
         ]
     },
     contato: {
@@ -128,14 +132,15 @@ export const homeEditorConfig = {
         saveRemote: setHomeContactContentRemote,
         previewType: 'homeContact',
         fields: [
-            { path: 'eyebrow', label: 'Eyebrow' },
-            { path: 'titleStart', label: 'Título (início)' },
+            { path: 'eyebrow', label: 'Eyebrow (Texto Superior)' },
+            { path: 'titlePrefix', label: 'Título (início)' },
             { path: 'titleHighlight', label: 'Título (destaque)' },
             { path: 'description', label: 'Descrição', multiline: true, rows: 3, fullWidth: true },
-            { path: 'quickMessage', label: 'Mensagem rápida', multiline: true, rows: 3, fullWidth: true },
-            { path: 'whatsappPhone', label: 'WhatsApp (somente números com DDI)' },
-            { path: 'email', label: 'E-mail de contato' },
-            { path: 'copiedFeedback', label: 'Feedback ao copiar e-mail' }
+            { path: 'ctaLabel', label: 'Rótulo do CTA' },
+            { path: 'ctaLink', label: 'Link do CTA' },
+            { path: 'emailAddress', label: 'E-mail de contato' },
+            { path: 'emailFeedbackMessage', label: 'Feedback ao copiar e-mail' },
+            { path: 'whatsappNumber', label: 'WhatsApp', helperText: 'Insira apenas números com DDI e DDD (ex: 554199999999)' }
         ]
     },
     faq: {

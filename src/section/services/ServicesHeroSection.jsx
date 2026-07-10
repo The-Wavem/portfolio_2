@@ -3,45 +3,34 @@ import { Box, Button, Container, Stack, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
 import { Link as RouterLink } from 'react-router-dom';
 import { trackAction } from '@/service/analytics/tracking.service';
+import styles from './ServicesHeroSection.module.css';
 
-const HeroImpactStats = memo(function HeroImpactStats({ items, accent }) {
+const HeroImpactStats = memo(function HeroImpactStats({ items }) {
     return (
-        <Box
-            sx={{
-                mt: 2,
-                display: 'grid',
-                gridTemplateColumns: { xs: 'repeat(3, minmax(0, 1fr))', md: 'repeat(3, minmax(0, 1fr))' },
-                gap: 0.8,
-                maxWidth: { xs: '100%', md: 430 }
-            }}
-        >
+        <div className={styles.statsContainer}>
             {items.map((item, index) => (
-                <motion.div
-                    key={item.id}
-                    initial={{ opacity: 0, y: 10, scale: 0.98 }}
-                    whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                    viewport={{ once: true, amount: 0.2 }}
-                    transition={{ duration: 0.34, delay: index * 0.06, ease: 'easeOut' }}
-                >
-                    <Box
-                        sx={{
-                            p: { xs: 1, md: 1.1 },
-                            borderRadius: '12px',
-                            border: `1px solid ${accent}50`,
-                            background: `linear-gradient(145deg, ${accent}22, rgba(10,10,10,0.72))`,
-                            textAlign: 'center'
-                        }}
+                <div key={item.id} style={{ display: 'flex', alignItems: 'center' }}>
+                    <motion.div
+                        initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                        whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                        viewport={{ once: true, amount: 0.2 }}
+                        transition={{ duration: 0.34, delay: index * 0.06, ease: 'easeOut' }}
                     >
-                        <Typography sx={{ color: '#fff', fontWeight: 900, fontSize: { xs: '1.4rem', md: '1.6rem' }, lineHeight: 1 }}>
-                            {item.value}
-                        </Typography>
-                        <Typography sx={{ mt: 0.25, color: 'rgba(228,228,231,0.82)', fontWeight: 700, fontSize: '0.72rem', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
-                            {item.label}
-                        </Typography>
-                    </Box>
-                </motion.div>
+                        <div className={styles.statItem}>
+                            <span className={styles.statValue}>
+                                {item.value}
+                            </span>
+                            <span className={styles.statLabel}>
+                                {item.label}
+                            </span>
+                        </div>
+                    </motion.div>
+                    {index < items.length - 1 && (
+                        <div className={styles.statDivider} style={{ marginLeft: '2.5rem' }} />
+                    )}
+                </div>
             ))}
-        </Box>
+        </div>
     );
 });
 
@@ -73,13 +62,7 @@ export default function ServicesHeroSection({ content, accent }) {
                     preload="metadata"
                     style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
                 />
-                <Box
-                    sx={{
-                        position: 'absolute',
-                        inset: 0,
-                        background: 'linear-gradient(100deg, rgba(5,5,5,0.92) 0%, rgba(5,5,5,0.74) 42%, rgba(5,5,5,0.58) 100%)'
-                    }}
-                />
+                <div className={styles.overlay} />
 
                 <motion.div
                     aria-hidden
@@ -148,7 +131,7 @@ export default function ServicesHeroSection({ content, accent }) {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.4, delay: 0.2, ease: 'easeOut' }}
                     >
-                        <HeroImpactStats items={content.impactStats ?? []} accent={accent} />
+                        <HeroImpactStats items={content.impactStats ?? []} />
                     </motion.div>
 
                     <motion.div

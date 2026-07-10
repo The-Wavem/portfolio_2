@@ -1,0 +1,171 @@
+.timelineWrapper {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 0;
+}
+
+.svgContainer {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px; /* Coluna Central */
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    cursor: crosshair;
+}
+
+@media (max-width: 900px) {
+    .svgContainer {
+        left: 40px; /* Metade da coluna central de 80px */
+        transform: translateX(-50%);
+    }
+}
+
+.svgLine {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.hitbox {
+    position: absolute;
+    inset: 0 -100px;
+    z-index: 0;
+}
+
+.timelineRow {
+    display: grid;
+    grid-template-columns: 1fr 80px 1fr; /* Fonte da Verdade Estrita */
+    gap: 0;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+    margin-bottom: 60px;
+}
+
+.timelineRow:last-child {
+    margin-bottom: 0;
+}
+
+@media (max-width: 900px) {
+    .timelineRow {
+        grid-template-columns: 80px 1fr;
+        margin-bottom: 40px;
+    }
+}
+
+.nodeWrapper {
+    grid-column: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+@media (max-width: 900px) {
+    .nodeWrapper {
+        grid-column: 1;
+    }
+}
+
+.contentLeft {
+    grid-column: 1;
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 40px;
+    z-index: 3;
+}
+
+.contentRight {
+    grid-column: 3;
+    display: flex;
+    justify-content: flex-start;
+    padding-left: 40px;
+    z-index: 3;
+}
+
+@media (max-width: 900px) {
+    .contentLeft, .contentRight {
+        grid-column: 2;
+        padding-left: 0;
+        padding-right: 0;
+        justify-content: flex-start;
+    }
+}
+
+.card {
+    background: rgba(10, 10, 10, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 18px;
+    padding: 32px;
+    backdrop-filter: blur(16px);
+    width: 100%;
+    max-width: 480px;
+    transition: background 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
+    position: relative; /* OBRIGATÓRIO PARA A PONTE ABSOLUTA */
+}
+
+.card:hover {
+    background: rgba(18, 18, 20, 0.7);
+}
+
+.node {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background-color: #050505;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: rgba(255,255,255,0.4);
+    border: 2px solid rgba(255,255,255,0.1);
+    z-index: 10; /* Sempre por cima do SVG e Conectores */
+    transition: color 0.5s ease, background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
+}
+
+/* MICRO-CONECTORES (Ancorados no Card) */
+.connectorLeft {
+    position: absolute;
+    right: -54px; /* Atravessa o padding de 40px + 14px até o limite do nó */
+    top: 50%;
+    transform: translateY(-50%);
+    width: 54px;
+    height: 2px;
+    opacity: 0.15;
+    transition: opacity 0.5s ease, box-shadow 0.5s ease, background-color 0.5s ease;
+    z-index: 5;
+}
+
+.connectorRight {
+    position: absolute;
+    left: -54px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 54px;
+    height: 2px;
+    opacity: 0.15;
+    transition: opacity 0.5s ease, box-shadow 0.5s ease, background-color 0.5s ease;
+    z-index: 5;
+}
+
+@media (max-width: 900px) {
+    .connectorLeft {
+        display: none;
+    }
+    .connectorRight {
+        left: -14px;
+        width: 14px;
+    }
+}

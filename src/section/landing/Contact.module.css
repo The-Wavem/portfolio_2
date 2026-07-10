@@ -1,0 +1,97 @@
+.container {
+    padding-top: 8rem;
+    padding-bottom: 8rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 4rem;
+    align-items: center;
+}
+
+@media (min-width: 900px) {
+    .grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 6rem;
+    }
+}
+
+.actionAxis {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    align-items: flex-start;
+}
+
+.presenceAxis {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    align-items: flex-start;
+}
+
+@media (min-width: 900px) {
+    .presenceAxis {
+        align-items: flex-end;
+        text-align: right;
+    }
+}
+
+.emailOversized {
+    font-size: clamp(2.2rem, 4.5vw, 4rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.04em;
+    color: #ffffff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    word-break: break-all;
+    display: inline-block;
+}
+
+.emailOversized:hover {
+    color: var(--primary-color, #A78BFA);
+}
+
+.socialRow {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.socialIcon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    cursor: pointer;
+    transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+    text-decoration: none;
+}
+
+.socialIcon:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: var(--primary-color, #ffffff);
+}
+
+.wordContainer {
+    display: inline-block;
+    overflow: hidden;
+    margin-right: 0.25em;
+    padding-bottom: 0.1em;
+    vertical-align: top;
+}
+
+.wordInner {
+    display: inline-block;
+}

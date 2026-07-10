@@ -1,8 +1,9 @@
 import { Box, Container, Typography, Stack, useTheme } from '@mui/material';
 import { motion } from 'framer-motion';
 import { VscJson, VscCode, VscSymbolRuler } from 'react-icons/vsc';
-import { getExperienceItems } from '@/service/content';
-import { getStackIcon, getToolMeta } from '@/components/organism/aboutTeam.utils';
+import { getServicesContent, getServicesContentRemote } from '@/service/content';
+import { useRef, useEffect, useState } from 'react';
+import styles from './Experience.module.css';
 
 function hexToRgba(hex, alpha) {
     if (typeof hex !== 'string') {
@@ -97,9 +98,11 @@ const BackgroundArtifact = ({ type, color, intensity = 0.05 }) => {
     const gridPattern = (
         <Box sx={{
             width: '100%', height: '100%',
-            backgroundImage: `radial-gradient(${color} 1px, transparent 1px)`,
+            backgroundImage: `linear-gradient(${color} 1px, transparent 1px), linear-gradient(90deg, ${color} 1px, transparent 1px)`,
             backgroundSize: '16px 16px',
-            opacity: resolved.snippetOpacity
+            opacity: resolved.snippetOpacity * 0.7,
+            transform: 'perspective(400px) rotateX(45deg) scale(1.4)',
+            transformOrigin: 'top center'
         }} />
     );
 
@@ -107,15 +110,10 @@ const BackgroundArtifact = ({ type, color, intensity = 0.05 }) => {
         <Box
             sx={{
                 position: 'absolute',
-                top: resolved.top,
-                right: resolved.right,
-                width: resolved.width,
-                height: resolved.height,
-                overflow: 'hidden',
-                zIndex: 0,
-                pointerEvents: 'none',
-                filter: resolved.blur,
-                maskImage: resolved.mask
+                top: resolved.top, right: resolved.right,
+                width: resolved.width, height: resolved.height,
+                pointerEvents: 'none', userSelect: 'none', zIndex: 0,
+                filter: resolved.blur, WebkitMaskImage: resolved.mask, maskImage: resolved.mask
             }}
         >
             {type === 'code' && codeSnippet}
@@ -126,11 +124,21 @@ const BackgroundArtifact = ({ type, color, intensity = 0.05 }) => {
 };
 
 const NeuralCard = ({ item, variant = 'small' }) => {
+    const cardRef = useRef(null);
     const isHero = variant === 'hero';
-    const itemGlowSoft = hexToRgba(item.color, isHero ? 0.12 : 0.08);
-    const itemGlowEdge = hexToRgba(item.color, 0.24);
-    const itemChipBg = hexToRgba(item.color, 0.06);
-    const itemChipBorder = hexToRgba(item.color, 0.2);
+
+    const handleMouseMove = (e) => {
+        if (!cardRef.current) return;
+        const rect = cardRef.current.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        cardRef.current.style.setProperty('--mouse-x', `${x}px`);
+        cardRef.current.style.setProperty('--mouse-y', `${y}px`);
+    };
+
+    const itemChipBg = hexToRgba(item.color, 0.08);
+    const itemChipBorder = hexToRgba(item.color, 0.22);
+    const itemGlowSoft = hexToRgba(item.color, 0.14);
 
     return (
         <motion.div
@@ -139,12 +147,21 @@ const NeuralCard = ({ item, variant = 'small' }) => {
             viewport={{ once: true, amount: 0.3 }}
             whileHover={{ y: -6, scale: 1.01 }}
             transition={{ type: 'spring', stiffness: 260, damping: 24 }}
+            className={styles.cardWrapper}
         >
             <Box
-                sx={{
+                ref={cardRef}
+                onMouseMove={handleMouseMove}
+                className={styles.neuralCard}
+                style={{
+                    '--card-color': item.color,
                     background: isHero
                         ? `linear-gradient(140deg, ${itemGlowSoft} 0%, rgba(10,10,10,0.72) 32%, rgba(10,10,10,0.72) 100%)`
                         : `linear-gradient(140deg, ${hexToRgba(item.color, 0.08)} 0%, rgba(10,10,10,0.62) 30%, rgba(10,10,10,0.62) 100%)`,
+                }}
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
                     backdropFilter: 'blur(16px)',
                     border: `1px solid ${hexToRgba(item.color, 0.18)}`,
                     borderRadius: '18px',
@@ -157,16 +174,6 @@ const NeuralCard = ({ item, variant = 'small' }) => {
                     '&:hover': {
                         borderColor: item.color,
                         boxShadow: `0 8px 34px ${item.color}16`,
-                    },
-                    '&::before': {
-                        content: '""',
-                        position: 'absolute',
-                        inset: 0,
-                        borderRadius: '18px',
-                        pointerEvents: 'none',
-                        background: `radial-gradient(circle at 88% 12%, ${itemGlowEdge} 0%, transparent 48%)`,
-                        opacity: isHero ? 0.95 : 0.78,
-                        zIndex: 0
                     }
                 }}
             >
@@ -232,50 +239,30 @@ const NeuralCard = ({ item, variant = 'small' }) => {
                         display: '-webkit-box',
                         WebkitLineClamp: isHero ? 4 : 5,
                         WebkitBoxOrient: 'vertical',
-                        overflow: 'hidden',
-                        minHeight: isHero ? { xs: '6.6em', md: '6.2em' } : { xs: '7.7em', md: '7.2em' }
+                        overflow: 'hidden'
                     }}
                 >
                     {item.description}
                 </Typography>
 
-                <Stack direction="row" gap={{ xs: 1, md: 1.2 }} flexWrap="wrap" position="relative" zIndex={1}>
-                    {item.techs.map((tech) => {
-                        const techMeta = getToolMeta(tech);
-                        const Icon = getStackIcon(techMeta) ?? VscCode;
-                        return (
-                            <motion.div
-                                key={tech.name}
-                                whileHover={{ scale: 1.04, y: -2 }}
-                                transition={{ type: 'spring', stiffness: 320, damping: 20 }}
+                {item.tags && item.tags.length > 0 && (
+                    <div className={styles.tagsContainer}>
+                        {item.tags.map(tag => (
+                            <div
+                                key={tag}
+                                className={styles.badge}
+                                style={{
+                                    '--badge-border': hexToRgba(item.color, 0.25),
+                                    '--badge-bg-hover': hexToRgba(item.color, 0.08),
+                                    '--badge-border-hover': item.color,
+                                    '--badge-glow': hexToRgba(item.color, 0.3)
+                                }}
                             >
-                                <Box
-                                    sx={{
-                                        display: 'flex', alignItems: 'center', gap: 1,
-                                        px: { xs: 1.25, md: 1.45 }, py: { xs: 0.62, md: 0.74 },
-                                        borderRadius: '999px',
-                                        minWidth: { xs: 104, md: 112 },
-                                        minHeight: { xs: 32, md: 34 },
-                                        justifyContent: 'center',
-                                        background: itemChipBg,
-                                        border: `1px solid ${hexToRgba(item.color, 0.16)}`,
-                                        transition: 'all 0.24s ease',
-                                        '&:hover': {
-                                            background: hexToRgba(item.color, 0.12),
-                                            borderColor: item.color,
-                                            boxShadow: `0 0 0 1px ${item.color}22 inset`
-                                        }
-                                    }}
-                                >
-                                    <Icon size={15} color={item.color} />
-                                    <Typography variant="caption" sx={{ color: '#E4E4E7', fontWeight: 600, fontSize: { xs: '0.68rem', md: '0.72rem' }, letterSpacing: '0.01em' }}>
-                                        {techMeta.name}
-                                    </Typography>
-                                </Box>
-                            </motion.div>
-                        )
-                    })}
-                </Stack>
+                                {tag}
+                            </div>
+                        ))}
+                    </div>
+                )}
             </Box>
         </motion.div>
     );
@@ -283,7 +270,34 @@ const NeuralCard = ({ item, variant = 'small' }) => {
 
 export default function Experience() {
     const theme = useTheme();
-    const experiences = getExperienceItems();
+    const [content, setContent] = useState(() => getServicesContent());
+
+    useEffect(() => {
+        let isMounted = true;
+        async function fetchContent() {
+            try {
+                const remote = await getServicesContentRemote();
+                if (isMounted && remote) {
+                    setContent(remote);
+                }
+            } catch (err) {
+                console.error("Failed to load services content", err);
+            }
+        }
+        fetchContent();
+        return () => { isMounted = false; };
+    }, []);
+
+    const defaultColors = ['#A78BFA', '#34D399', '#60A5FA', '#F87171', '#FBBF24', '#C084FC'];
+    const defaultBgTypes = ['code', 'json', 'grid', 'code', 'grid', 'json'];
+
+    const rawServices = content?.servicesList || [];
+    const experiences = rawServices.map((service, index) => ({
+        ...service,
+        color: defaultColors[index % defaultColors.length],
+        bgType: defaultBgTypes[index % defaultBgTypes.length],
+        role: service.role || `Especialidade 0${index + 1}`
+    }));
 
     return (
         <Box component="section" sx={{ py: { xs: 10, md: 15 }, position: 'relative', overflow: 'hidden' }}>
@@ -319,8 +333,8 @@ export default function Experience() {
 
             <Container maxWidth="lg">
                 <Box mb={{ xs: 7, md: 10 }} textAlign="left" position="relative" zIndex={2}>
-                    <Typography variant="overline" color="primary" sx={{ letterSpacing: 4, fontWeight: 700, fontSize: '0.72rem', opacity: 0.95 }}>
-                        NOSSO DNA TÉCNICO
+                    <Typography variant="overline" color="primary" sx={{ letterSpacing: 4, fontWeight: 700, fontSize: '0.72rem', opacity: 0.95, textTransform: 'uppercase' }}>
+                        {content?.highlightsEyebrow || "NOSSO DNA TÉCNICO"}
                     </Typography>
                     <Typography
                         variant="h3"
@@ -331,11 +345,14 @@ export default function Experience() {
                             maxWidth: 760,
                             fontSize: { xs: '2rem', sm: '2.35rem', md: '3.1rem' },
                             lineHeight: 1.06,
-                            letterSpacing: '-0.03em'
+                            letterSpacing: '-0.03em',
+                            color: '#fff'
                         }}
                     >
-                        Mais que ferramentas, <br />
-                        <span style={{ color: theme.palette.primary.main }}>domínio tecnológico.</span>
+                        {content?.highlightsTitle || "Mais que ferramentas,"} <br />
+                        <span style={{ color: theme.palette.primary.main }}>
+                            {content?.highlightsTitleHighlight || "domínio tecnológico."}
+                        </span>
                     </Typography>
                 </Box>
 
@@ -349,7 +366,7 @@ export default function Experience() {
                 >
                     {experiences.map((item, index) => (
                         <Box
-                            key={item.id}
+                            key={item.id || index}
                             sx={{
                                 gridColumn: { xs: '1 / -1', md: 'span 6' }
                             }}

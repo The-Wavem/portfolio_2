@@ -3,13 +3,16 @@ import { motion } from 'framer-motion';
 import { TbX } from 'react-icons/tb';
 
 export default function MemberHeader({ selectedMember, onClose }) {
+    const defaultAccent = '#38BDF8';
+    const accent = selectedMember?.accent || defaultAccent;
+
     return (
         <Box
             sx={{
                 display: 'grid',
                 gridTemplateColumns: { xs: '1fr', md: '5fr 7fr' },
                 borderBottom: '1px solid rgba(255,255,255,0.08)',
-                background: `linear-gradient(145deg, ${selectedMember.accent}12 0%, rgba(8,8,8,0.92) 55%)`
+                background: `linear-gradient(145deg, ${accent}12 0%, rgba(8,8,8,0.92) 55%)`
             }}
         >
             <motion.div
@@ -21,7 +24,7 @@ export default function MemberHeader({ selectedMember, onClose }) {
                     sx={{
                         minHeight: { xs: 220, md: 320 },
                         position: 'relative',
-                        backgroundImage: `url(${selectedMember.photo})`,
+                        backgroundImage: `url(${selectedMember.image})`,
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                         borderRight: { md: '1px solid rgba(255,255,255,0.08)' }
@@ -66,15 +69,15 @@ export default function MemberHeader({ selectedMember, onClose }) {
                         </IconButton>
                     </motion.div>
 
-                    <Typography variant="caption" sx={{ color: selectedMember.accent, letterSpacing: 1.8, fontWeight: 700, textTransform: 'uppercase', fontSize: '0.68rem' }}>
+                    <Typography variant="caption" sx={{ color: accent, letterSpacing: 1.8, fontWeight: 700, textTransform: 'uppercase', fontSize: '0.68rem' }}>
                         {selectedMember.role}
                     </Typography>
                     <Typography sx={{ mt: 0.35, color: '#fff', fontWeight: 800, lineHeight: 1.05, fontSize: { xs: '1.5rem', md: '2rem' }, letterSpacing: '-0.024em', pr: { md: 5 } }}>
                         {selectedMember.name}
                     </Typography>
 
-                    <Typography sx={{ mt: 0.9, color: selectedMember.accent, fontWeight: 700, fontSize: '0.86rem', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
-                        Especialização • {selectedMember.specialties?.[0] ?? selectedMember.role}
+                    <Typography sx={{ mt: 0.9, color: accent, fontWeight: 700, fontSize: '0.86rem', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+                        Especialização • {selectedMember.stacks?.[0] ?? selectedMember.role}
                     </Typography>
 
                     <Typography sx={{ mt: 1.4, color: 'rgba(228,228,231,0.78)', lineHeight: 1.75, fontSize: { xs: '0.92rem', md: '0.98rem' } }}>

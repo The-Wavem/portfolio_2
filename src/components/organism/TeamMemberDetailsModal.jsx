@@ -15,6 +15,9 @@ import MemberStacks from './about-modal/MemberStacks';
 import MemberProjects from './about-modal/MemberProjects';
 
 export default function TeamMemberDetailsModal({ selectedMember, onClose }) {
+    const defaultAccent = '#38BDF8';
+    const accent = selectedMember?.accent || defaultAccent;
+
     return (
         <Dialog
             open={Boolean(selectedMember)}
@@ -39,7 +42,7 @@ export default function TeamMemberDetailsModal({ selectedMember, onClose }) {
                         scrollBehavior: 'smooth',
                         position: 'relative',
                         scrollbarWidth: 'thin',
-                        scrollbarColor: `${selectedMember.accent}99 rgba(255,255,255,0.1)`,
+                        scrollbarColor: `${accent}99 rgba(255,255,255,0.1)`,
                         '&::-webkit-scrollbar': {
                             width: '10px'
                         },
@@ -48,12 +51,12 @@ export default function TeamMemberDetailsModal({ selectedMember, onClose }) {
                             borderRadius: '12px'
                         },
                         '&::-webkit-scrollbar-thumb': {
-                            background: `linear-gradient(180deg, ${selectedMember.accent}, rgba(255,255,255,0.35))`,
+                            background: `linear-gradient(180deg, ${accent}, rgba(255,255,255,0.35))`,
                             borderRadius: '12px',
                             border: '2px solid rgba(8,8,8,0.7)'
                         },
                         '&::-webkit-scrollbar-thumb:hover': {
-                            background: `linear-gradient(180deg, ${selectedMember.accent}, rgba(255,255,255,0.5))`
+                            background: `linear-gradient(180deg, ${accent}, rgba(255,255,255,0.5))`
                         }
                     }}
                 >
@@ -72,33 +75,6 @@ export default function TeamMemberDetailsModal({ selectedMember, onClose }) {
                     <MemberHeader selectedMember={selectedMember} onClose={onClose} />
 
                     <Box sx={{ p: { xs: 2.4, md: 3 } }}>
-                        <Typography sx={{ color: '#fff', fontWeight: 700, fontSize: '0.96rem' }}>Habilidades e focos</Typography>
-
-                        <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mt: 1.2 }}>
-                            {selectedMember.specialties.map((item) => (
-                                <Chip
-                                    key={item}
-                                    label={item}
-                                    size="small"
-                                    variant="outlined"
-                                    sx={{
-                                        color: '#fff',
-                                        borderColor: 'rgba(255,255,255,0.2)',
-                                        background: 'rgba(255,255,255,0.03)',
-                                        '& .MuiChip-label': { fontWeight: 600, fontSize: '0.72rem' }
-                                    }}
-                                />
-                            ))}
-                        </Stack>
-
-                        <Stack spacing={1} sx={{ mt: 1.8 }}>
-                            {selectedMember.focuses.map((focus) => (
-                                <Typography key={focus} sx={{ color: 'rgba(228,228,231,0.76)', fontSize: '0.9rem', lineHeight: 1.6 }}>
-                                    • {focus}
-                                </Typography>
-                            ))}
-                        </Stack>
-
                         <MemberStacks selectedMember={selectedMember} />
 
                         <MemberProjects selectedMember={selectedMember} />
@@ -109,7 +85,7 @@ export default function TeamMemberDetailsModal({ selectedMember, onClose }) {
                                 p: { xs: 1.2, md: 1.3 },
                                 borderRadius: '12px',
                                 border: '1px solid rgba(255,255,255,0.1)',
-                                background: `linear-gradient(90deg, ${selectedMember.accent}22 0%, rgba(255,255,255,0.03) 42%, rgba(255,255,255,0.02) 100%)`
+                                background: `linear-gradient(90deg, ${accent}22 0%, rgba(255,255,255,0.03) 42%, rgba(255,255,255,0.02) 100%)`
                             }}
                         >
                             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.2}>
@@ -125,26 +101,30 @@ export default function TeamMemberDetailsModal({ selectedMember, onClose }) {
                                     Falar com {selectedMember.name}
                                 </Button>
 
-                                {selectedMember.links.map((link) => (
-                                    <Button
-                                        key={link.key}
-                                        component="a"
-                                        href={link.href}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        variant="outlined"
-                                        endIcon={<TbExternalLink size={16} />}
-                                        sx={{
-                                            borderRadius: '10px',
-                                            color: '#fff',
-                                            borderColor: 'rgba(255,255,255,0.24)',
-                                            fontWeight: 600,
-                                            '&:hover': { borderColor: selectedMember.accent, background: 'rgba(255,255,255,0.04)' }
-                                        }}
-                                    >
-                                        {link.label}
-                                    </Button>
-                                ))}
+                                {selectedMember.socialLinks && Object.entries(selectedMember.socialLinks).map(([key, href]) => {
+                                    if (!href) return null;
+                                    return (
+                                        <Button
+                                            key={key}
+                                            component="a"
+                                            href={href}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            variant="outlined"
+                                            endIcon={<TbExternalLink size={16} />}
+                                            sx={{
+                                                borderRadius: '10px',
+                                                color: '#fff',
+                                                borderColor: 'rgba(255,255,255,0.24)',
+                                                fontWeight: 600,
+                                                textTransform: 'capitalize',
+                                                '&:hover': { borderColor: accent, background: 'rgba(255,255,255,0.04)' }
+                                            }}
+                                        >
+                                            {key}
+                                        </Button>
+                                    );
+                                })}
                             </Stack>
                         </Box>
                     </Box>

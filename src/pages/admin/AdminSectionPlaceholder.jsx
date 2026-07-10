@@ -13,7 +13,16 @@ import {
   Stack,
   TextField,
   Typography,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  IconButton,
+  Divider,
 } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
+import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
 import { useParams } from "react-router-dom";
 import { TbArrowUpRight } from "react-icons/tb";
 import { editorConfigByPageSection, pageLabelByKey } from "./editors";
@@ -23,6 +32,7 @@ import Portfolio from "@/section/landing/Portfolio";
 import Process from "@/section/landing/Process";
 import { processIconMap } from "@/section/landing/ElasticTimeline";
 import ServicesHeroSection from "@/section/services/ServicesHeroSection";
+import ServicesHighlightsSection from "@/section/services/ServicesHighlightsSection";
 
 import ElasticTimeline from "@/section/landing/ElasticTimeline";
 
@@ -139,6 +149,20 @@ function createEmptyFaq(nextId) {
 function getStepsArray(draft, path) {
   const items = getNestedValue(draft, path);
   return Array.isArray(items) ? items : [];
+}
+
+function getServicesArray(draft, path) {
+  const items = getNestedValue(draft, path);
+  return Array.isArray(items) ? items : [];
+}
+
+function createEmptyService(nextId) {
+  return {
+    id: `service-${nextId}`,
+    title: "Novo Serviço",
+    description: "Insira a descrição deste serviço/especialidade aqui.",
+    tags: []
+  };
 }
 
 function createEmptyStep(nextId) {
@@ -1142,6 +1166,7 @@ const componentMap = {
   homeHero: Hero,
   homePortfolio: Portfolio,
   servicesHero: ServicesHeroSection,
+  servicesHighlights: ServicesHighlightsSection,
 };
 
 function LivePreviewWrapper({ config, draft, selectableOptions }) {
@@ -1186,6 +1211,36 @@ function LivePreviewWrapper({ config, draft, selectableOptions }) {
 
         <Box sx={{ position: "relative", px: { xs: 0, md: 2 } }}>
           <ElasticTimeline steps={steps} />
+        </Box>
+      </Box>
+    );
+  }
+
+  if (config.previewType === "servicesHighlights") {
+    const services = getServicesArray(draft, config.dynamicServicesPath || 'servicesList');
+    return (
+      <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: '#0a0a0a', color: '#fff', borderRadius: '16px' }}>
+        <Typography sx={{ color: '#7C3AED', fontWeight: 800, fontSize: '0.8rem', letterSpacing: 2, textTransform: 'uppercase', mb: 1 }}>
+          {draft.highlightsEyebrow || "ESPECIALIDADES"}
+        </Typography>
+        <Typography variant="h3" sx={{ fontWeight: 900, mb: 4, fontSize: { xs: '2rem', md: '2.5rem' } }}>
+          {draft.highlightsTitle || "Nossos Serviços"} <br />
+          <span style={{ color: '#7C3AED' }}>
+            {draft.highlightsTitleHighlight || ""}
+          </span>
+        </Typography>
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3 }}>
+          {services.map(service => (
+            <Box key={service.id} sx={{ p: 3, border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', bgcolor: 'rgba(255,255,255,0.02)' }}>
+              <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>{service.title}</Typography>
+              <Typography sx={{ color: 'rgba(255,255,255,0.7)', mb: 2, fontSize: '0.9rem' }}>{service.description}</Typography>
+              <Stack direction="row" gap={1} flexWrap="wrap">
+                {(service.tags || []).map(tag => (
+                  <Chip key={tag} label={tag} size="small" sx={{ bgcolor: 'rgba(124,58,237,0.2)', color: '#DDD6FE', border: '1px solid rgba(124,58,237,0.3)' }} />
+                ))}
+              </Stack>
+            </Box>
+          ))}
         </Box>
       </Box>
     );
@@ -1253,7 +1308,9 @@ function ContentEditor({ config }) {
   const [projectModalIndex, setProjectModalIndex] = useState(null);
   const [faqModalIndex, setFaqModalIndex] = useState(null);
   const [stepModalIndex, setStepModalIndex] = useState(null);
+  const [serviceModalIndex, setServiceModalIndex] = useState(null);
   const [draggedProjectId, setDraggedProjectId] = useState(null);
+  const [tagInputs, setTagInputs] = useState({});
 
   const savedContent = useMemo(() => {
     try {
@@ -1630,6 +1687,38 @@ function ContentEditor({ config }) {
       });
 
       return setNestedValue(current, config.dynamicStepsPath, nextSteps);
+    });
+  }
+
+  function handleAddService() {
+    if (!config.dynamicServicesPath) return;
+    setDraft((current) => {
+      const services = getServicesArray(current, config.dynamicServicesPath);
+      const nextId = services.length > 0 ? Math.max(...services.map(s => parseInt(s.id?.replace('service-', '')) || 0)) + 1 : 1;
+      const nextServices = [...services, createEmptyService(nextId)];
+      return setNestedValue(current, config.dynamicServicesPath, nextServices);
+    });
+  }
+
+  function handleRemoveService(index) {
+    if (!config.dynamicServicesPath) return;
+    setDraft((current) => {
+      const services = getServicesArray(current, config.dynamicServicesPath);
+      const nextServices = services.filter((_, itemIndex) => itemIndex !== index);
+      return setNestedValue(current, config.dynamicServicesPath, nextServices);
+    });
+    setServiceModalIndex(null);
+  }
+
+  function handleServiceFieldChange(index, key, rawValue) {
+    if (!config.dynamicServicesPath) return;
+    setDraft((current) => {
+      const services = getServicesArray(current, config.dynamicServicesPath);
+      const nextServices = services.map((service, serviceIndex) => {
+        if (serviceIndex !== index) return service;
+        return { ...service, [key]: rawValue };
+      });
+      return setNestedValue(current, config.dynamicServicesPath, nextServices);
     });
   }
 
@@ -2318,6 +2407,166 @@ function ContentEditor({ config }) {
                           }}
                         >
                           {step.description || "Descrição do passo"}
+                        </Typography>
+                      </Box>
+                    );
+                  })}
+                </Box>
+              </Box>
+            ) : null}
+
+            {config.dynamicServicesPath ? (
+              <Box sx={{ gridColumn: "1 / -1", mt: 0.6 }}>
+                <Stack
+                  direction="row"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  sx={{ mb: 1.1 }}
+                >
+                  <Typography
+                    sx={{ color: "#fff", fontWeight: 800, fontSize: "0.96rem" }}
+                  >
+                    Especialidades / Serviços
+                  </Typography>
+                  <Button
+                    onClick={handleAddService}
+                    variant="outlined"
+                    startIcon={<AddIcon />}
+                    sx={{
+                      borderRadius: "999px",
+                      textTransform: "none",
+                      fontWeight: 700,
+                      color: "#C7D2FE",
+                      borderColor: "rgba(99,102,241,0.45)",
+                    }}
+                  >
+                    Adicionar Serviço
+                  </Button>
+                </Stack>
+
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+                  {getServicesArray(draft, config.dynamicServicesPath).map((service, index) => {
+                    return (
+                      <Box
+                        key={service.id || index}
+                        draggable
+                        onDragStart={(e) => {
+                          e.dataTransfer.setData("text/plain", index);
+                          e.dataTransfer.effectAllowed = "move";
+                        }}
+                        onDragOver={(e) => {
+                          e.preventDefault();
+                          e.dataTransfer.dropEffect = "move";
+                        }}
+                        onDrop={(e) => {
+                          e.preventDefault();
+                          const fromIndex = parseInt(e.dataTransfer.getData("text/plain"), 10);
+                          const toIndex = index;
+                          
+                          if (fromIndex === toIndex || isNaN(fromIndex)) return;
+                          
+                          const newServices = [...getServicesArray(draft, config.dynamicServicesPath)];
+                          const [movedService] = newServices.splice(fromIndex, 1);
+                          newServices.splice(toIndex, 0, movedService);
+                          
+                          setDraft(setNestedValue(draft, config.dynamicServicesPath, newServices));
+                        }}
+                        sx={{
+                          p: 2.5,
+                          bgcolor: "rgba(255,255,255,0.02)",
+                          border: "1px solid rgba(255,255,255,0.1)",
+                          borderRadius: "12px",
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: 1.5,
+                          cursor: "grab",
+                          transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                          "&:active": {
+                            cursor: "grabbing",
+                            transform: "scale(0.98)"
+                          },
+                          "&:hover": {
+                            bgcolor: "rgba(255,255,255,0.04)",
+                            borderColor: "rgba(255,255,255,0.2)"
+                          }
+                        }}
+                      >
+                        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", position: "relative" }}>
+                          
+                          <Typography
+                            sx={{
+                              position: "absolute",
+                              top: -34,
+                              right: -10,
+                              fontWeight: 900,
+                              fontSize: "3rem",
+                              color: "rgba(255,255,255,0.03)",
+                              pointerEvents: "none",
+                              userSelect: "none",
+                              zIndex: 0
+                            }}
+                          >
+                            #{index + 1}
+                          </Typography>
+
+                          <Stack direction="row" spacing={1.5} alignItems="center" sx={{ zIndex: 1 }}>
+                            <Box sx={{
+                              p: 1,
+                              borderRadius: "8px",
+                              background: "rgba(255,255,255,0.05)",
+                              color: service.color || "#7C3AED",
+                              border: "1px solid rgba(255,255,255,0.1)",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center"
+                            }}>
+                              <DragIndicatorIcon sx={{ fontSize: 20 }} />
+                            </Box>
+                            <Box>
+                              <Typography sx={{ color: "#fff", fontWeight: 700, fontSize: "0.95rem" }}>
+                                {service.title || "Novo Serviço"}
+                              </Typography>
+                              <Typography sx={{ color: service.color || "#7C3AED", fontSize: "0.75rem", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase" }}>
+                                {service.role || "Subtítulo"}
+                              </Typography>
+                            </Box>
+                          </Stack>
+                          <Stack direction="row" spacing={1} sx={{ zIndex: 1 }}>
+                            <IconButton
+                              size="small"
+                              color="error"
+                              onClick={(e) => { e.stopPropagation(); handleRemoveService(index); }}
+                            >
+                              <DeleteIcon fontSize="small" />
+                            </IconButton>
+                            <Button
+                              size="small"
+                              onClick={() => setServiceModalIndex(index)}
+                              sx={{
+                                color: "#fff",
+                                textTransform: "none",
+                                fontWeight: 600,
+                                border: "1px solid rgba(255,255,255,0.2)",
+                                borderRadius: "8px",
+                                px: 2,
+                              }}
+                            >
+                              Editar
+                            </Button>
+                          </Stack>
+                        </Box>
+                        <Typography
+                          sx={{
+                            color: "rgba(255,255,255,0.7)",
+                            fontSize: "0.85rem",
+                            lineHeight: 1.5,
+                            display: "-webkit-box",
+                            WebkitLineClamp: 3,
+                            WebkitBoxOrient: "vertical",
+                            overflow: "hidden",
+                          }}
+                        >
+                          {service.description || "Descrição do serviço"}
                         </Typography>
                       </Box>
                     );
@@ -3370,6 +3619,209 @@ function ContentEditor({ config }) {
                       </Button>
                       <Button
                         onClick={() => setStepModalIndex(null)}
+                        variant="contained"
+                        sx={{
+                          borderRadius: "999px",
+                          textTransform: "none",
+                          fontWeight: 700,
+                          bgcolor: "#7C3AED",
+                          "&:hover": { bgcolor: "#6D28D9" },
+                        }}
+                      >
+                        Concluído
+                      </Button>
+                    </Stack>
+                  </Stack>
+                );
+              })()}
+            </DialogContent>
+          </Dialog>
+        ) : null}
+
+        {config.dynamicServicesPath ? (
+          <Dialog
+            open={serviceModalIndex !== null}
+            onClose={() => setServiceModalIndex(null)}
+            maxWidth="md"
+            fullWidth
+            PaperProps={{
+              sx: {
+                borderRadius: "18px",
+                bgcolor: "rgba(12,12,14,0.98)",
+                border: "1px solid rgba(255,255,255,0.12)",
+              },
+            }}
+          >
+            <DialogTitle sx={{ color: "#fff", fontWeight: 800 }}>
+              Editar Serviço / Especialidade
+            </DialogTitle>
+            <DialogContent>
+              {(() => {
+                const services = getServicesArray(draft, config.dynamicServicesPath);
+                const service = serviceModalIndex !== null ? services[serviceModalIndex] : null;
+
+                if (!service) {
+                  return null;
+                }
+
+                return (
+                  <Stack spacing={1.2} sx={{ mt: 0.4 }}>
+                    <TextField
+                      label="Subtítulo Superior (Role)"
+                      fullWidth
+                      value={service.role ?? ""}
+                      onChange={(event) =>
+                        handleServiceFieldChange(
+                          serviceModalIndex,
+                          "role",
+                          event.target.value,
+                        )
+                      }
+                      sx={getTextFieldStyles()}
+                    />
+                    <TextField
+                      label="Título Principal"
+                      fullWidth
+                      value={service.title ?? ""}
+                      onChange={(event) =>
+                        handleServiceFieldChange(
+                          serviceModalIndex,
+                          "title",
+                          event.target.value,
+                        )
+                      }
+                      sx={getTextFieldStyles()}
+                    />
+                    <TextField
+                      label="Descrição do Card"
+                      fullWidth
+                      multiline
+                      rows={3}
+                      value={service.description ?? ""}
+                      onChange={(event) =>
+                        handleServiceFieldChange(
+                          serviceModalIndex,
+                          "description",
+                          event.target.value,
+                        )
+                      }
+                      sx={getTextFieldStyles()}
+                    />
+                    
+                    <Box sx={{ p: 2, border: "1px solid rgba(255,255,255,0.05)", borderRadius: "12px", bgcolor: "rgba(7,7,8,0.86)", mt: 1 }}>
+                      <Typography sx={{ color: "rgba(255,255,255,0.7)", mb: 1.5, fontSize: "0.85rem", fontWeight: 600, textTransform: "uppercase" }}>
+                        Tags / Tecnologias
+                      </Typography>
+                      
+                      <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mb: 2 }}>
+                        {(service.tags || []).map((tag, tagIndex) => (
+                          <Chip
+                            key={`${tag}-${tagIndex}`}
+                            label={tag}
+                            onDelete={() => {
+                              handleServiceFieldChange(serviceModalIndex, "tags", (service.tags || []).filter((_, i) => i !== tagIndex));
+                            }}
+                            sx={{
+                              bgcolor: "rgba(124,58,237,0.15)",
+                              color: "#DDD6FE",
+                              border: "1px solid rgba(124,58,237,0.3)",
+                              "& .MuiChip-deleteIcon": { color: "#7C3AED", "&:hover": { color: "#9333EA" } }
+                            }}
+                          />
+                        ))}
+                        {(!service.tags || service.tags.length === 0) && (
+                          <Typography sx={{ color: "rgba(255,255,255,0.3)", fontSize: "0.85rem" }}>Nenhuma tag adicionada.</Typography>
+                        )}
+                      </Stack>
+
+                      <TextField
+                        size="small"
+                        placeholder="Digite uma tecnologia e aperte Enter..."
+                        value={tagInputs[service.id] || ""}
+                        onChange={e => setTagInputs(prev => ({ ...prev, [service.id]: e.target.value }))}
+                        onKeyDown={e => {
+                          if (e.key === "Enter" || e.key === ",") {
+                            e.preventDefault();
+                            const newTag = (tagInputs[service.id] || "").trim().replace(",", "");
+                            if (!newTag) return;
+                            
+                            const currentTags = service.tags || [];
+                            if (!currentTags.includes(newTag)) {
+                              handleServiceFieldChange(serviceModalIndex, "tags", [...currentTags, newTag]);
+                            }
+                            setTagInputs(prev => ({ ...prev, [service.id]: "" }));
+                          }
+                        }}
+                        fullWidth
+                        sx={getTextFieldStyles()}
+                      />
+                    </Box>
+
+                    <Box sx={{ mt: 1 }}>
+                      <Typography sx={{ color: "rgba(255,255,255,0.7)", fontSize: "0.85rem", mb: 1, fontWeight: 600 }}>
+                        Cor do Card
+                      </Typography>
+                      <Stack direction="row" spacing={2} alignItems="center">
+                        <Box
+                          sx={{
+                            width: 48,
+                            height: 48,
+                            borderRadius: "12px",
+                            overflow: "hidden",
+                            border: "1px solid rgba(255,255,255,0.1)",
+                            position: "relative",
+                            flexShrink: 0,
+                          }}
+                        >
+                          <input
+                            type="color"
+                            value={service.color || "#7C3AED"}
+                            onChange={(e) => handleServiceFieldChange(serviceModalIndex, "color", e.target.value)}
+                            style={{
+                              position: "absolute",
+                              top: -10,
+                              left: -10,
+                              width: 100,
+                              height: 100,
+                              cursor: "pointer",
+                              border: "none",
+                              padding: 0,
+                            }}
+                          />
+                        </Box>
+                        <TextField
+                          fullWidth
+                          value={service.color || ""}
+                          onChange={(e) =>
+                            handleServiceFieldChange(
+                              serviceModalIndex,
+                              "color",
+                              e.target.value,
+                            )
+                          }
+                          sx={getTextFieldStyles()}
+                        />
+                      </Stack>
+                    </Box>
+
+                    <Stack
+                      direction="row"
+                      justifyContent="space-between"
+                      alignItems="center"
+                      sx={{ pt: 1 }}
+                    >
+                      <Button
+                        onClick={() => handleRemoveService(serviceModalIndex)}
+                        sx={{
+                          color: "#FCA5A5",
+                          textTransform: "none",
+                          fontWeight: 700,
+                        }}
+                      >
+                        Remover Serviço
+                      </Button>
+                      <Button
+                        onClick={() => setServiceModalIndex(null)}
                         variant="contained"
                         sx={{
                           borderRadius: "999px",

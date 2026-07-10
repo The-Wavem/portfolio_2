@@ -18,7 +18,10 @@ import {
     setFaqItemsRemote,
     setHomeHeroContentRemote,
     setHomePortfolioContentRemote,
-    setHomeProcessContentRemote
+    setHomeProcessContentRemote,
+    getServicesContent,
+    getServicesContentRemote,
+    setServicesContentRemote
 } from '@/service/content';
 
 function getHomeFaqEditorContent() {
@@ -73,21 +76,6 @@ export const homeEditorConfig = {
             { path: 'secondaryCTA.link', label: 'CTA secundário - rota' }
         ]
     },
-    processo: {
-        title: 'Processo da Home',
-        navLabel: 'Filosofia / Processo',
-        description: 'Edite a proposta de método e narrativa da seção de processo.',
-        getContent: getHomeProcessContent,
-        loadRemote: getHomeProcessContentRemote,
-        saveRemote: setHomeProcessContentRemote,
-        previewType: 'homeProcess',
-        dynamicStepsPath: 'steps',
-        fields: [
-            { path: 'eyebrow', label: 'Título superior', fullWidth: true },
-            { path: 'titlePrefix', label: 'Título (início)' },
-            { path: 'titleHighlight', label: 'Título (destaque)' }
-        ]
-    },
     portfolio: {
         title: 'Portfólio da Home',
         navLabel: 'Portfólio',
@@ -103,6 +91,36 @@ export const homeEditorConfig = {
             { path: 'titleStart', label: 'Título (início)' },
             { path: 'titleHighlight', label: 'Título (destaque)' },
             { path: 'buttonText', label: 'Texto do Botão', fullWidth: true }
+        ]
+    },
+    processo: {
+        title: 'Processo da Home',
+        navLabel: 'Filosofia / Processo',
+        description: 'Edite a proposta de método e narrativa da seção de processo.',
+        getContent: getHomeProcessContent,
+        loadRemote: getHomeProcessContentRemote,
+        saveRemote: setHomeProcessContentRemote,
+        previewType: 'homeProcess',
+        dynamicStepsPath: 'steps',
+        fields: [
+            { path: 'eyebrow', label: 'Título superior', fullWidth: true },
+            { path: 'titlePrefix', label: 'Título (início)' },
+            { path: 'titleHighlight', label: 'Título (destaque)' }
+        ]
+    },
+    especialidades: {
+        title: 'Especialidades / Serviços',
+        navLabel: 'Especialidades',
+        description: 'Gerencie a lista dinâmica de serviços, ferramentas e descrições.',
+        getContent: getServicesContent,
+        loadRemote: getServicesContentRemote,
+        saveRemote: setServicesContentRemote,
+        previewType: 'servicesHighlights',
+        dynamicServicesPath: 'servicesList',
+        fields: [
+            { path: 'highlightsEyebrow', label: 'Eyebrow (Texto Superior)', fullWidth: true },
+            { path: 'highlightsTitle', label: 'Título Principal da Seção', fullWidth: true },
+            { path: 'highlightsTitleHighlight', label: 'Título em Destaque (Cor Primária)', fullWidth: true }
         ]
     },
     contato: {

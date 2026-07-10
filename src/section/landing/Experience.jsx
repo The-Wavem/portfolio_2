@@ -1,8 +1,8 @@
 import { Box, Container, Typography, Stack, useTheme } from '@mui/material';
 import { motion } from 'framer-motion';
 import { VscJson, VscCode, VscSymbolRuler } from 'react-icons/vsc';
-import { getExperienceItems } from '@/service/content';
-import { useRef } from 'react';
+import { getServicesContent, getServicesContentRemote } from '@/service/content';
+import { useRef, useEffect, useState } from 'react';
 import styles from './Experience.module.css';
 
 function hexToRgba(hex, alpha) {
@@ -98,9 +98,11 @@ const BackgroundArtifact = ({ type, color, intensity = 0.05 }) => {
     const gridPattern = (
         <Box sx={{
             width: '100%', height: '100%',
-            backgroundImage: `radial-gradient(${color} 1px, transparent 1px)`,
+            backgroundImage: `linear-gradient(${color} 1px, transparent 1px), linear-gradient(90deg, ${color} 1px, transparent 1px)`,
             backgroundSize: '16px 16px',
-            opacity: resolved.snippetOpacity
+            opacity: resolved.snippetOpacity * 0.7,
+            transform: 'perspective(400px) rotateX(45deg) scale(1.4)',
+            transformOrigin: 'top center'
         }} />
     );
 
@@ -108,15 +110,10 @@ const BackgroundArtifact = ({ type, color, intensity = 0.05 }) => {
         <Box
             sx={{
                 position: 'absolute',
-                top: resolved.top,
-                right: resolved.right,
-                width: resolved.width,
-                height: resolved.height,
-                overflow: 'hidden',
-                zIndex: 0,
-                pointerEvents: 'none',
-                filter: resolved.blur,
-                maskImage: resolved.mask
+                top: resolved.top, right: resolved.right,
+                width: resolved.width, height: resolved.height,
+                pointerEvents: 'none', userSelect: 'none', zIndex: 0,
+                filter: resolved.blur, WebkitMaskImage: resolved.mask, maskImage: resolved.mask
             }}
         >
             {type === 'code' && codeSnippet}
@@ -127,13 +124,8 @@ const BackgroundArtifact = ({ type, color, intensity = 0.05 }) => {
 };
 
 const NeuralCard = ({ item, variant = 'small' }) => {
-    const isHero = variant === 'hero';
-    const itemGlowSoft = hexToRgba(item.color, isHero ? 0.12 : 0.08);
-    const itemGlowEdge = hexToRgba(item.color, 0.24);
-    const itemChipBg = hexToRgba(item.color, 0.06);
-    const itemChipBorder = hexToRgba(item.color, 0.2);
-
     const cardRef = useRef(null);
+    const isHero = variant === 'hero';
 
     const handleMouseMove = (e) => {
         if (!cardRef.current) return;
@@ -143,6 +135,10 @@ const NeuralCard = ({ item, variant = 'small' }) => {
         cardRef.current.style.setProperty('--mouse-x', `${x}px`);
         cardRef.current.style.setProperty('--mouse-y', `${y}px`);
     };
+
+    const itemChipBg = hexToRgba(item.color, 0.08);
+    const itemChipBorder = hexToRgba(item.color, 0.22);
+    const itemGlowSoft = hexToRgba(item.color, 0.14);
 
     return (
         <motion.div
@@ -274,7 +270,34 @@ const NeuralCard = ({ item, variant = 'small' }) => {
 
 export default function Experience() {
     const theme = useTheme();
-    const experiences = getExperienceItems();
+    const [content, setContent] = useState(() => getServicesContent());
+
+    useEffect(() => {
+        let isMounted = true;
+        async function fetchContent() {
+            try {
+                const remote = await getServicesContentRemote();
+                if (isMounted && remote) {
+                    setContent(remote);
+                }
+            } catch (err) {
+                console.error("Failed to load services content", err);
+            }
+        }
+        fetchContent();
+        return () => { isMounted = false; };
+    }, []);
+
+    const defaultColors = ['#A78BFA', '#34D399', '#60A5FA', '#F87171', '#FBBF24', '#C084FC'];
+    const defaultBgTypes = ['code', 'json', 'grid', 'code', 'grid', 'json'];
+
+    const rawServices = content?.servicesList || [];
+    const experiences = rawServices.map((service, index) => ({
+        ...service,
+        color: defaultColors[index % defaultColors.length],
+        bgType: defaultBgTypes[index % defaultBgTypes.length],
+        role: service.role || `Especialidade 0${index + 1}`
+    }));
 
     return (
         <Box component="section" sx={{ py: { xs: 10, md: 15 }, position: 'relative', overflow: 'hidden' }}>
@@ -310,8 +333,8 @@ export default function Experience() {
 
             <Container maxWidth="lg">
                 <Box mb={{ xs: 7, md: 10 }} textAlign="left" position="relative" zIndex={2}>
-                    <Typography variant="overline" color="primary" sx={{ letterSpacing: 4, fontWeight: 700, fontSize: '0.72rem', opacity: 0.95 }}>
-                        NOSSO DNA TÉCNICO
+                    <Typography variant="overline" color="primary" sx={{ letterSpacing: 4, fontWeight: 700, fontSize: '0.72rem', opacity: 0.95, textTransform: 'uppercase' }}>
+                        {content?.highlightsEyebrow || "NOSSO DNA TÉCNICO"}
                     </Typography>
                     <Typography
                         variant="h3"
@@ -322,11 +345,14 @@ export default function Experience() {
                             maxWidth: 760,
                             fontSize: { xs: '2rem', sm: '2.35rem', md: '3.1rem' },
                             lineHeight: 1.06,
-                            letterSpacing: '-0.03em'
+                            letterSpacing: '-0.03em',
+                            color: '#fff'
                         }}
                     >
-                        Mais que ferramentas, <br />
-                        <span style={{ color: theme.palette.primary.main }}>domínio tecnológico.</span>
+                        {content?.highlightsTitle || "Mais que ferramentas,"} <br />
+                        <span style={{ color: theme.palette.primary.main }}>
+                            {content?.highlightsTitleHighlight || "domínio tecnológico."}
+                        </span>
                     </Typography>
                 </Box>
 
@@ -340,7 +366,7 @@ export default function Experience() {
                 >
                     {experiences.map((item, index) => (
                         <Box
-                            key={item.id}
+                            key={item.id || index}
                             sx={{
                                 gridColumn: { xs: '1 / -1', md: 'span 6' }
                             }}

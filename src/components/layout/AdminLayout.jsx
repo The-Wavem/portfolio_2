@@ -35,6 +35,7 @@ const adminPageGroups = [
       { key: "hero", label: "Hero & Perfil" },
       { key: "portfolio", label: "Portfólio" },
       { key: "processo", label: "Filosofia / Processo" },
+      { key: "especialidades", label: "Especialidades" },
       { key: "contato", label: "Contato" },
       { key: "faq", label: "FAQ / Dúvidas" },
     ],

@@ -28,17 +28,19 @@ export const servicesEditorConfig = {
             { path: 'impactStats.2.label', label: 'Stat 3 - rótulo' }
         ]
     },
-    destaques: {
-        title: 'Destaques de Serviços',
-        navLabel: 'Destaques',
-        description: 'Listas de expectativa inicial e métricas de sucesso.',
+    especialidades: {
+        title: 'Especialidades / Serviços',
+        navLabel: 'Especialidades',
+        description: 'Gerencie a lista dinâmica de serviços, ferramentas e descrições.',
         getContent: getServicesContent,
         loadRemote: getServicesContentRemote,
         saveRemote: setServicesContentRemote,
         previewType: 'servicesHighlights',
+        dynamicServicesPath: 'servicesList',
         fields: [
-            { path: 'firstWeekExpectations', label: 'Primeira semana (separadas por ;)', arraySeparator: ';', multiline: true, rows: 5, fullWidth: true },
-            { path: 'successMetrics', label: 'Métricas de sucesso (separadas por ;)', arraySeparator: ';', multiline: true, rows: 5, fullWidth: true }
+            { path: 'highlightsEyebrow', label: 'Eyebrow (Texto Superior)', fullWidth: true },
+            { path: 'highlightsTitle', label: 'Título Principal da Seção', fullWidth: true },
+            { path: 'highlightsTitleHighlight', label: 'Título em Destaque (Cor Primária)', fullWidth: true }
         ]
     },
     processo: {

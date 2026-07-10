@@ -20,6 +20,7 @@ import { editorConfigByPageSection, pageLabelByKey } from "./editors";
 import { useAdminUnsavedChanges } from "./adminUnsavedChanges.context";
 import Hero from "@/section/landing/Hero";
 import Portfolio from "@/section/landing/Portfolio";
+import Process from "@/section/landing/Process";
 import ServicesHeroSection from "@/section/services/ServicesHeroSection";
 
 function getNestedValue(obj, path) {
@@ -128,7 +129,23 @@ function createEmptyFaq(nextId) {
   return {
     id: `faq-${nextId}`,
     question: "Nova pergunta frequente",
-    answer: "Nova resposta.",
+    answer: "Insira a resposta aqui",
+  };
+}
+
+function getStepsArray(draft, path) {
+  const items = getNestedValue(draft, path);
+  return Array.isArray(items) ? items : [];
+}
+
+function createEmptyStep(nextId) {
+  return {
+    id: nextId,
+    title: "Novo Passo",
+    subtitle: "Subtítulo",
+    description: "Descrição do passo.",
+    iconKey: "coffee",
+    color: "#7C3AED"
   };
 }
 
@@ -676,63 +693,16 @@ function SectionPreview({ config, draft }) {
 
   if (config.previewType === "homeProcess") {
     return (
-      <Stack spacing={1.1}>
-        <Stack direction="row" spacing={0.8} flexWrap="wrap" useFlexGap>
-          {normalizePreviewList(draft.topTags).map((tag, index) => (
-            <Chip
-              key={`${tag}-${index}`}
-              label={tag}
-              sx={{
-                bgcolor: "rgba(56,189,248,0.16)",
-                color: "#BAE6FD",
-                border: "1px solid rgba(56,189,248,0.35)",
-              }}
-            />
-          ))}
-        </Stack>
-        <Box
-          sx={{
-            p: 1.3,
-            borderRadius: "12px",
-            border: "1px solid rgba(255,255,255,0.14)",
-            bgcolor: "rgba(255,255,255,0.02)",
-          }}
-        >
-          <Typography
-            sx={{
-              color: "rgba(228,228,231,0.72)",
-              textTransform: "uppercase",
-              fontWeight: 700,
-              fontSize: "0.68rem",
-              letterSpacing: "0.08em",
-            }}
-          >
-            {draft.eyebrow || "EYEBROW"}
-          </Typography>
-          <Typography
-            sx={{
-              mt: 0.55,
-              color: "#fff",
-              fontWeight: 800,
-              lineHeight: 1.24,
-              fontSize: "0.96rem",
-            }}
-          >
-            {draft.titleStart}{" "}
-            <span style={{ color: "#67E8F9" }}>{draft.titleHighlight}</span>
-          </Typography>
-          <Typography
-            sx={{
-              mt: 0.7,
-              color: "rgba(228,228,231,0.78)",
-              fontSize: "0.82rem",
-              lineHeight: 1.55,
-            }}
-          >
-            {draft.description}
-          </Typography>
-        </Box>
-      </Stack>
+      <Box sx={{
+        minHeight: "800px",
+        height: "100%",
+        width: "100%",
+        overflow: "hidden",
+        position: "relative",
+        "& > section": { py: 4 } // Override padding so it fits well
+      }}>
+        <Process content={draft} />
+      </Box>
     );
   }
 
@@ -1243,6 +1213,7 @@ function ContentEditor({ config }) {
   const [memberModalIndex, setMemberModalIndex] = useState(null);
   const [projectModalIndex, setProjectModalIndex] = useState(null);
   const [faqModalIndex, setFaqModalIndex] = useState(null);
+  const [stepModalIndex, setStepModalIndex] = useState(null);
   const [draggedProjectId, setDraggedProjectId] = useState(null);
 
   useEffect(() => {
@@ -1256,6 +1227,7 @@ function ContentEditor({ config }) {
     setMemberModalIndex(null);
     setProjectModalIndex(null);
     setFaqModalIndex(null);
+    setStepModalIndex(null);
 
     async function loadRemoteContent() {
       if (!config.loadRemote) {
@@ -1558,6 +1530,54 @@ function ContentEditor({ config }) {
       });
 
       return setNestedValue(current, config.dynamicFaqPath, nextFaqs);
+    });
+  }
+
+  function handleAddStep() {
+    if (!config.dynamicStepsPath) {
+      return;
+    }
+
+    setDraft((current) => {
+      const steps = getStepsArray(current, config.dynamicStepsPath);
+      const nextId = steps.length > 0 ? Math.max(...steps.map(s => s.id)) + 1 : 1;
+      const nextSteps = [...steps, createEmptyStep(nextId)];
+      return setNestedValue(current, config.dynamicStepsPath, nextSteps);
+    });
+  }
+
+  function handleRemoveStep(index) {
+    if (!config.dynamicStepsPath) {
+      return;
+    }
+
+    setDraft((current) => {
+      const steps = getStepsArray(current, config.dynamicStepsPath);
+      const nextSteps = steps.filter((_, itemIndex) => itemIndex !== index);
+      return setNestedValue(current, config.dynamicStepsPath, nextSteps);
+    });
+    setStepModalIndex(null);
+  }
+
+  function handleStepFieldChange(index, key, rawValue) {
+    if (!config.dynamicStepsPath) {
+      return;
+    }
+
+    setDraft((current) => {
+      const steps = getStepsArray(current, config.dynamicStepsPath);
+      const nextSteps = steps.map((step, stepIndex) => {
+        if (stepIndex !== index) {
+          return step;
+        }
+
+        return {
+          ...step,
+          [key]: rawValue,
+        };
+      });
+
+      return setNestedValue(current, config.dynamicStepsPath, nextSteps);
     });
   }
 
@@ -2082,6 +2102,103 @@ function ContentEditor({ config }) {
                           }}
                         >
                           {faq.answer || "Sem resposta ainda."}
+                        </Typography>
+                      </Box>
+                    ),
+                  )}
+                </Box>
+              </Box>
+            ) : null}
+
+            {config.dynamicStepsPath ? (
+              <Box sx={{ gridColumn: "1 / -1", mt: 0.6 }}>
+                <Stack
+                  direction="row"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  sx={{ mb: 1.1 }}
+                >
+                  <Typography
+                    sx={{ color: "#fff", fontWeight: 800, fontSize: "0.96rem" }}
+                  >
+                    Passos do Processo
+                  </Typography>
+                  <Button
+                    onClick={handleAddStep}
+                    variant="outlined"
+                    sx={{
+                      borderRadius: "999px",
+                      textTransform: "none",
+                      fontWeight: 700,
+                      color: "#C7D2FE",
+                      borderColor: "rgba(99,102,241,0.45)",
+                    }}
+                  >
+                    Adicionar Passo
+                  </Button>
+                </Stack>
+
+                <Box
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: {
+                      xs: "1fr",
+                      md: "repeat(2, minmax(0, 1fr))",
+                    },
+                    gap: 1.2,
+                  }}
+                >
+                  {getStepsArray(draft, config.dynamicStepsPath).map(
+                    (step, index) => (
+                      <Box
+                        key={step.id || index}
+                        sx={{
+                          p: 1.2,
+                          borderRadius: "12px",
+                          border: "1px solid rgba(255,255,255,0.14)",
+                          bgcolor: "rgba(255,255,255,0.02)",
+                        }}
+                      >
+                        <Stack
+                          direction="row"
+                          justifyContent="space-between"
+                          alignItems="center"
+                          spacing={1}
+                        >
+                          <Typography
+                            sx={{
+                              color: "#fff",
+                              fontWeight: 800,
+                              fontSize: "0.84rem",
+                            }}
+                          >
+                            {step.title || `Passo ${index + 1}`}
+                          </Typography>
+                          <Button
+                            onClick={() => setStepModalIndex(index)}
+                            sx={{
+                              borderRadius: "999px",
+                              textTransform: "none",
+                              fontWeight: 700,
+                              color: "#DDD6FE",
+                              border: "1px solid rgba(124,58,237,0.4)",
+                              px: 1.2,
+                              minWidth: 0,
+                            }}
+                          >
+                            Editar
+                          </Button>
+                        </Stack>
+
+                        <Typography
+                          sx={{
+                            mt: 0.8,
+                            color: "rgba(228,228,231,0.68)",
+                            fontSize: "0.78rem",
+                            lineHeight: 1.5,
+                          }}
+                        >
+                          {step.description || "Sem descrição ainda."}
                         </Typography>
                       </Box>
                     ),
@@ -2878,13 +2995,7 @@ function ContentEditor({ config }) {
                           event.target.value,
                         )
                       }
-                      sx={{
-                        "& .MuiInputBase-root": {
-                          bgcolor: "rgba(7,7,8,0.86)",
-                          borderRadius: "12px",
-                          color: "#F5F5F5",
-                        },
-                      }}
+                      sx={getTextFieldStyles()}
                     />
                     <TextField
                       label="Pergunta"
@@ -2897,13 +3008,7 @@ function ContentEditor({ config }) {
                           event.target.value,
                         )
                       }
-                      sx={{
-                        "& .MuiInputBase-root": {
-                          bgcolor: "rgba(7,7,8,0.86)",
-                          borderRadius: "12px",
-                          color: "#F5F5F5",
-                        },
-                      }}
+                      sx={getTextFieldStyles()}
                     />
                     <TextField
                       label="Resposta"
@@ -2918,13 +3023,20 @@ function ContentEditor({ config }) {
                           event.target.value,
                         )
                       }
-                      sx={{
-                        "& .MuiInputBase-root": {
-                          bgcolor: "rgba(7,7,8,0.86)",
-                          borderRadius: "12px",
-                          color: "#F5F5F5",
-                        },
-                      }}
+                      sx={getTextFieldStyles()}
+                    />
+                    <TextField
+                      label="Categoria (opcional)"
+                      fullWidth
+                      value={faq.category ?? ""}
+                      onChange={(event) =>
+                        handleFaqFieldChange(
+                          faqModalIndex,
+                          "category",
+                          event.target.value,
+                        )
+                      }
+                      sx={getTextFieldStyles()}
                     />
 
                     <Stack
@@ -2954,7 +3066,140 @@ function ContentEditor({ config }) {
                           "&:hover": { bgcolor: "#6D28D9" },
                         }}
                       >
-                        Fechar
+                        Concluído
+                      </Button>
+                    </Stack>
+                  </Stack>
+                );
+              })()}
+            </DialogContent>
+          </Dialog>
+        ) : null}
+
+        {config.dynamicStepsPath ? (
+          <Dialog
+            open={stepModalIndex !== null}
+            onClose={() => setStepModalIndex(null)}
+            maxWidth="md"
+            fullWidth
+            PaperProps={{
+              sx: {
+                borderRadius: "18px",
+                bgcolor: "rgba(12,12,14,0.98)",
+                border: "1px solid rgba(255,255,255,0.12)",
+              },
+            }}
+          >
+            <DialogTitle sx={{ color: "#fff", fontWeight: 800 }}>
+              Editar Passo do Processo
+            </DialogTitle>
+            <DialogContent>
+              {(() => {
+                const steps = getStepsArray(draft, config.dynamicStepsPath);
+                const step = stepModalIndex !== null ? steps[stepModalIndex] : null;
+
+                if (!step) {
+                  return null;
+                }
+
+                return (
+                  <Stack spacing={1.2} sx={{ mt: 0.4 }}>
+                    <TextField
+                      label="Título"
+                      fullWidth
+                      value={step.title ?? ""}
+                      onChange={(event) =>
+                        handleStepFieldChange(
+                          stepModalIndex,
+                          "title",
+                          event.target.value,
+                        )
+                      }
+                      sx={getTextFieldStyles()}
+                    />
+                    <TextField
+                      label="Subtítulo"
+                      fullWidth
+                      value={step.subtitle ?? ""}
+                      onChange={(event) =>
+                        handleStepFieldChange(
+                          stepModalIndex,
+                          "subtitle",
+                          event.target.value,
+                        )
+                      }
+                      sx={getTextFieldStyles()}
+                    />
+                    <TextField
+                      label="Descrição"
+                      fullWidth
+                      multiline
+                      rows={3}
+                      value={step.description ?? ""}
+                      onChange={(event) =>
+                        handleStepFieldChange(
+                          stepModalIndex,
+                          "description",
+                          event.target.value,
+                        )
+                      }
+                      sx={getTextFieldStyles()}
+                    />
+                    <TextField
+                      label="Ícone (ex: coffee, pencil, file, code, rocket)"
+                      fullWidth
+                      value={step.iconKey ?? ""}
+                      onChange={(event) =>
+                        handleStepFieldChange(
+                          stepModalIndex,
+                          "iconKey",
+                          event.target.value,
+                        )
+                      }
+                      sx={getTextFieldStyles()}
+                    />
+                    <TextField
+                      label="Cor do Ícone (ex: #7C3AED)"
+                      fullWidth
+                      value={step.color ?? ""}
+                      onChange={(event) =>
+                        handleStepFieldChange(
+                          stepModalIndex,
+                          "color",
+                          event.target.value,
+                        )
+                      }
+                      sx={getTextFieldStyles()}
+                    />
+
+                    <Stack
+                      direction="row"
+                      justifyContent="space-between"
+                      alignItems="center"
+                      sx={{ pt: 0.4 }}
+                    >
+                      <Button
+                        onClick={() => handleRemoveStep(stepModalIndex)}
+                        sx={{
+                          color: "#FCA5A5",
+                          textTransform: "none",
+                          fontWeight: 700,
+                        }}
+                      >
+                        Remover Passo
+                      </Button>
+                      <Button
+                        onClick={() => setStepModalIndex(null)}
+                        variant="contained"
+                        sx={{
+                          borderRadius: "999px",
+                          textTransform: "none",
+                          fontWeight: 700,
+                          bgcolor: "#7C3AED",
+                          "&:hover": { bgcolor: "#6D28D9" },
+                        }}
+                      >
+                        Concluído
                       </Button>
                     </Stack>
                   </Stack>

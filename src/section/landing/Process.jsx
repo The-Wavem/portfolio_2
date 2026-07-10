@@ -9,12 +9,17 @@ import {
 import ElasticTimeline from "./ElasticTimeline";
 import styles from "./Process.module.css";
 
-export default function Process() {
-  const steps = getProcessSteps();
-  const [process, setProcess] = useState(() => getHomeProcessContent());
+export default function Process({ content }) {
+  const [process, setProcess] = useState(() => content || getHomeProcessContent());
+  const steps = process?.steps || getProcessSteps();
 
   useEffect(() => {
     let isMounted = true;
+
+    if (content) {
+      setProcess(content);
+      return;
+    }
 
     async function loadProcessRemote() {
       try {
@@ -32,7 +37,7 @@ export default function Process() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [content]);
 
   return (
     <Box

@@ -81,12 +81,11 @@ export const homeEditorConfig = {
         loadRemote: getHomeProcessContentRemote,
         saveRemote: setHomeProcessContentRemote,
         previewType: 'homeProcess',
+        dynamicStepsPath: 'steps',
         fields: [
-            { path: 'eyebrow', label: 'Eyebrow' },
-            { path: 'titleStart', label: 'Título (início)' },
+            { path: 'titlePrefix', label: 'Título (início)' },
             { path: 'titleHighlight', label: 'Título (destaque)' },
-            { path: 'description', label: 'Descrição', multiline: true, rows: 3, fullWidth: true },
-            { path: 'topTags', label: 'Tags do topo (separadas por ;)', arraySeparator: ';', multiline: true, rows: 3, fullWidth: true }
+            { path: 'description', label: 'Descrição', multiline: true, rows: 3, fullWidth: true }
         ]
     },
     portfolio: {

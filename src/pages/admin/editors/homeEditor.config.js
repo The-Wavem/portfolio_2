@@ -132,14 +132,15 @@ export const homeEditorConfig = {
         saveRemote: setHomeContactContentRemote,
         previewType: 'homeContact',
         fields: [
-            { path: 'eyebrow', label: 'Eyebrow' },
-            { path: 'titleStart', label: 'Título (início)' },
+            { path: 'eyebrow', label: 'Eyebrow (Texto Superior)' },
+            { path: 'titlePrefix', label: 'Título (início)' },
             { path: 'titleHighlight', label: 'Título (destaque)' },
             { path: 'description', label: 'Descrição', multiline: true, rows: 3, fullWidth: true },
-            { path: 'quickMessage', label: 'Mensagem rápida', multiline: true, rows: 3, fullWidth: true },
-            { path: 'whatsappPhone', label: 'WhatsApp (somente números com DDI)' },
-            { path: 'email', label: 'E-mail de contato' },
-            { path: 'copiedFeedback', label: 'Feedback ao copiar e-mail' }
+            { path: 'ctaLabel', label: 'Rótulo do CTA' },
+            { path: 'ctaLink', label: 'Link do CTA' },
+            { path: 'emailAddress', label: 'E-mail de contato' },
+            { path: 'emailFeedbackMessage', label: 'Feedback ao copiar e-mail' },
+            { path: 'whatsappNumber', label: 'WhatsApp', helperText: 'Insira apenas números com DDI e DDD (ex: 554199999999)' }
         ]
     },
     faq: {

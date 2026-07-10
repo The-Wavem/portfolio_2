@@ -107,18 +107,26 @@ const IconMap = {
     github: TbBrandGithub
 };
 
-export default function Contact() {
+export default function Contact({ content: overrideContent }) {
     const theme = useTheme();
-    const [contact, setContact] = useState(() => getHomeContactContent());
+    const [contact, setContact] = useState(() => overrideContent || getHomeContactContent());
     const [copied, setCopied] = useState(false);
 
-    const contactEmail = contact.email;
-    const normalizedWhatsappPhone = String(contact.whatsappPhone || '').replace(/\D/g, '');
+    useEffect(() => {
+        if (overrideContent) {
+            setContact(overrideContent);
+        }
+    }, [overrideContent]);
+
+    const contactEmail = contact.emailAddress;
+    const normalizedWhatsappPhone = String(contact.whatsappNumber || '').replace(/\D/g, '');
     const whatsappHref = normalizedWhatsappPhone
-        ? `https://wa.me/${normalizedWhatsappPhone}?text=${encodeURIComponent(contact.quickMessage || '')}`
+        ? `https://wa.me/${normalizedWhatsappPhone}`
         : '#';
+    const ctaLink = contact.ctaLink || whatsappHref;
 
     useEffect(() => {
+        if (overrideContent) return; // Se tiver override (Live Preview), não buscar do firebase
         let isMounted = true;
         async function loadRemoteContact() {
             try {
@@ -134,7 +142,7 @@ export default function Contact() {
         return () => {
             isMounted = false;
         };
-    }, []);
+    }, [overrideContent]);
 
     const handleCopyEmail = async (e) => {
         e.preventDefault();
@@ -157,7 +165,6 @@ export default function Contact() {
                             <Typography variant="overline" color="primary" sx={{ letterSpacing: 4, fontWeight: 700, fontSize: '0.75rem', opacity: 0.95, mb: 2, display: 'block' }}>
                                 {contact.eyebrow}
                             </Typography>
-                            
                             <Typography
                                 variant="h2"
                                 fontWeight={800}
@@ -168,7 +175,7 @@ export default function Contact() {
                                     mb: 3
                                 }}
                             >
-                                <StaggeredText text={contact.titleStart} color="#ffffff" delayOffset={0} />
+                                <StaggeredText text={contact.titlePrefix} color="#ffffff" delayOffset={0} />
                                 <br />
                                 <StaggeredText text={contact.titleHighlight} color={theme.palette.primary.main} delayOffset={0.3} />
                             </Typography>
@@ -181,8 +188,8 @@ export default function Contact() {
                         <MagneticWrapper strength={0.4}>
                             <Button
                                 component="a"
-                                href={whatsappHref}
-                                onClick={() => trackAction({ page: 'home', section: 'contact', action: 'open_whatsapp_primary', label: contact.buttonText })}
+                                href={ctaLink}
+                                onClick={() => trackAction({ page: 'home', section: 'contact', action: 'open_whatsapp_primary', label: contact.ctaLabel })}
                                 target="_blank"
                                 rel="noreferrer"
                                 variant="contained"
@@ -205,7 +212,7 @@ export default function Contact() {
                                     }
                                 }}
                             >
-                                {contact.buttonText || 'Iniciar Conversa'}
+                                {contact.ctaLabel || 'Iniciar Conversa'}
                             </Button>
                         </MagneticWrapper>
                     </div>
@@ -249,7 +256,7 @@ export default function Contact() {
 
             <Snackbar open={copied} autoHideDuration={2500} onClose={() => setCopied(false)} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
                 <Alert onClose={() => setCopied(false)} severity="success" variant="filled" sx={{ width: '100%', bgcolor: '#10B981', color: '#fff' }}>
-                    {contact.copiedFeedback}
+                    {contact.emailFeedbackMessage}
                 </Alert>
             </Snackbar>
         </Box>

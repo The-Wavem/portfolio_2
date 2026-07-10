@@ -30,6 +30,7 @@ import { useAdminUnsavedChanges } from "./adminUnsavedChanges.context";
 import Hero from "@/section/landing/Hero";
 import Portfolio from "@/section/landing/Portfolio";
 import Process from "@/section/landing/Process";
+import Contact from "@/section/landing/Contact";
 import { processIconMap } from "@/section/landing/ElasticTimeline";
 import ServicesHeroSection from "@/section/services/ServicesHeroSection";
 import ServicesHighlightsSection from "@/section/services/ServicesHighlightsSection";
@@ -1165,6 +1166,7 @@ function SectionPreview({ config, draft }) {
 const componentMap = {
   homeHero: Hero,
   homePortfolio: Portfolio,
+  homeContact: Contact,
   servicesHero: ServicesHeroSection,
   servicesHighlights: ServicesHighlightsSection,
 };
@@ -1916,6 +1918,7 @@ function ContentEditor({ config }) {
                     multiline={field.multiline}
                     rows={field.rows}
                     value={displayValue(field)}
+                    helperText={field.helperText}
                     onChange={(event) =>
                       handleChange(field, event.target.value)
                     }

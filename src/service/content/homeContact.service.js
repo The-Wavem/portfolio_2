@@ -2,16 +2,15 @@ import { getFirebaseContent, setFirebaseContent } from "@/service/firebase";
 
 export const homeContactContent = {
   eyebrow: "CONTATO SEM FRICÇÃO",
-  titleStart: "Fale com a The Wavem com",
+  titlePrefix: "Fale com a The Wavem com",
   titleHighlight: "clareza desde o primeiro clique.",
   description:
     "Entre em contato com a The Wavem para discutir seu projeto, esclarecer dúvidas ou solicitar informações. Estamos prontos para ouvir suas ideias e ajudá-lo a alcançar seus objetivos.",
-  quickMessage:
-    "Olá, The Wavem! Quero conversar sobre um novo projeto e entender o melhor caminho para começar.",
-  whatsappPhone: "5541995424186",
-  email: "contato.thewavem@gmail.com",
-  copiedFeedback: "E-mail copiado com sucesso.",
-  buttonText: "Iniciar Conversa",
+  ctaLabel: "Iniciar Conversa",
+  ctaLink: "",
+  whatsappNumber: "5541995424186",
+  emailAddress: "contato.thewavem@gmail.com",
+  emailFeedbackMessage: "E-mail copiado com sucesso.",
   socials: [
     {
       id: "instagram",

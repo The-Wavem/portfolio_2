@@ -21,7 +21,10 @@ import { useAdminUnsavedChanges } from "./adminUnsavedChanges.context";
 import Hero from "@/section/landing/Hero";
 import Portfolio from "@/section/landing/Portfolio";
 import Process from "@/section/landing/Process";
+import { processIconMap } from "@/section/landing/ElasticTimeline";
 import ServicesHeroSection from "@/section/services/ServicesHeroSection";
+
+import ElasticTimeline from "@/section/landing/ElasticTimeline";
 
 function getNestedValue(obj, path) {
   return path
@@ -692,18 +695,8 @@ function SectionPreview({ config, draft }) {
   }
 
   if (config.previewType === "homeProcess") {
-    return (
-      <Box sx={{
-        minHeight: "800px",
-        height: "100%",
-        width: "100%",
-        overflow: "hidden",
-        position: "relative",
-        "& > section": { py: 4 } // Override padding so it fits well
-      }}>
-        <Process content={draft} />
-      </Box>
-    );
+    // Moved to LivePreviewWrapper
+    return null;
   }
 
   if (config.previewType === "homePortfolio") {
@@ -1152,6 +1145,52 @@ const componentMap = {
 };
 
 function LivePreviewWrapper({ config, draft, selectableOptions }) {
+  if (config.previewType === "homeProcess") {
+    const steps = getStepsArray(draft, config.dynamicStepsPath);
+
+    return (
+      <Box sx={{
+        height: "100%",
+        width: "100%",
+        overflow: "hidden",
+        position: "relative",
+        p: { xs: 2, md: 4 },
+        bgcolor: "#000",
+        borderRadius: "16px"
+      }}>
+        <Box sx={{ textAlign: "center", mb: 6 }}>
+          <Typography
+            sx={{
+              color: "#7C3AED",
+              textTransform: "uppercase",
+              fontWeight: 800,
+              fontSize: "0.8rem",
+              letterSpacing: "0.15em",
+              mb: 1
+            }}
+          >
+            {draft.eyebrow || "METODOLOGIA"}
+          </Typography>
+          <Typography
+            sx={{
+              color: "#fff",
+              fontWeight: 900,
+              fontSize: { xs: "2rem", md: "2.8rem" },
+              lineHeight: 1.1,
+            }}
+          >
+            {draft.titlePrefix}{" "}
+            <span style={{ color: "#67E8F9" }}>{draft.titleHighlight}</span>
+          </Typography>
+        </Box>
+
+        <Box sx={{ position: "relative", px: { xs: 0, md: 2 } }}>
+          <ElasticTimeline steps={steps} />
+        </Box>
+      </Box>
+    );
+  }
+
   const Component = componentMap[config.previewType];
 
   if (!Component) {
@@ -1215,6 +1254,19 @@ function ContentEditor({ config }) {
   const [faqModalIndex, setFaqModalIndex] = useState(null);
   const [stepModalIndex, setStepModalIndex] = useState(null);
   const [draggedProjectId, setDraggedProjectId] = useState(null);
+
+  const savedContent = useMemo(() => {
+    try {
+      return JSON.parse(savedSnapshot);
+    } catch {
+      return {};
+    }
+  }, [savedSnapshot]);
+
+  const savedSteps = useMemo(() => {
+    if (!config.dynamicStepsPath) return [];
+    return getStepsArray(savedContent, config.dynamicStepsPath);
+  }, [savedContent, config.dynamicStepsPath]);
 
   useEffect(() => {
     let isMounted = true;
@@ -1717,7 +1769,7 @@ function ContentEditor({ config }) {
         <Box
           sx={{
             mt: 2.2,
-            display: "grid",
+        display: "grid",
             gridTemplateColumns: {
               xs: "1fr",
               xl: "minmax(0, 1.55fr) minmax(280px, 0.75fr)",
@@ -2148,61 +2200,128 @@ function ContentEditor({ config }) {
                     gap: 1.2,
                   }}
                 >
-                  {getStepsArray(draft, config.dynamicStepsPath).map(
-                    (step, index) => (
+                  {getStepsArray(draft, config.dynamicStepsPath).map((step, index) => {
+                    const IconComponent = processIconMap[step.iconKey] || processIconMap.coffee;
+                    const isMoved = savedSteps[index]?.id !== step.id;
+
+                    return (
                       <Box
                         key={step.id || index}
+                        draggable
+                        onDragStart={(e) => {
+                          e.dataTransfer.setData("text/plain", index);
+                          e.dataTransfer.effectAllowed = "move";
+                        }}
+                        onDragOver={(e) => {
+                          e.preventDefault();
+                          e.dataTransfer.dropEffect = "move";
+                        }}
+                        onDrop={(e) => {
+                          e.preventDefault();
+                          const fromIndex = parseInt(e.dataTransfer.getData("text/plain"), 10);
+                          const toIndex = index;
+                          
+                          if (fromIndex === toIndex || isNaN(fromIndex)) return;
+                          
+                          const newSteps = [...getStepsArray(draft, config.dynamicStepsPath)];
+                          const [movedStep] = newSteps.splice(fromIndex, 1);
+                          newSteps.splice(toIndex, 0, movedStep);
+                          
+                          setDraft(setNestedValue(draft, config.dynamicStepsPath, newSteps));
+                        }}
                         sx={{
-                          p: 1.2,
-                          borderRadius: "12px",
-                          border: "1px solid rgba(255,255,255,0.14)",
+                          p: 2.5,
                           bgcolor: "rgba(255,255,255,0.02)",
+                          border: isMoved ? `1px solid ${step.color || "#7C3AED"}` : "1px solid rgba(255,255,255,0.1)",
+                          boxShadow: isMoved ? `0 0 20px -5px ${step.color || "#7C3AED"}40` : "none",
+                          borderRadius: "12px",
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: 1.5,
+                          cursor: "grab",
+                          transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                          "&:active": {
+                            cursor: "grabbing",
+                            transform: "scale(0.98)"
+                          },
+                          "&:hover": {
+                            bgcolor: "rgba(255,255,255,0.04)",
+                            borderColor: isMoved ? (step.color || "#7C3AED") : "rgba(255,255,255,0.2)"
+                          }
                         }}
                       >
-                        <Stack
-                          direction="row"
-                          justifyContent="space-between"
-                          alignItems="center"
-                          spacing={1}
-                        >
+                        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", position: "relative" }}>
+                          
+                          {/* Position Indicator Badge */}
                           <Typography
                             sx={{
-                              color: "#fff",
-                              fontWeight: 800,
-                              fontSize: "0.84rem",
+                              position: "absolute",
+                              top: -34,
+                              right: -10,
+                              fontWeight: 900,
+                              fontSize: "3rem",
+                              color: "rgba(255,255,255,0.03)",
+                              pointerEvents: "none",
+                              userSelect: "none",
+                              zIndex: 0
                             }}
                           >
-                            {step.title || `Passo ${index + 1}`}
+                            #{index + 1}
                           </Typography>
+
+                          <Stack direction="row" spacing={1.5} alignItems="center" sx={{ zIndex: 1 }}>
+                            <Box sx={{
+                              p: 1,
+                              borderRadius: "8px",
+                              background: "rgba(255,255,255,0.05)",
+                              color: step.color || "#7C3AED",
+                              border: "1px solid rgba(255,255,255,0.1)",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center"
+                            }}>
+                              <IconComponent size={20} />
+                            </Box>
+                            <Box>
+                              <Typography sx={{ color: "#fff", fontWeight: 700, fontSize: "0.95rem" }}>
+                                {step.title || "Novo Passo"}
+                              </Typography>
+                              <Typography sx={{ color: step.color || "#7C3AED", fontSize: "0.75rem", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase" }}>
+                                {step.subtitle || "Subtítulo"}
+                              </Typography>
+                            </Box>
+                          </Stack>
                           <Button
+                            size="small"
                             onClick={() => setStepModalIndex(index)}
                             sx={{
-                              borderRadius: "999px",
+                              color: "#fff",
                               textTransform: "none",
-                              fontWeight: 700,
-                              color: "#DDD6FE",
-                              border: "1px solid rgba(124,58,237,0.4)",
-                              px: 1.2,
-                              minWidth: 0,
+                              fontWeight: 600,
+                              border: "1px solid rgba(255,255,255,0.2)",
+                              borderRadius: "8px",
+                              px: 2,
                             }}
                           >
                             Editar
                           </Button>
-                        </Stack>
-
+                        </Box>
                         <Typography
                           sx={{
-                            mt: 0.8,
-                            color: "rgba(228,228,231,0.68)",
-                            fontSize: "0.78rem",
+                            color: "rgba(255,255,255,0.7)",
+                            fontSize: "0.85rem",
                             lineHeight: 1.5,
+                            display: "-webkit-box",
+                            WebkitLineClamp: 3,
+                            WebkitBoxOrient: "vertical",
+                            overflow: "hidden",
                           }}
                         >
-                          {step.description || "Sem descrição ainda."}
+                          {step.description || "Descrição do passo"}
                         </Typography>
                       </Box>
-                    ),
-                  )}
+                    );
+                  })}
                 </Box>
               </Box>
             ) : null}
@@ -3145,32 +3264,93 @@ function ContentEditor({ config }) {
                       }
                       sx={getTextFieldStyles()}
                     />
-                    <TextField
-                      label="Ícone (ex: coffee, pencil, file, code, rocket)"
-                      fullWidth
-                      value={step.iconKey ?? ""}
-                      onChange={(event) =>
-                        handleStepFieldChange(
-                          stepModalIndex,
-                          "iconKey",
-                          event.target.value,
-                        )
-                      }
-                      sx={getTextFieldStyles()}
-                    />
-                    <TextField
-                      label="Cor do Ícone (ex: #7C3AED)"
-                      fullWidth
-                      value={step.color ?? ""}
-                      onChange={(event) =>
-                        handleStepFieldChange(
-                          stepModalIndex,
-                          "color",
-                          event.target.value,
-                        )
-                      }
-                      sx={getTextFieldStyles()}
-                    />
+                      <Box>
+                        <Typography sx={{ color: "rgba(255,255,255,0.7)", fontSize: "0.85rem", mb: 1, fontWeight: 600 }}>
+                          Ícone
+                        </Typography>
+                        <Box sx={{ 
+                          display: "flex", 
+                          flexWrap: "wrap", 
+                          gap: 1, 
+                          p: 1.5, 
+                          borderRadius: "12px", 
+                          bgcolor: "rgba(7,7,8,0.86)",
+                          border: "1px solid rgba(255,255,255,0.05)"
+                        }}>
+                          {Object.entries(processIconMap).map(([key, IconComponent]) => (
+                            <Box
+                              key={key}
+                              onClick={() => handleStepFieldChange(stepModalIndex, "iconKey", key)}
+                              sx={{
+                                width: 44,
+                                height: 44,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                borderRadius: "10px",
+                                cursor: "pointer",
+                                transition: "all 0.2s",
+                                bgcolor: step.iconKey === key ? "rgba(124,58,237,0.2)" : "transparent",
+                                border: step.iconKey === key ? "1px solid #7C3AED" : "1px solid transparent",
+                                color: step.iconKey === key ? "#C4B5FD" : "rgba(255,255,255,0.5)",
+                                "&:hover": {
+                                  bgcolor: step.iconKey === key ? "rgba(124,58,237,0.3)" : "rgba(255,255,255,0.05)",
+                                  color: step.iconKey === key ? "#DDD6FE" : "#FFF"
+                                }
+                              }}
+                            >
+                              <IconComponent size={24} />
+                            </Box>
+                          ))}
+                        </Box>
+                      </Box>
+                      
+                      <Box>
+                        <Typography sx={{ color: "rgba(255,255,255,0.7)", fontSize: "0.85rem", mb: 1, fontWeight: 600 }}>
+                          Cor do Ícone
+                        </Typography>
+                        <Stack direction="row" spacing={2} alignItems="center">
+                          <Box
+                            sx={{
+                              width: 48,
+                              height: 48,
+                              borderRadius: "12px",
+                              overflow: "hidden",
+                              border: "1px solid rgba(255,255,255,0.1)",
+                              position: "relative",
+                              flexShrink: 0,
+                            }}
+                          >
+                            <input
+                              type="color"
+                              value={step.color || "#7C3AED"}
+                              onChange={(e) => handleStepFieldChange(stepModalIndex, "color", e.target.value)}
+                              style={{
+                                position: "absolute",
+                                top: -10,
+                                left: -10,
+                                width: 100,
+                                height: 100,
+                                cursor: "pointer",
+                                border: "none",
+                                padding: 0,
+                              }}
+                            />
+                          </Box>
+                          <TextField
+                            fullWidth
+                            value={step.color || ""}
+                            onChange={(e) =>
+                              handleStepFieldChange(
+                                stepModalIndex,
+                                "color",
+                                e.target.value,
+                              )
+                            }
+                            sx={getTextFieldStyles()}
+                          />
+                        </Stack>
+                      </Box>
 
                     <Stack
                       direction="row"
@@ -3238,6 +3418,14 @@ function ContentEditor({ config }) {
     </Stack>
   );
 }
+
+const getTextFieldStyles = () => ({
+  "& .MuiInputBase-root": {
+    bgcolor: "rgba(7,7,8,0.86)",
+    borderRadius: "12px",
+    color: "#F5F5F5",
+  },
+});
 
 export default function AdminSectionPlaceholder() {
   const { requestNavigation } = useAdminUnsavedChanges();

@@ -15,15 +15,35 @@ import {
   TbFileText,
   TbCode,
   TbRocket,
+  TbTarget,
+  TbBulb,
+  TbDeviceDesktop,
+  TbFlame,
+  TbSettings,
+  TbSearch,
+  TbBrush,
+  TbSparkles,
+  TbPalette,
+  TbCheckbox
 } from "react-icons/tb";
 import styles from "./ElasticTimeline.module.css";
 
-const processIconMap = {
+export const processIconMap = {
   coffee: TbCoffee,
   pencil: TbPencil,
   file: TbFileText,
   code: TbCode,
   rocket: TbRocket,
+  target: TbTarget,
+  bulb: TbBulb,
+  desktop: TbDeviceDesktop,
+  flame: TbFlame,
+  settings: TbSettings,
+  search: TbSearch,
+  brush: TbBrush,
+  sparkles: TbSparkles,
+  palette: TbPalette,
+  check: TbCheckbox,
 };
 
 function CardContent({ step, Icon }) {

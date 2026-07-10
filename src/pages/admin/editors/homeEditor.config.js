@@ -83,9 +83,9 @@ export const homeEditorConfig = {
         previewType: 'homeProcess',
         dynamicStepsPath: 'steps',
         fields: [
+            { path: 'eyebrow', label: 'Título superior', fullWidth: true },
             { path: 'titlePrefix', label: 'Título (início)' },
-            { path: 'titleHighlight', label: 'Título (destaque)' },
-            { path: 'description', label: 'Descrição', multiline: true, rows: 3, fullWidth: true }
+            { path: 'titleHighlight', label: 'Título (destaque)' }
         ]
     },
     portfolio: {

@@ -87,8 +87,8 @@ export const aboutEditorConfig = {
         previewType: 'aboutTeam',
         dynamicMembersPath: 'members',
         fields: [
-            { path: 'accent', label: 'Accent (hex)' },
-            { path: 'eyebrow', label: 'Eyebrow' },
+            { path: 'titlePrefix', label: 'Título (início)' },
+            { path: 'titleHighlight', label: 'Título (destaque)' },
             { path: 'description', label: 'Descrição', multiline: true, rows: 3, fullWidth: true }
         ]
     }

@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "thewavem-991f4"
-  }
+    "default": "thewavem-991f4",
+    "portfolio": "thewavem-991f4"
+  },
+  "targets": {},
+  "etags": {}
 }

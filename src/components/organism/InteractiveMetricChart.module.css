@@ -1,12 +1,13 @@
 .visualStage {
     width: 100%;
     height: 100%;
-    min-height: 440px;
-    background: radial-gradient(circle at center, rgba(0, 240, 255, 0.04), transparent 70%), rgba(10, 15, 25, 0.6);
-    backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 24px;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 240, 255, 0.03);
+    min-height: 380px;
+    max-height: 420px;
+    background: rgba(10, 15, 25, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 20px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), 0 0 30px rgba(0, 240, 255, 0.02);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -16,8 +17,7 @@
 }
 
 .visualStage:hover {
-    border-color: rgba(255, 255, 255, 0.14);
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(0, 240, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.12);
 }
 
 .stageInner {
@@ -39,14 +39,126 @@
 .svgResponsive {
     width: 100%;
     height: auto;
-    max-height: 380px;
+    max-height: 320px;
     overflow: visible;
 }
 
-@media (max-width: 900px) {
+/* Comparison Layout for Step 2 */
+.comparisonWrapper {
+    width: 100%;
+    max-width: 360px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.microTagTop {
+    font-family: 'Fira Code', monospace, sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    color: rgba(228, 228, 231, 0.4);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+}
+
+.comparisonList {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.comparisonRowTraditional {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.comparisonLabel {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: rgba(228, 228, 231, 0.5);
+}
+
+.comparisonSub {
+    font-size: 0.72rem;
+    color: rgba(228, 228, 231, 0.35);
+}
+
+.comparisonValueTrad {
+    font-size: 1.55rem;
+    font-weight: 800;
+    color: rgba(228, 228, 231, 0.65);
+    letter-spacing: -0.02em;
+    text-decoration: line-through;
+    text-decoration-color: rgba(239, 68, 68, 0.6);
+}
+
+.comparisonNoteTrad {
+    font-size: 0.75rem;
+    color: rgba(248, 113, 113, 0.7);
+    font-weight: 500;
+}
+
+.comparisonDivider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+}
+
+.comparisonRowWavem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.comparisonHeader {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.comparisonLabelWavem {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #FFFFFF;
+}
+
+.comparisonBadgeWavem {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #38BDF8;
+    background: rgba(56, 189, 248, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    border-radius: 999px;
+    padding: 2px 8px;
+}
+
+.comparisonValueWavem {
+    font-size: 2.1rem;
+    font-weight: 800;
+    color: #34D399;
+    letter-spacing: -0.03em;
+    text-shadow: 0 0 24px rgba(52, 211, 153, 0.35);
+}
+
+.comparisonNoteWavem {
+    font-size: 0.78rem;
+    color: rgba(52, 211, 153, 0.8);
+    font-weight: 500;
+}
+
+@media (max-width: 767px) {
     .visualStage {
-        min-height: 320px;
-        border-radius: 18px;
+        min-height: 280px;
+        max-height: 320px;
+        border-radius: 16px;
     }
 
     .stageInner {
@@ -54,6 +166,14 @@
     }
 
     .svgResponsive {
-        max-height: 300px;
+        max-height: 240px;
+    }
+
+    .comparisonValueWavem {
+        font-size: 1.7rem;
+    }
+
+    .comparisonValueTrad {
+        font-size: 1.3rem;
     }
 }

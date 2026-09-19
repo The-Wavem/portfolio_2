@@ -1,104 +1,129 @@
 .section {
     position: relative;
     padding-top: 80px;
-    padding-bottom: 100px;
     overflow: visible;
 }
 
 @media (min-width: 900px) {
     .section {
         padding-top: 100px;
-        padding-bottom: 140px;
     }
 }
 
 .introWrapper {
     text-align: center;
     max-width: 860px;
-    margin: 0 auto 64px auto;
+    margin: 0 auto 56px auto;
 }
 
-/* 2-Column Sticky Layout */
-.stickyContainer {
-    display: flex;
-    flex-direction: column-reverse;
-    gap: 40px;
+/* Pinned Scroll Track: 280vh of scroll distance to cycle through the 3 steps */
+.scrollTrack {
     position: relative;
+    height: 280vh;
     width: 100%;
 }
 
-@media (min-width: 900px) {
-    .stickyContainer {
+/* The Viewport that remains locked on screen */
+.stickyViewport {
+    position: sticky;
+    top: 72px;
+    height: calc(100vh - 72px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    overflow: hidden;
+}
+
+/* 2-Column Presentation Grid */
+.stageGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+    width: 100%;
+    align-items: center;
+}
+
+@media (min-width: 860px) {
+    .stageGrid {
         display: grid;
         grid-template-columns: 1fr 1.15fr;
         gap: 64px;
-        align-items: start;
+        align-items: center;
     }
 }
 
-/* Left Column: Narrative Steps */
+/* Left Column: Morphing Editorial Story */
 .narrativeColumn {
     width: 100%;
     display: flex;
     flex-direction: column;
-}
-
-.narrativeStep {
-    width: 100%;
-    min-height: 48vh;
-    padding: 36px 0;
-    display: flex;
-    flex-direction: column;
     justify-content: center;
-    cursor: pointer;
-    transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-                filter 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-                transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@media (min-width: 900px) {
-    .narrativeStep {
-        min-height: 75vh;
-        padding: 48px 0;
-    }
-}
-
-/* Active Step: Bright, focused */
-.narrativeStepActive {
-    opacity: 1;
-    filter: blur(0);
-    transform: translateY(0);
-}
-
-/* Inactive Step: Faded out, cinematographic blur */
-.narrativeStepInactive {
-    opacity: 0.25;
-    filter: blur(1px);
-    transform: translateY(6px);
-}
-
-.narrativeStepInactive:hover {
-    opacity: 0.5;
-    filter: blur(0);
-}
-
-/* Step Header */
-.stepHeader {
+/* Step Progress Indicator */
+.stepCounterBar {
     display: flex;
     align-items: center;
-    margin-bottom: 12px;
+    gap: 16px;
+    margin-bottom: 24px;
 }
 
 .stepIndex {
     font-family: 'Fira Code', monospace, sans-serif;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: #A78BFA;
+}
+
+.stepBars {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.stepBarItem {
+    width: 24px;
+    height: 3px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.stepBarItemActive {
+    background: linear-gradient(90deg, #7C3AED, #38BDF8);
+    width: 44px;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+}
+
+/* Morphing Wrapper */
+.textMorphWrapper {
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+@media (min-width: 860px) {
+    .textMorphWrapper {
+        min-height: 320px;
+    }
+}
+
+.blockTag {
+    font-family: 'Fira Code', monospace, sans-serif;
+    font-size: 0.76rem;
     font-weight: 700;
     letter-spacing: 0.14em;
     color: rgba(228, 228, 231, 0.45);
     text-transform: uppercase;
+    margin-bottom: 12px;
 }
 
-/* Large Stat Display */
 .statLarge {
     font-size: 3.2rem;
     font-weight: 800;
@@ -106,6 +131,7 @@
     letter-spacing: -0.04em;
     margin-bottom: 16px;
     font-family: 'Inter', sans-serif;
+    text-shadow: 0 0 32px rgba(124, 58, 237, 0.25);
 }
 
 @media (min-width: 600px) {
@@ -114,7 +140,6 @@
     }
 }
 
-/* Story Title */
 .storyTitle {
     font-size: 1.55rem;
     font-weight: 800;
@@ -130,7 +155,6 @@
     }
 }
 
-/* Story Description */
 .storyDescription {
     font-size: 1.05rem;
     line-height: 1.7;
@@ -139,7 +163,6 @@
     max-width: 500px;
 }
 
-/* Insight Note */
 .storyInsight {
     font-size: 0.94rem;
     line-height: 1.65;
@@ -154,35 +177,26 @@
     font-weight: 700;
 }
 
-/* Right Column: Sticky Visual Stage */
-.stickyStageColumn {
+/* Right Column: Chart Column */
+.chartColumn {
     width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-@media (min-width: 900px) {
-    .stickyStageColumn {
-        position: sticky;
-        top: 18vh;
-        height: 480px;
-        display: flex;
-        align-items: center;
-    }
-}
-
-.stickyWrapper {
-    width: 100%;
-    height: 100%;
-}
-
-@media (max-width: 899px) {
-    .stickyStageColumn {
-        position: sticky;
-        top: 76px;
-        z-index: 10;
-        margin-bottom: 16px;
+@media (max-width: 859px) {
+    .stickyViewport {
+        height: auto;
+        min-height: calc(100vh - 72px);
+        padding: 24px 0;
     }
 
-    .stickyWrapper {
-        height: 320px;
+    .chartColumn {
+        max-height: 300px;
+    }
+
+    .textMorphWrapper {
+        min-height: 240px;
     }
 }

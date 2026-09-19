@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Box, Container } from '@mui/material';
-import { motion } from 'framer-motion';
-import { TbShieldCheck, TbBolt, TbCoins, TbArrowRight, TbAdjustmentsHorizontal } from 'react-icons/tb';
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
+import { TbArrowRight, TbAdjustmentsHorizontal } from 'react-icons/tb';
 
 import SectionTitle from '@/components/ui/SectionTitle';
 import GlowButton from '@/components/ui/GlowButton';
@@ -16,33 +16,43 @@ import styles from './WhyWavem.module.css';
 const pillarItems = [
     {
         id: 0,
-        title: 'Credibilidade & Autoridade',
+        tag: 'Stanford Web Credibility',
+        title: 'Credibilidade & Autoridade pelo Design',
         stat: '> 75%',
-        statColor: '#A78BFA',
-        description: 'Julgam a confiança da empresa com base exclusivamente no design e na fluidez do site.',
-        icon: TbShieldCheck,
+        statColor: '#38BDF8',
+        description:
+            'Mais de 75% dos consumidores admitem julgar a credibilidade e a autoridade de uma empresa com base exclusivamente no design e na fluidez do site oficial.',
+        insight:
+            'A primeira impressão digital é formada em menos de 0.05 segundos. Templates genéricos comunicam amadorismo antes de qualquer proposta comercial.',
     },
     {
         id: 1,
-        title: 'Performance de Conversão & Ads',
+        tag: 'Google & Ads Performance',
+        title: 'Performance de Conversão & Tráfego Pago',
         stat: '-300%',
         statColor: '#FF3366',
-        description: 'Páginas lentas (>3s) derrubam até 300% a conversão de anúncios do Google e Meta.',
-        icon: TbBolt,
+        description:
+            'Páginas lentas (>3s) derrubam até 300% a conversão de anúncios do Google e Meta. Mais de 53% dos visitantes abandonam a navegação no mobile.',
+        insight:
+            'Cada segundo adicional reduz até 20% do faturamento de tráfego pago. Um site veloz captura os leads que concorrentes lentos estão perdendo.',
     },
     {
         id: 2,
-        title: 'Autonomia Real & CMS Próprio',
+        tag: 'Autonomia Total CMS',
+        title: 'Autonomia Real & CMS Sob Medida',
         stat: 'R$ 0 taxas',
         statColor: '#34D399',
-        description: 'Elimine mensalidades técnicas e tenha controle instantâneo sem depender de agências.',
-        icon: TbCoins,
+        description:
+            'Elimine mensalidades técnicas ocultas de agências e plugins vulneráveis. Controle total do seu conteúdo em 1 clique com código blindado.',
+        insight:
+            'Independência técnica absoluta para alterar textos, fotos e produtos sem ficar refém de chamados de suporte ou taxas recorrentes.',
     },
 ];
 
 export default function WhyWavem({ content }) {
     const [data, setData] = useState(() => content || getHomeWhyWavemContent());
-    const [activeStep, setActiveStep] = useState(1); // Default to conversion drop graph for high shock value
+    const [activeStep, setActiveStep] = useState(0);
+    const trackRef = useRef(null);
 
     useEffect(() => {
         let isMounted = true;
@@ -70,14 +80,40 @@ export default function WhyWavem({ content }) {
         };
     }, [content]);
 
+    // Pinned scroll controller using Framer Motion useScroll
+    const { scrollYProgress } = useScroll({
+        target: trackRef,
+        offset: ['start start', 'end end'],
+    });
+
+    useMotionValueEvent(scrollYProgress, 'change', (latest) => {
+        if (latest < 0.33) {
+            setActiveStep(0);
+        } else if (latest < 0.67) {
+            setActiveStep(1);
+        } else {
+            setActiveStep(2);
+        }
+    });
+
     const cta = data?.cta;
+    const currentStory = pillarItems[activeStep] || pillarItems[0];
+
+    const handleJumpToStep = (index) => {
+        setActiveStep(index);
+        if (trackRef.current) {
+            const rect = trackRef.current.getBoundingClientRect();
+            const scrollTop = window.scrollY + rect.top;
+            const stepOffset = (trackRef.current.offsetHeight / 3) * index;
+            window.scrollTo({
+                top: scrollTop + stepOffset + 20,
+                behavior: 'smooth',
+            });
+        }
+    };
 
     return (
-        <Box
-            component="section"
-            className={styles.section}
-            sx={{ py: { xs: 10, md: 15 } }}
-        >
+        <Box component="section" className={styles.section}>
             <div className={styles.bgGlow} aria-hidden />
 
             <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
@@ -109,66 +145,91 @@ export default function WhyWavem({ content }) {
                         </div>
                     </motion.div>
                 )}
+            </Container>
 
-                {/* 2-Column Dynamic Interactive Showcase */}
-                <div className={styles.interactiveShowcase}>
-                    {/* Left: Pillar triggers */}
-                    <div className={styles.interactiveList}>
-                        {pillarItems.map((item) => {
-                            const Icon = item.icon;
-                            const isActive = activeStep === item.id;
-
-                            return (
-                                <button
-                                    key={item.id}
-                                    type="button"
-                                    className={`${styles.interactiveItem} ${
-                                        isActive ? styles.interactiveItemActive : ''
-                                    }`}
-                                    onClick={() => {
-                                        setActiveStep(item.id);
-                                        trackAction({
-                                            page: 'home',
-                                            section: 'why_wavem',
-                                            action: 'select_metric_tab',
-                                            label: item.title,
-                                        });
-                                    }}
-                                >
-                                    <div className={styles.itemIconWrapper}>
-                                        <Icon size={20} />
+            {/* Pinned Scrollytelling Stage: Viewport locks, scrolls through 3 steps, then releases */}
+            <div ref={trackRef} className={styles.scrollTrack}>
+                <div className={styles.stickyViewport}>
+                    <Container maxWidth="lg">
+                        <div className={styles.stageGrid}>
+                            {/* Left Column: Morphing Editorial Story */}
+                            <div className={styles.narrativeColumn}>
+                                {/* Step Tracker Bar */}
+                                <div className={styles.stepCounterBar}>
+                                    <span className={styles.stepIndex}>
+                                        0{activeStep + 1} // 03
+                                    </span>
+                                    <div className={styles.stepBars}>
+                                        {pillarItems.map((item) => (
+                                            <button
+                                                key={item.id}
+                                                type="button"
+                                                className={`${styles.stepBarItem} ${
+                                                    activeStep === item.id
+                                                        ? styles.stepBarItemActive
+                                                        : ''
+                                                }`}
+                                                onClick={() => handleJumpToStep(item.id)}
+                                                aria-label={`Ir para etapa 0${item.id + 1}`}
+                                            />
+                                        ))}
                                     </div>
+                                </div>
 
-                                    <div className={styles.itemContent}>
-                                        <div className={styles.itemHeader}>
-                                            <h4 className={styles.itemTitle}>{item.title}</h4>
-                                            <span
-                                                className={styles.itemStat}
-                                                style={{ color: item.statColor }}
+                                {/* Text content morphs smoothly in place */}
+                                <div className={styles.textMorphWrapper}>
+                                    <AnimatePresence mode="wait">
+                                        <motion.div
+                                            key={currentStory.id}
+                                            initial={{ opacity: 0, y: 16 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, y: -16 }}
+                                            transition={{ duration: 0.35, ease: 'easeOut' }}
+                                        >
+                                            <div className={styles.blockTag}>
+                                                {currentStory.tag}
+                                            </div>
+
+                                            <div
+                                                className={styles.statLarge}
+                                                style={{ color: currentStory.statColor }}
                                             >
-                                                {item.stat}
-                                            </span>
-                                        </div>
-                                        <p className={styles.itemDesc}>{item.description}</p>
-                                    </div>
-                                </button>
-                            );
-                        })}
-                    </div>
+                                                {currentStory.stat}
+                                            </div>
 
-                    {/* Right: Live Interactive SVG Chart */}
-                    <div className={styles.chartWrapper}>
-                        <InteractiveMetricChart activeStep={activeStep} />
-                    </div>
+                                            <h3 className={styles.storyTitle}>
+                                                {currentStory.title}
+                                            </h3>
+
+                                            <p className={styles.storyDescription}>
+                                                {currentStory.description}
+                                            </p>
+
+                                            <div className={styles.storyInsight}>
+                                                <strong>Impacto Real:</strong> {currentStory.insight}
+                                            </div>
+                                        </motion.div>
+                                    </AnimatePresence>
+                                </div>
+                            </div>
+
+                            {/* Right Column: Sticky Minimalist Visual Stage */}
+                            <div className={styles.chartColumn}>
+                                <InteractiveMetricChart activeStep={activeStep} />
+                            </div>
+                        </div>
+                    </Container>
                 </div>
+            </div>
 
-                {/* Bottom CTA container */}
+            {/* Bottom CTA container */}
+            <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1, mt: { xs: 8, md: 12 }, pb: { xs: 8, md: 12 } }}>
                 {cta && (
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        transition={{ duration: 0.5, delay: 0.25, ease: 'easeOut' }}
+                        transition={{ duration: 0.5, delay: 0.1, ease: 'easeOut' }}
                     >
                         <div className={styles.ctaContainer}>
                             <p className={styles.ctaText}>

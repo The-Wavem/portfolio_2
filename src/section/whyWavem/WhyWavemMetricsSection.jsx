@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { Box, Container } from '@mui/material';
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
 
 import SectionTitle from '@/components/ui/SectionTitle';
 import InteractiveMetricChart from '@/components/organism/InteractiveMetricChart';
@@ -8,6 +9,7 @@ import styles from './WhyWavemMetricsSection.module.css';
 const storySteps = [
     {
         id: 0,
+        tag: 'Stanford Web Credibility',
         stat: '> 75%',
         statColor: '#38BDF8',
         title: 'Credibilidade Imediata pelo Design',
@@ -18,6 +20,7 @@ const storySteps = [
     },
     {
         id: 1,
+        tag: 'Google & Ads Performance',
         stat: '-300%',
         statColor: '#FF3366',
         title: 'O Abismo da Lentidão: Rasgando Dinheiro em Tráfego',
@@ -28,6 +31,7 @@ const storySteps = [
     },
     {
         id: 2,
+        tag: 'Autonomia Total CMS',
         stat: 'R$ 0 taxas',
         statColor: '#34D399',
         title: 'O Fim da Dependência de Agências e Plugins Lentos',
@@ -40,44 +44,35 @@ const storySteps = [
 
 export default function WhyWavemMetricsSection({ content }) {
     const [activeStep, setActiveStep] = useState(0);
-    const stepRefs = useRef([]);
+    const trackRef = useRef(null);
     const data = content?.costOfInaction || content?.marketData;
+    const currentStory = storySteps[activeStep] || storySteps[0];
 
-    useEffect(() => {
-        const observers = [];
+    // Pinned scroll controller using Framer Motion useScroll
+    const { scrollYProgress } = useScroll({
+        target: trackRef,
+        offset: ['start start', 'end end'],
+    });
 
-        stepRefs.current.forEach((el, index) => {
-            if (!el) return;
+    useMotionValueEvent(scrollYProgress, 'change', (latest) => {
+        if (latest < 0.33) {
+            setActiveStep(0);
+        } else if (latest < 0.67) {
+            setActiveStep(1);
+        } else {
+            setActiveStep(2);
+        }
+    });
 
-            const observer = new IntersectionObserver(
-                (entries) => {
-                    entries.forEach((entry) => {
-                        if (entry.isIntersecting) {
-                            setActiveStep(index);
-                        }
-                    });
-                },
-                {
-                    rootMargin: '-35% 0px -35% 0px',
-                    threshold: 0.15,
-                }
-            );
-
-            observer.observe(el);
-            observers.push(observer);
-        });
-
-        return () => {
-            observers.forEach((obs) => obs.disconnect());
-        };
-    }, []);
-
-    const handleStepClick = (index) => {
+    const handleJumpToStep = (index) => {
         setActiveStep(index);
-        if (stepRefs.current[index]) {
-            stepRefs.current[index].scrollIntoView({
+        if (trackRef.current) {
+            const rect = trackRef.current.getBoundingClientRect();
+            const scrollTop = window.scrollY + rect.top;
+            const stepOffset = (trackRef.current.offsetHeight / 3) * index;
+            window.scrollTo({
+                top: scrollTop + stepOffset + 20,
                 behavior: 'smooth',
-                block: 'center',
             });
         }
     };
@@ -98,60 +93,82 @@ export default function WhyWavemMetricsSection({ content }) {
                         maxWidth={860}
                     />
                 </div>
+            </Container>
 
-                {/* Sticky Scroll Container */}
-                <div className={styles.stickyContainer}>
-                    {/* Left Column: Narrative with cinematographic focus */}
-                    <div className={styles.narrativeColumn}>
-                        {storySteps.map((story, index) => {
-                            const isActive = activeStep === index;
-
-                            return (
-                                <div
-                                    key={story.id}
-                                    ref={(el) => (stepRefs.current[index] = el)}
-                                    className={`${styles.narrativeStep} ${
-                                        isActive
-                                            ? styles.narrativeStepActive
-                                            : styles.narrativeStepInactive
-                                    }`}
-                                    onClick={() => handleStepClick(index)}
-                                >
-                                    <div className={styles.stepHeader}>
-                                        <span className={styles.stepIndex}>
-                                            0{index + 1} // 03
-                                        </span>
-                                    </div>
-
-                                    <div
-                                        className={styles.statLarge}
-                                        style={{ color: story.statColor }}
-                                    >
-                                        {story.stat}
-                                    </div>
-
-                                    <h3 className={styles.storyTitle}>{story.title}</h3>
-
-                                    <p className={styles.storyDescription}>
-                                        {story.description}
-                                    </p>
-
-                                    <div className={styles.storyInsight}>
-                                        <strong>Impacto Real:</strong> {story.insight}
+            {/* Pinned Scrollytelling Stage: Viewport locks, scrolls through 3 steps, then releases */}
+            <div ref={trackRef} className={styles.scrollTrack}>
+                <div className={styles.stickyViewport}>
+                    <Container maxWidth="lg">
+                        <div className={styles.stageGrid}>
+                            {/* Left Column: Morphing Editorial Story */}
+                            <div className={styles.narrativeColumn}>
+                                {/* Step Tracker Bar */}
+                                <div className={styles.stepCounterBar}>
+                                    <span className={styles.stepIndex}>
+                                        0{activeStep + 1} // 03
+                                    </span>
+                                    <div className={styles.stepBars}>
+                                        {storySteps.map((story) => (
+                                            <button
+                                                key={story.id}
+                                                type="button"
+                                                className={`${styles.stepBarItem} ${
+                                                    activeStep === story.id
+                                                        ? styles.stepBarItemActive
+                                                        : ''
+                                                }`}
+                                                onClick={() => handleJumpToStep(story.id)}
+                                                aria-label={`Ir para etapa 0${story.id + 1}`}
+                                            />
+                                        ))}
                                     </div>
                                 </div>
-                            );
-                        })}
-                    </div>
 
-                    {/* Right Column: Sticky Visual Stage */}
-                    <div className={styles.stickyStageColumn}>
-                        <div className={styles.stickyWrapper}>
-                            <InteractiveMetricChart activeStep={activeStep} />
+                                {/* Text content morphs smoothly in place */}
+                                <div className={styles.textMorphWrapper}>
+                                    <AnimatePresence mode="wait">
+                                        <motion.div
+                                            key={currentStory.id}
+                                            initial={{ opacity: 0, y: 16 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, y: -16 }}
+                                            transition={{ duration: 0.35, ease: 'easeOut' }}
+                                        >
+                                            <div className={styles.blockTag}>
+                                                {currentStory.tag}
+                                            </div>
+
+                                            <div
+                                                className={styles.statLarge}
+                                                style={{ color: currentStory.statColor }}
+                                            >
+                                                {currentStory.stat}
+                                            </div>
+
+                                            <h3 className={styles.storyTitle}>
+                                                {currentStory.title}
+                                            </h3>
+
+                                            <p className={styles.storyDescription}>
+                                                {currentStory.description}
+                                            </p>
+
+                                            <div className={styles.storyInsight}>
+                                                <strong>Impacto Real:</strong> {currentStory.insight}
+                                            </div>
+                                        </motion.div>
+                                    </AnimatePresence>
+                                </div>
+                            </div>
+
+                            {/* Right Column: Sticky Minimalist Visual Stage */}
+                            <div className={styles.chartColumn}>
+                                <InteractiveMetricChart activeStep={activeStep} />
+                            </div>
                         </div>
-                    </div>
+                    </Container>
                 </div>
-            </Container>
+            </div>
         </Box>
     );
 }

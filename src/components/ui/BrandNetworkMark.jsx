@@ -169,19 +169,7 @@ export default function BrandNetworkMark({
                 >
                     <text
                         x="380"
-                        y="134"
-                        textAnchor="middle"
-                        fill={resolvedTextColor}
-                        fontSize="72"
-                        fontFamily="Inter, Arial, sans-serif"
-                        letterSpacing="4"
-                        fontWeight="500"
-                    >
-                        THE
-                    </text>
-                    <text
-                        x="380"
-                        y="236"
+                        y="226"
                         textAnchor="middle"
                         fill={resolvedTextColor}
                         fontSize="124"

@@ -69,8 +69,8 @@
 }
 
 .pillarCard {
-    background: #08080A;
-    border: 1px solid rgba(255, 255, 255, 0.07);
+    background: #0a0a0c00;
+    /* border: 1px solid rgba(255, 255, 255, 0.07); */
     border-radius: 16px;
     padding: 32px 26px;
     display: flex;
@@ -83,12 +83,6 @@
     .pillarCard {
         padding: 36px 30px;
     }
-}
-
-.pillarCard:hover {
-    transform: translateY(-4px);
-    border-color: rgba(124, 58, 237, 0.35);
-    box-shadow: 0 12px 30px rgba(124, 58, 237, 0.1);
 }
 
 .iconWrapper {

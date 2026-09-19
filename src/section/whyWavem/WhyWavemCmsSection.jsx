@@ -6,9 +6,9 @@ import SectionTitle from '@/components/ui/SectionTitle';
 import styles from './WhyWavemCmsSection.module.css';
 
 export default function WhyWavemCmsSection({ content }) {
-    const cms = content?.customCms;
-    const wavem = cms?.wavemFeatures;
-    const traditional = cms?.traditionalFeatures;
+    const cms = content?.cmsSection || content?.customCms;
+    const wavem = cms?.comparison?.wavem || cms?.wavemFeatures;
+    const traditional = cms?.comparison?.traditional || cms?.traditionalFeatures;
 
     return (
         <Box component="section" id="cms-wavem" className={styles.section}>
@@ -16,11 +16,12 @@ export default function WhyWavemCmsSection({ content }) {
 
             <Container maxWidth="lg">
                 <SectionTitle
-                    eyebrow={cms?.badge || 'AUTONOMIA REAL'}
-                    title={cms?.title || 'O CMS Wavem: seu site livre de mensalidades ocultas.'}
+                    eyebrow={cms?.tag || cms?.badge || 'Autonomia & Segurança'}
+                    title={cms?.title || 'Esqueça a dependência de agências e plugins lentos'}
                     subtitle={
+                        cms?.subtitle ||
                         cms?.description ||
-                        'Chega de pagar de R$ 100 a R$ 200 por hora técnica para agências trocarem uma foto ou um texto no seu site. Construímos um painel administrativo exclusivo, veloz e sob medida para a sua rotina.'
+                        'Liberdade total para gerenciar o seu conteúdo com a segurança e a velocidade que o seu negócio exige através do CMS Próprio da Wavem.'
                     }
                     align="center"
                     maxWidth={860}
@@ -35,13 +36,6 @@ export default function WhyWavemCmsSection({ content }) {
                         transition={{ duration: 0.55, ease: 'easeOut' }}
                     >
                         <div className={styles.wavemCard}>
-                            <div className={styles.cardHeader}>
-                                <h3 className={styles.cardTitle}>{wavem?.label || 'Wavem CMS Sob Medida'}</h3>
-                                <div className={styles.wavemBadge}>
-                                    <TbSparkles size={14} color="#A78BFA" />
-                                    <span>Vantagem Wavem</span>
-                                </div>
-                            </div>
 
                             <ul className={styles.featuresList}>
                                 {(wavem?.items || []).map((item, idx) => (
@@ -64,14 +58,6 @@ export default function WhyWavemCmsSection({ content }) {
                         transition={{ duration: 0.55, ease: 'easeOut' }}
                     >
                         <div className={styles.traditionalCard}>
-                            <div className={styles.cardHeader}>
-                                <h3 className={styles.cardTitle}>{traditional?.label || 'Agências Tradicionais / WordPress'}</h3>
-                                <div className={styles.traditionalBadge}>
-                                    <TbAlertTriangle size={14} color="#F87171" />
-                                    <span>A Cilada Comum</span>
-                                </div>
-                            </div>
-
                             <ul className={styles.featuresList}>
                                 {(traditional?.items || []).map((item, idx) => (
                                     <li key={idx} className={styles.traditionalFeatureItem}>

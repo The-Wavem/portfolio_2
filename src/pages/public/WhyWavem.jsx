@@ -43,7 +43,7 @@ export default function WhyWavem() {
     return (
         <Box component="main">
             <WhyWavemHeroSection content={content} />
-            <WhyWavemConsultingSection content={content} />
+            {/* <WhyWavemConsultingSection content={content} /> */}
             <WhyWavemCmsSection content={content} />
             <WhyWavemMetricsSection content={content} />
             <WhyWavemCtaSection content={content} />

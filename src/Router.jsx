@@ -47,6 +47,10 @@ export const router = createBrowserRouter([
                 path: 'servicos',
                 element: withSuspense(Services),
             },
+            {
+                path: 'contato',
+                element: <Navigate to="/#contato" replace />,
+            },
         ],
     },
     {

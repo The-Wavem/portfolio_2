@@ -8,7 +8,12 @@ import styles from './WhyWavemHeroSection.module.css';
 
 export default function WhyWavemHeroSection({ content }) {
     const hero = content?.hero;
-    const badges = hero?.badges || [];
+    const badges = [
+        '100% Sob Medida',
+        'CMS Próprio & Rápido',
+        'Performance Implacável',
+        'Contato Direto com Devs'
+    ];
 
     const scrollToContent = () => {
         const target = document.getElementById('abordagem-consultiva');
@@ -30,8 +35,7 @@ export default function WhyWavemHeroSection({ content }) {
                         transition={{ duration: 0.45, ease: 'easeOut' }}
                     >
                         <div className={styles.eyebrowBadge}>
-                            <TbSparkles size={16} color="#A78BFA" />
-                            <span>{hero?.tag || 'O Efeito Wavem'}</span>
+                            <span>{hero?.tag || 'Estratégia de Conversão'}</span>
                         </div>
                     </motion.div>
 
@@ -41,28 +45,41 @@ export default function WhyWavemHeroSection({ content }) {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: 0.1, ease: 'easeOut' }}
                     >
-                        Tecnologia de ponta pensada para a{' '}
-                        <span className={styles.titleGradient}>realidade do seu negócio.</span>
+                        O Poder de um{' '}
+                        <span className={styles.titleGradient}>Site Sob Medida</span>
                     </motion.h1>
+
+                    {hero?.question && (
+                        <motion.div
+                            className={styles.questionCard}
+                            initial={{ opacity: 0, scale: 0.98, y: 16 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            transition={{ duration: 0.5, delay: 0.16, ease: 'easeOut' }}
+                        >
+                            <p className={styles.questionText}>
+                                "{hero.question}"
+                            </p>
+                        </motion.div>
+                    )}
 
                     <motion.p
                         className={styles.heroSubtitle}
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: 18 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.18, ease: 'easeOut' }}
+                        transition={{ duration: 0.5, delay: 0.22, ease: 'easeOut' }}
                     >
-                        {hero?.subtitle ||
-                            'Eliminamos a burocracia de agências tradicionais e entregamos plataformas ultrarrápidas, 100% personalizadas e com controle total nas suas mãos.'}
+                        {hero?.description ||
+                            'No digital, a sua vitrine é a primeira e muitas vezes a única impressão. Transforme cliques em receita com um ecossistema digital feito sob medida para escalar o seu faturamento.'}
                     </motion.p>
 
                     <motion.div
                         className={styles.actionsRow}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.26, ease: 'easeOut' }}
+                        transition={{ duration: 0.5, delay: 0.28, ease: 'easeOut' }}
                     >
                         <GlowButton
-                            href="https://wa.me/5541995424186?text=Ol%C3%A1%2C%20The%20Wavem!%20Quero%20agendar%20um%20diagn%C3%B3stico%20gratuito%20para%20o%20meu%20projeto."
+                            to={hero?.ctaLink || '/contato'}
                             variant="primary"
                             size="large"
                             endIcon={<TbArrowRight size={18} />}
@@ -71,11 +88,11 @@ export default function WhyWavemHeroSection({ content }) {
                                     page: 'why_wavem',
                                     section: 'hero',
                                     action: 'click_hero_primary_cta',
-                                    label: 'Agendar diagnóstico gratuito'
+                                    label: hero?.ctaText || 'Quero um Site que Vende'
                                 })
                             }
                         >
-                            Agendar diagnóstico gratuito
+                            {hero?.ctaText || 'Quero um Site que Vende'}
                         </GlowButton>
 
                         <Button
@@ -100,22 +117,6 @@ export default function WhyWavemHeroSection({ content }) {
                             Conhecer os diferenciais
                         </Button>
                     </motion.div>
-
-                    {badges.length > 0 && (
-                        <motion.div
-                            className={styles.badgesGrid}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ duration: 0.6, delay: 0.36 }}
-                        >
-                            {badges.map((badge) => (
-                                <div key={badge} className={styles.badgePill}>
-                                    <TbCheck size={15} color="#38BDF8" />
-                                    <span>{badge}</span>
-                                </div>
-                            ))}
-                        </motion.div>
-                    )}
                 </div>
             </Container>
         </Box>

@@ -19,8 +19,9 @@ export default function Home() {
         <Box component="main">
             {/* 1. Dobra Principal */}
             <Hero />
-            <WhyWavem />
             <Portfolio />
+            <WhyWavem />
+            
             <Process />
 
             <Experience />

@@ -1,29 +1,31 @@
 import { Box, Container } from '@mui/material';
 import { motion } from 'framer-motion';
-import { TbShieldCheck, TbBolt, TbCoins } from 'react-icons/tb';
+import { TbShieldCheck, TbBolt, TbTrendingDown, TbCoins } from 'react-icons/tb';
 
 import SectionTitle from '@/components/ui/SectionTitle';
 import styles from './WhyWavemMetricsSection.module.css';
 
 const metricIconMap = {
     shield: TbShieldCheck,
+    trendingDown: TbTrendingDown,
     bolt: TbBolt,
     coins: TbCoins,
 };
 
 export default function WhyWavemMetricsSection({ content }) {
-    const marketData = content?.marketData;
-    const metrics = marketData?.metrics || [];
+    const data = content?.costOfInaction || content?.marketData;
+    const metrics = data?.metrics || [];
 
     return (
         <Box component="section" id="metricas-pesquisas" className={styles.section}>
             <Container maxWidth="lg">
                 <SectionTitle
-                    eyebrow={marketData?.badge || 'DADOS & CIÊNCIA'}
-                    title={marketData?.title || 'Números reais que se convertem em faturamento.'}
+                    eyebrow={data?.tag || data?.badge || 'Realidade de Mercado'}
+                    title={data?.title || 'Quanto custa ser invisível na internet?'}
                     subtitle={
-                        marketData?.subtitle ||
-                        'Decisões de engenharia e design fundamentadas nas maiores pesquisas do mercado global.'
+                        data?.intro ||
+                        data?.subtitle ||
+                        'O mercado mudou. O amadorismo digital drena o seu lucro silenciosamente todos os dias. Veja o que os dados revelam sobre o comportamento do consumidor moderno:'
                     }
                     align="center"
                     maxWidth={860}
@@ -36,7 +38,7 @@ export default function WhyWavemMetricsSection({ content }) {
 
                         return (
                             <motion.div
-                                key={metric.id || index}
+                                key={metric.source || metric.title || index}
                                 initial={{ opacity: 0, y: 24 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
@@ -46,7 +48,9 @@ export default function WhyWavemMetricsSection({ content }) {
                                 <div className={styles.metricCard}>
                                     <div>
                                         <div className={styles.cardTop}>
-                                            <span className={styles.tag}>{metric.tag}</span>
+                                            <span className={styles.tag}>
+                                                {metric.source || metric.tag}
+                                            </span>
                                             <div className={styles.iconWrapper}>
                                                 <IconComponent size={22} color={accentColor} />
                                             </div>
@@ -66,7 +70,9 @@ export default function WhyWavemMetricsSection({ content }) {
                                             )}
                                         </div>
 
-                                        <h3 className={styles.title}>{metric.title}</h3>
+                                        {metric.title && (
+                                            <h3 className={styles.title}>{metric.title}</h3>
+                                        )}
                                     </div>
 
                                     <p className={styles.description}>{metric.description}</p>

@@ -1,121 +1,108 @@
 import { getFirebaseContent, setFirebaseContent } from '@/service/firebase';
 
-export const whyWavemContent = {
+export const defaultWhyWavemContent = {
     hero: {
-        tag: 'O Efeito Wavem',
-        title: 'Tecnologia de ponta pensada para a realidade do seu negócio.',
-        subtitle: 'Eliminamos a burocracia de agências tradicionais e entregamos plataformas ultrarrápidas, 100% personalizadas e com controle total nas suas mãos.',
-        badges: [
-            '100% Sob Medida',
-            'CMS Próprio & Rápido',
-            'Performance Implacável',
-            'Contato Direto com Devs'
-        ]
+        tag: 'Estratégia de Conversão',
+        title: 'O Poder de um Site Sob Medida',
+        question: 'O seu negócio está perdendo clientes neste exato momento para concorrentes com sites piores que o seu? Ou pior: porque você não tem um?',
+        description: 'No digital, a sua vitrine é a primeira e muitas vezes a única impressão. Transforme cliques em receita com um ecossistema digital feito sob medida para escalar o seu faturamento.',
+        ctaText: 'Quero um Site que Vende',
+        ctaLink: '/contato'
     },
     consultiveApproach: {
-        badge: 'MÉTODO CONSULTIVO',
-        title: 'Antes do código, uma conversa de verdade.',
-        description: 'Não acreditamos em soluções de prateleira ou pacotes engessados. Mapeamos as necessidades reais do seu modelo de negócio para construir uma ferramenta feita sob medida para a sua operação.',
-        pillars: [
+        tag: 'Abordagem Consultiva',
+        title: 'Desenvolvimento 100% customizado, focado na sua dor real',
+        description: 'Antes de escrever uma única linha de código, nós conversamos de verdade com você. Entendemos o seu modelo de negócio, o perfil dos seus clientes e as suas metas para desenhar a arquitetura perfeita — sem soluções genéricas de prateleira.',
+        features: [
             {
-                id: 'diagnostico',
-                title: 'Diagnóstico estratégico e transparente',
-                description: 'Entendemos a fundo seu mercado, seus clientes e seus desafios antes de sugerir qualquer linha de código ou tecnologia.',
+                title: 'Diagnóstico Estratégico',
+                description: 'Mapeamento aprofundado dos gargalos da sua presença online atual.',
                 iconKey: 'target'
             },
             {
-                id: 'design',
-                title: 'Design e fluxo pensados para o seu cliente',
-                description: 'Interfaces limpas e objetivas focadas em credibilidade imediata, navegação intuitiva e alta taxa de conversão.',
+                title: 'Projetado para Conversão',
+                description: 'Cada botão, texto e transição pensado para guiar o visitante até a compra.',
                 iconKey: 'layout'
             },
             {
-                id: 'nativos',
-                title: 'Contato direto com quem desenvolve',
-                description: 'Sem intermediários, sem gerentes de conta comerciais e sem ruídos de comunicação. Nativos digitais na linha de frente.',
+                title: 'Contato Direto com Devs',
+                description: 'Sem intermediários ou gerentes de conta burocráticos. Você fala direto com quem constrói.',
                 iconKey: 'users'
             }
         ]
     },
-    customCms: {
-        badge: 'AUTONOMIA REAL',
-        title: 'O CMS Wavem: seu site livre de mensalidades ocultas.',
-        description: 'Chega de pagar de R$ 100 a R$ 200 por hora técnica para agências trocarem uma foto ou um texto no seu site. Construímos um painel administrativo exclusivo, veloz e sob medida para a sua rotina.',
-        wavemFeatures: {
-            label: 'Wavem CMS Sob Medida',
-            items: [
-                'Interface limpa, moderna e feita exatamente para a sua rotina',
-                'Carregamento instantâneo sem lentidão ou peso desnecessário',
-                'Zero plugins vulneráveis ou risco de invasões de segurança',
-                'Autonomia total para editar textos, fotos e banners em 1 clique',
-                'Economia financeira real: zero taxas de agência para pequenas alterações'
-            ]
-        },
-        traditionalFeatures: {
-            label: 'Agências Tradicionais / WordPress',
-            items: [
-                'Dezenas de plugins pesados, obsoletos e propensos a falhas',
-                'Lentidão extrema no carregamento (prejudica SEO e derruba conversão)',
-                'Quebras frequentes de layout após atualizações de sistema',
-                'Cobrança anual de R$ 800 a R$ 2.500 para simples manutenções',
-                'Dependência técnica crônica e burocracia para alterar uma frase'
-            ]
-        }
-    },
-    marketData: {
-        badge: 'DADOS & CIÊNCIA',
-        title: 'Números reais que se convertem em faturamento.',
-        subtitle: 'Decisões de engenharia e design fundamentadas nas maiores pesquisas do mercado global.',
+    costOfInaction: {
+        tag: 'Realidade de Mercado',
+        title: 'Quanto custa ser invisível na internet?',
+        intro: 'O mercado mudou. O amadorismo digital drena o seu lucro silenciosamente todos os dias. Veja o que os dados revelam sobre o comportamento do consumidor moderno:',
         metrics: [
             {
-                id: 'credibility',
-                stat: '75%',
-                statLabel: 'dos consumidores',
-                title: 'Credibilidade Imediata',
-                description: 'Julgam a confiança e credibilidade da empresa exclusivamente pelo design do site (Stanford Web Credibility Research).',
-                tag: 'Stanford Research',
+                stat: '> 75%',
+                source: 'Stanford Web Credibility',
+                description: 'Mais de 75% dos consumidores julgam a credibilidade de uma empresa com base no design e na fluidez do seu site oficial.',
                 accentColor: '#A78BFA',
                 iconKey: 'shield'
             },
             {
-                id: 'performance',
-                stat: '< 2s',
-                statLabel: 'tempo médio de carregamento',
-                title: 'Performance & Conversão',
-                description: 'Mais de 53% dos usuários abandonam páginas com mais de 3s de espera. Cada 1s extra derruba 7% das conversões (Google Research).',
-                tag: 'Google Research',
-                accentColor: '#38BDF8',
-                iconKey: 'bolt'
+                stat: '-300%',
+                source: 'Meta & Google Ads',
+                description: 'Enviar tráfego pago para redes sociais ou sites lentos é rasgar dinheiro: a conversão despenca em até 300% comparada a uma página profissional.',
+                accentColor: '#F87171',
+                iconKey: 'trendingDown'
             },
             {
-                id: 'savings',
-                stat: 'R$ 0',
-                statLabel: 'de taxa por edição de texto',
-                title: 'Autonomia Financeira',
-                description: 'Elimine os custos anuais de agências com nosso CMS exclusivo. Você tem independência completa da sua plataforma.',
-                tag: 'Economia Anual',
-                accentColor: '#34D399',
-                iconKey: 'coins'
+                stat: '53%',
+                source: 'Google Research',
+                description: 'Abandonam páginas que demoram mais de 3 segundos. Cada segundo extra reduz conversões em até 20%, entregando margem para a concorrência.',
+                accentColor: '#38BDF8',
+                iconKey: 'bolt'
             }
         ]
     },
+    cmsSection: {
+        tag: 'Autonomia & Segurança',
+        title: 'Esqueça a dependência de agências e plugins lentos',
+        subtitle: 'Liberdade total para gerenciar o seu conteúdo com a segurança e a velocidade que o seu negócio exige através do CMS Próprio da Wavem.',
+        comparison: {
+            traditional: {
+                title: 'Mercado Tradicional (WordPress & Construtores)',
+                items: [
+                    'Dezenas de plugins de terceiros sujeitos a falhas e invasões',
+                    'Lentidão extrema provocada por código inchado e templates pesados',
+                    'Painéis complexos que geram dependência de agências para trocas simples',
+                    'Custos recorrentes com licenças pagas de temas e plugins'
+                ]
+            },
+            wavem: {
+                title: 'O Ecossistema Wavem',
+                items: [
+                    'Arquitetura limpa, segura e blindada contra invasões',
+                    'Performance máxima com carregamento instantâneo focado em SEO',
+                    'CMS próprio e intuitivo, feito sob medida para a sua rotina',
+                    'Autonomia total no dia a dia, sem amarras técnicas ou taxas ocultas'
+                ]
+            }
+        }
+    },
     cta: {
-        title: 'Pronto para ter um site que realmente trabalha pelo seu crescimento?',
-        subtitle: 'Vamos bater um papo franco, entender seu negócio e desenhar uma presença digital sob medida com autonomia total.',
-        buttonText: 'Agendar diagnóstico gratuito',
-        link: 'https://wa.me/5541995424186?text=Ol%C3%A1%2C%20The%20Wavem!%20Quero%20agendar%20um%20diagn%C3%B3stico%20gratuito%20para%20o%20meu%20projeto.'
+        title: 'Não deixe sua margem de lucro na mesa',
+        description: 'Vamos desenhar a presença digital definitiva da sua marca e colocar seu site para vender todos os dias.',
+        buttonText: 'Quero um Site que Vende',
+        link: '/contato'
     }
 };
 
+export const whyWavemContent = defaultWhyWavemContent;
+
 export function getWhyWavemContent() {
-    return whyWavemContent;
+    return defaultWhyWavemContent;
 }
 
 export async function getWhyWavemContentRemote() {
     const response = await getFirebaseContent({
         page: 'whyWavem',
         section: 'main',
-        fallbackData: whyWavemContent
+        fallbackData: defaultWhyWavemContent
     });
 
     return response.data;

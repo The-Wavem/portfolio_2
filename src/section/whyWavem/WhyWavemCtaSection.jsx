@@ -1,6 +1,6 @@
 import { Box, Container, Button } from '@mui/material';
 import { motion } from 'framer-motion';
-import { TbBrandWhatsapp, TbMail, TbArrowRight } from 'react-icons/tb';
+import { TbBrandWhatsapp, TbArrowRight } from 'react-icons/tb';
 
 import GlowButton from '@/components/ui/GlowButton';
 import { trackAction } from '@/service/analytics/tracking.service';
@@ -22,48 +22,47 @@ export default function WhyWavemCtaSection({ content }) {
                 >
                     <div className={styles.ctaCard}>
                         <h2 className={styles.title}>
-                            {cta?.title || 'Pronto para ter um site que realmente trabalha pelo seu crescimento?'}
+                            {cta?.title || 'Não deixe sua margem de lucro na mesa'}
                         </h2>
 
                         <p className={styles.subtitle}>
-                            {cta?.subtitle ||
-                                'Vamos bater um papo franco, entender seu negócio e desenhar uma presença digital sob medida com autonomia total.'}
+                            {cta?.description ||
+                                cta?.subtitle ||
+                                'Vamos desenhar a presença digital definitiva da sua marca e colocar seu site para vender todos os dias.'}
                         </p>
 
                         <div className={styles.actions}>
                             <GlowButton
-                                href={
-                                    cta?.link ||
-                                    'https://wa.me/5541995424186?text=Ol%C3%A1%2C%20The%20Wavem!%20Quero%20agendar%20um%20diagn%C3%B3stico%20gratuito%20para%20o%20meu%20projeto.'
-                                }
+                                to={cta?.link || '/contato'}
                                 variant="primary"
                                 size="large"
-                                startIcon={<TbBrandWhatsapp size={20} />}
                                 endIcon={<TbArrowRight size={18} />}
                                 onClick={() =>
                                     trackAction({
                                         page: 'why_wavem',
                                         section: 'cta_final',
-                                        action: 'click_whatsapp_diagnosis',
-                                        label: cta?.buttonText || 'Agendar diagnóstico gratuito'
+                                        action: 'click_final_cta',
+                                        label: cta?.buttonText || 'Quero um Site que Vende'
                                     })
                                 }
                             >
-                                {cta?.buttonText || 'Agendar diagnóstico gratuito'}
+                                {cta?.buttonText || 'Quero um Site que Vende'}
                             </GlowButton>
 
                             <Button
                                 component="a"
-                                href="mailto:contato.thewavem@gmail.com?subject=Diagn%C3%B3stico%20de%20Projeto%20-%20The%20Wavem"
+                                href="https://wa.me/5541995424186?text=Ol%C3%A1%2C%20The%20Wavem!%20Quero%20conversar%20sobre%20um%20site%20para%20o%20meu%20neg%C3%B3cio."
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 variant="outlined"
                                 size="large"
-                                startIcon={<TbMail size={18} />}
+                                startIcon={<TbBrandWhatsapp size={18} />}
                                 onClick={() =>
                                     trackAction({
                                         page: 'why_wavem',
                                         section: 'cta_final',
-                                        action: 'click_email_contact',
-                                        label: 'Enviar e-mail'
+                                        action: 'click_whatsapp_direct',
+                                        label: 'Falar no WhatsApp'
                                     })
                                 }
                                 sx={{
@@ -80,7 +79,7 @@ export default function WhyWavemCtaSection({ content }) {
                                     }
                                 }}
                             >
-                                Enviar por e-mail
+                                Falar no WhatsApp
                             </Button>
                         </div>
 

@@ -1,54 +1,50 @@
 import { Box, Container } from '@mui/material';
 import { motion } from 'framer-motion';
-import { TbTarget, TbLayout2, TbUsers } from 'react-icons/tb';
+import { TbTarget, TbTrendingUp, TbUsers } from 'react-icons/tb';
 
 import SectionTitle from '@/components/ui/SectionTitle';
 import styles from './WhyWavemConsultingSection.module.css';
 
-const iconMap = {
-    target: TbTarget,
-    layout: TbLayout2,
-    users: TbUsers
-};
+const defaultIcons = [TbTarget, TbTrendingUp, TbUsers];
 
 export default function WhyWavemConsultingSection({ content }) {
     const consulting = content?.consultiveApproach;
-    const pillars = consulting?.pillars || [];
+    const features = consulting?.features || consulting?.pillars || [];
 
     return (
         <Box component="section" id="abordagem-consultiva" className={styles.section}>
             <Container maxWidth="lg">
                 <SectionTitle
-                    eyebrow={consulting?.badge || 'MÉTODO CONSULTIVO'}
-                    title={consulting?.title || 'Antes do código, uma conversa de verdade.'}
+                    eyebrow={consulting?.tag || consulting?.badge || 'Abordagem Consultiva'}
+                    title={consulting?.title || 'Desenvolvimento 100% customizado, focado na sua dor real'}
                     subtitle={
                         consulting?.description ||
-                        'Não acreditamos em soluções de prateleira ou pacotes engessados. Mapeamos as necessidades reais do seu modelo de negócio para construir uma ferramenta feita sob medida para a sua operação.'
+                        'Antes de escrever uma única linha de código, nós conversamos de verdade com você. Entendemos o seu modelo de negócio, o perfil dos seus clientes e as suas metas para desenhar a arquitetura perfeita — sem soluções genéricas de prateleira.'
                     }
                     align="center"
-                    maxWidth={840}
+                    maxWidth={860}
                 />
 
                 <div className={styles.grid} style={{ marginTop: '48px' }}>
-                    {pillars.map((pillar, index) => {
-                        const IconComponent = iconMap[pillar.iconKey] || TbTarget;
+                    {features.map((feature, index) => {
+                        const IconComponent = defaultIcons[index % defaultIcons.length];
 
                         return (
                             <motion.div
-                                key={pillar.id || index}
+                                key={feature.title || index}
                                 initial={{ opacity: 0, y: 24 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.5, delay: index * 0.12, ease: 'easeOut' }}
                                 style={{ display: 'flex' }}
                             >
-                                <div className={styles.pillarCard}>
+                                {/* <div className={styles.pillarCard}>
                                     <div className={styles.iconWrapper}>
                                         <IconComponent size={24} />
                                     </div>
-                                    <h3 className={styles.pillarTitle}>{pillar.title}</h3>
-                                    <p className={styles.pillarDesc}>{pillar.description}</p>
-                                </div>
+                                    <h3 className={styles.pillarTitle}>{feature.title}</h3>
+                                    <p className={styles.pillarDesc}>{feature.description}</p>
+                                </div> */}
                             </motion.div>
                         );
                     })}

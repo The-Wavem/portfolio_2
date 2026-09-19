@@ -1,14 +1,14 @@
 .section {
     position: relative;
-    padding-top: 60px;
-    padding-bottom: 60px;
+    padding-top: 70px;
+    padding-bottom: 70px;
     overflow: visible;
 }
 
 @media (min-width: 900px) {
     .section {
-        padding-top: 80px;
-        padding-bottom: 80px;
+        padding-top: 90px;
+        padding-bottom: 90px;
     }
 }
 
@@ -19,36 +19,34 @@
     transform: translate(-50%, -50%);
     width: 800px;
     height: 450px;
-    background: radial-gradient(circle, rgba(124, 58, 237, 0.09) 0%, rgba(0, 240, 255, 0.03) 40%, transparent 70%);
+    background: radial-gradient(circle, rgba(124, 58, 237, 0.08) 0%, rgba(0, 240, 255, 0.03) 40%, transparent 70%);
     pointer-events: none;
     z-index: 0;
 }
 
-/* Compact, Ultra-Refined Teaser Card */
-.teaserCard {
-    position: relative;
-    background: radial-gradient(circle at 50% 0%, rgba(124, 58, 237, 0.12) 0%, rgba(8, 8, 12, 0.9) 70%);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 24px;
-    backdrop-filter: blur(16px);
-    padding: 48px 24px;
-    display: flex;
-    flex-direction: column;
+/* 2-Column Split Grid (55% Copy / 45% Chart) */
+.splitGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 48px;
     align-items: center;
-    text-align: center;
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(124, 58, 237, 0.06);
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
-@media (min-width: 768px) {
-    .teaserCard {
-        padding: 64px 48px;
+@media (min-width: 900px) {
+    .splitGrid {
+        grid-template-columns: 1.18fr 0.92fr;
+        gap: 56px;
     }
 }
 
-.teaserCard:hover {
-    border-color: rgba(124, 58, 237, 0.35);
-    box-shadow: 0 28px 70px rgba(0, 0, 0, 0.7), 0 0 50px rgba(124, 58, 237, 0.1);
+/* Left Column: Narrative & CTA */
+.textColumn {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
 }
 
 /* Top Badge */
@@ -60,7 +58,7 @@
     border: 1px solid rgba(0, 240, 255, 0.25);
     border-radius: 999px;
     padding: 5px 14px;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
 }
 
 .badgeDot {
@@ -84,90 +82,76 @@
 .headline {
     font-size: 1.85rem;
     font-weight: 800;
-    line-height: 1.25;
+    line-height: 1.22;
     letter-spacing: -0.03em;
     color: #FFFFFF;
     margin: 0 0 18px 0;
-    max-width: 820px;
 }
 
 @media (min-width: 600px) {
     .headline {
-        font-size: 2.35rem;
+        font-size: 2.3rem;
     }
 }
 
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
     .headline {
-        font-size: 2.75rem;
+        font-size: 2.65rem;
     }
 }
 
-/* Supporting text */
-.supportingText {
+/* Description */
+.description {
     font-size: 1.05rem;
     line-height: 1.7;
-    color: rgba(228, 228, 231, 0.78);
-    margin: 0 0 36px 0;
-    max-width: 740px;
+    color: rgba(228, 228, 231, 0.76);
+    margin: 0 0 32px 0;
+    max-width: 560px;
 }
 
 @media (min-width: 600px) {
-    .supportingText {
-        font-size: 1.12rem;
+    .description {
+        font-size: 1.1rem;
     }
-}
-
-/* Micro-indicators Container */
-.pillsContainer {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 12px;
-    margin-bottom: 40px;
-    max-width: 840px;
-}
-
-.indicatorPill {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 999px;
-    padding: 8px 16px;
-    font-size: 0.85rem;
-    color: rgba(228, 228, 231, 0.85);
-    transition: all 0.25s ease;
-}
-
-.indicatorPill:hover {
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(255, 255, 255, 0.16);
-    transform: translateY(-1px);
-}
-
-.indicatorPill strong {
-    color: #FFFFFF;
-}
-
-.pillIconCyan {
-    color: #38BDF8;
-    flex-shrink: 0;
-}
-
-.pillIconViolet {
-    color: #A78BFA;
-    flex-shrink: 0;
-}
-
-.pillIconEmerald {
-    color: #34D399;
-    flex-shrink: 0;
 }
 
 /* CTA Wrapper */
 .ctaWrapper {
     display: flex;
+}
+
+/* Right Column: Chart Column */
+.chartColumn {
+    display: flex;
     justify-content: center;
+    width: 100%;
+}
+
+/* Compact Glass Frame for the Mini Chart */
+.chartFrame {
+    width: 100%;
+    max-width: 460px;
+    min-height: 300px;
+    background: rgba(10, 15, 25, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 240, 255, 0.03);
+    padding: 20px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.chartFrame:hover {
+    border-color: rgba(0, 240, 255, 0.25);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(0, 240, 255, 0.06);
+}
+
+.chartSvg {
+    width: 100%;
+    height: auto;
+    max-height: 280px;
+    overflow: visible;
 }

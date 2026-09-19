@@ -5,6 +5,11 @@ export const homeWhyWavemContent = {
     titlePrefix: 'Por que a',
     titleHighlight: 'Wavem?',
     subtitle: 'A combinação de tecnologia moderna, performance implacável e autonomia real para o seu negócio.',
+    cmsIntro: {
+        badge: 'CMS EXCLUSIVO WAVEM',
+        title: 'Chega de depender de desenvolvedores para mudar um simples texto.',
+        description: 'Desenvolvemos nosso próprio CMS para entregar autonomia técnica total ao seu negócio. Você atualiza conteúdos, fotos e seções em segundos, sem chamados demorados nem mensalidades extras de manutenção — potencializando os diferenciais a seguir:'
+    },
     pillars: [
         {
             id: 'credibility',
@@ -30,8 +35,8 @@ export const homeWhyWavemContent = {
         },
         {
             id: 'autonomy',
-            stat: 'R$ 800 a R$ 2.500',
-            statLabel: 'de economia por ano',
+            stat: 'Economia financeira',
+            statLabel: 'Média de R$ 800 a R$ 2.500/ano',
             highlight: 'Economia de R$ 800 a R$ 2.500/ano',
             title: 'Autonomia Financeira (CMS Wavem)',
             description: 'Elimine a taxa cobrada por agências para trocas simples de textos, imagens e banners. Tenha controle total da sua plataforma com nosso CMS exclusivo.',

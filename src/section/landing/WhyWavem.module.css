@@ -17,11 +17,84 @@
     z-index: 0;
 }
 
+.cmsBanner {
+    position: relative;
+    z-index: 1;
+    max-width: 860px;
+    margin: 36px auto 0;
+    padding: 24px 24px;
+    border-radius: 16px;
+    background: rgba(124, 58, 237, 0.04);
+    border: 1px solid rgba(124, 58, 237, 0.22);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cmsBanner:hover {
+    border-color: rgba(124, 58, 237, 0.4);
+    box-shadow: 0 8px 30px rgba(124, 58, 237, 0.1);
+}
+
+@media (min-width: 600px) {
+    .cmsBanner {
+        padding: 28px 36px;
+        margin-top: 44px;
+    }
+}
+
+.cmsBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 14px;
+    border-radius: 999px;
+    background: rgba(124, 58, 237, 0.0);
+    border: 1px solid rgba(124, 58, 237, 0.00);
+    color: #A78BFA;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+}
+
+.cmsTitle {
+    font-size: 1.12rem;
+    font-weight: 700;
+    line-height: 1.35;
+    letter-spacing: -0.015em;
+    color: #FFFFFF;
+    margin: 0 0 10px 0;
+}
+
+@media (min-width: 600px) {
+    .cmsTitle {
+        font-size: 1.28rem;
+    }
+}
+
+.cmsDescription {
+    font-size: 0.92rem;
+    line-height: 1.65;
+    color: rgba(228, 228, 231, 0.76);
+    margin: 0;
+    max-width: 740px;
+}
+
+@media (min-width: 600px) {
+    .cmsDescription {
+        font-size: 0.98rem;
+    }
+}
+
 .grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: 24px;
-    margin-top: 48px;
+    margin-top: 36px;
     margin-bottom: 56px;
     position: relative;
     z-index: 1;
@@ -31,7 +104,7 @@
     .grid {
         grid-template-columns: repeat(3, 1fr);
         gap: 28px;
-        margin-top: 64px;
+        margin-top: 44px;
         margin-bottom: 72px;
     }
 }

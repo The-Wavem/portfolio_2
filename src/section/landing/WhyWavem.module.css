@@ -1,300 +1,173 @@
 .section {
     position: relative;
+    padding-top: 60px;
+    padding-bottom: 60px;
     overflow: visible;
-    padding-top: 80px;
 }
 
 @media (min-width: 900px) {
     .section {
-        padding-top: 100px;
+        padding-top: 80px;
+        padding-bottom: 80px;
     }
 }
 
 .bgGlow {
     position: absolute;
-    top: 20%;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
-    width: 700px;
-    height: 400px;
-    background: radial-gradient(circle, rgba(124, 58, 237, 0.08) 0%, transparent 70%);
+    transform: translate(-50%, -50%);
+    width: 800px;
+    height: 450px;
+    background: radial-gradient(circle, rgba(124, 58, 237, 0.09) 0%, rgba(0, 240, 255, 0.03) 40%, transparent 70%);
     pointer-events: none;
     z-index: 0;
 }
 
-/* CMS Highlight Banner */
-.cmsBanner {
-    margin-top: 36px;
-    margin-bottom: 40px;
-    padding: 24px 28px;
-    border-radius: 16px;
-    background: rgba(124, 58, 237, 0.04);
-    border: 1px solid rgba(124, 58, 237, 0.2);
+/* Compact, Ultra-Refined Teaser Card */
+.teaserCard {
+    position: relative;
+    background: radial-gradient(circle at 50% 0%, rgba(124, 58, 237, 0.12) 0%, rgba(8, 8, 12, 0.9) 70%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    backdrop-filter: blur(16px);
+    padding: 48px 24px;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    position: relative;
-    overflow: hidden;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(124, 58, 237, 0.06);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.cmsBadge {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    color: #A78BFA;
-    text-transform: uppercase;
-    margin-bottom: 10px;
-}
-
-.cmsTitle {
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: #FFFFFF;
-    margin: 0 0 8px 0;
-}
-
-@media (min-width: 600px) {
-    .cmsTitle {
-        font-size: 1.35rem;
+@media (min-width: 768px) {
+    .teaserCard {
+        padding: 64px 48px;
     }
 }
 
-.cmsDescription {
-    font-size: 0.92rem;
-    line-height: 1.65;
-    color: rgba(228, 228, 231, 0.76);
-    margin: 0;
+.teaserCard:hover {
+    border-color: rgba(124, 58, 237, 0.35);
+    box-shadow: 0 28px 70px rgba(0, 0, 0, 0.7), 0 0 50px rgba(124, 58, 237, 0.1);
+}
+
+/* Top Badge */
+.topBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 240, 255, 0.06);
+    border: 1px solid rgba(0, 240, 255, 0.25);
+    border-radius: 999px;
+    padding: 5px 14px;
+    margin-bottom: 24px;
+}
+
+.badgeDot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #00F0FF;
+    box-shadow: 0 0 8px #00F0FF;
+}
+
+.badgeText {
+    font-family: 'Fira Code', monospace, sans-serif;
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    color: #00F0FF;
+    text-transform: uppercase;
+}
+
+/* Headline */
+.headline {
+    font-size: 1.85rem;
+    font-weight: 800;
+    line-height: 1.25;
+    letter-spacing: -0.03em;
+    color: #FFFFFF;
+    margin: 0 0 18px 0;
+    max-width: 820px;
+}
+
+@media (min-width: 600px) {
+    .headline {
+        font-size: 2.35rem;
+    }
+}
+
+@media (min-width: 900px) {
+    .headline {
+        font-size: 2.75rem;
+    }
+}
+
+/* Supporting text */
+.supportingText {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(228, 228, 231, 0.78);
+    margin: 0 0 36px 0;
     max-width: 740px;
 }
 
 @media (min-width: 600px) {
-    .cmsDescription {
-        font-size: 0.98rem;
+    .supportingText {
+        font-size: 1.12rem;
     }
 }
 
-/* Pinned Scroll Track: 280vh of scroll distance to cycle through the 3 steps */
-.scrollTrack {
-    position: relative;
-    height: 280vh;
-    width: 100%;
-}
-
-/* The Viewport that remains locked on screen */
-.stickyViewport {
-    position: sticky;
-    top: 72px;
-    height: calc(100vh - 72px);
+/* Micro-indicators Container */
+.pillsContainer {
     display: flex;
-    align-items: center;
+    flex-wrap: wrap;
     justify-content: center;
-    width: 100%;
-    overflow: hidden;
+    gap: 12px;
+    margin-bottom: 40px;
+    max-width: 840px;
 }
 
-/* 2-Column Presentation Grid */
-.stageGrid {
-    display: flex;
-    flex-direction: column;
-    gap: 36px;
-    width: 100%;
+.indicatorPill {
+    display: inline-flex;
     align-items: center;
-}
-
-@media (min-width: 860px) {
-    .stageGrid {
-        display: grid;
-        grid-template-columns: 1fr 1.15fr;
-        gap: 64px;
-        align-items: center;
-    }
-}
-
-/* Left Column: Morphing Editorial Story */
-.narrativeColumn {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-/* Step Progress Indicator */
-.stepCounterBar {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 24px;
-}
-
-.stepIndex {
-    font-family: 'Fira Code', monospace, sans-serif;
-    font-size: 0.85rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    color: #A78BFA;
-}
-
-.stepBars {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-}
-
-.stepBarItem {
-    width: 24px;
-    height: 3px;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.12);
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    transition: all 0.3s ease;
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    color: rgba(228, 228, 231, 0.85);
+    transition: all 0.25s ease;
 }
 
-.stepBarItemActive {
-    background: linear-gradient(90deg, #7C3AED, #38BDF8);
-    width: 44px;
-    box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+.indicatorPill:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.16);
+    transform: translateY(-1px);
 }
 
-/* Morphing Wrapper */
-.textMorphWrapper {
-    min-height: 280px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-@media (min-width: 860px) {
-    .textMorphWrapper {
-        min-height: 320px;
-    }
-}
-
-.blockTag {
-    font-family: 'Fira Code', monospace, sans-serif;
-    font-size: 0.76rem;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    color: rgba(228, 228, 231, 0.45);
-    text-transform: uppercase;
-    margin-bottom: 12px;
-}
-
-.statLarge {
-    font-size: 3.2rem;
-    font-weight: 800;
-    line-height: 1.05;
-    letter-spacing: -0.04em;
-    margin-bottom: 16px;
-    font-family: 'Inter', sans-serif;
-    text-shadow: 0 0 32px rgba(124, 58, 237, 0.25);
-}
-
-@media (min-width: 600px) {
-    .statLarge {
-        font-size: 4.4rem;
-    }
-}
-
-.storyTitle {
-    font-size: 1.55rem;
-    font-weight: 800;
-    line-height: 1.25;
-    letter-spacing: -0.02em;
+.indicatorPill strong {
     color: #FFFFFF;
-    margin-bottom: 16px;
 }
 
-@media (min-width: 600px) {
-    .storyTitle {
-        font-size: 1.95rem;
-    }
+.pillIconCyan {
+    color: #38BDF8;
+    flex-shrink: 0;
 }
 
-.storyDescription {
-    font-size: 1.05rem;
-    line-height: 1.7;
-    color: rgba(228, 228, 231, 0.78);
-    margin-bottom: 20px;
-    max-width: 500px;
+.pillIconViolet {
+    color: #A78BFA;
+    flex-shrink: 0;
 }
 
-.storyInsight {
-    font-size: 0.94rem;
-    line-height: 1.65;
-    color: rgba(228, 228, 231, 0.92);
-    padding-left: 14px;
-    border-left: 2px solid #7C3AED;
-    max-width: 500px;
+.pillIconEmerald {
+    color: #34D399;
+    flex-shrink: 0;
 }
 
-.storyInsight strong {
-    color: #FFFFFF;
-    font-weight: 700;
-}
-
-/* Right Column: Chart Column */
-.chartColumn {
-    width: 100%;
+/* CTA Wrapper */
+.ctaWrapper {
     display: flex;
-    align-items: center;
     justify-content: center;
-}
-
-@media (max-width: 859px) {
-    .stickyViewport {
-        height: auto;
-        min-height: calc(100vh - 72px);
-        padding: 24px 0;
-    }
-
-    .chartColumn {
-        max-height: 300px;
-    }
-
-    .textMorphWrapper {
-        min-height: 240px;
-    }
-}
-
-/* CTA Container at bottom */
-.ctaContainer {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: 36px 24px;
-    border-radius: 20px;
-    background: #08080A;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    max-width: 820px;
-    margin: 0 auto;
-}
-
-@media (min-width: 600px) {
-    .ctaContainer {
-        padding: 40px 36px;
-    }
-}
-
-.ctaText {
-    font-size: 1.08rem;
-    line-height: 1.5;
-    color: rgba(255, 255, 255, 0.92);
-    font-weight: 600;
-    margin-bottom: 24px;
-    max-width: 620px;
-}
-
-@media (min-width: 600px) {
-    .ctaText {
-        font-size: 1.18rem;
-    }
 }

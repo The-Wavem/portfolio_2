@@ -7,6 +7,7 @@ const Home = lazy(() => import('@pages/public/Home'));
 const About = lazy(() => import('@pages/public/About'));
 const Projects = lazy(() => import('@pages/public/Projects'));
 const Services = lazy(() => import('@pages/public/Services'));
+const WhyWavem = lazy(() => import('@pages/public/WhyWavem'));
 const AdminAuthGuard = lazy(() => import('@pages/admin/AdminAuthGuard'));
 const AdminLogin = lazy(() => import('@pages/admin/AdminLogin'));
 const AdminLayout = lazy(() => import('@/components/layout/AdminLayout'));
@@ -29,6 +30,10 @@ export const router = createBrowserRouter([
             {
                 index: true,
                 element: withSuspense(Home),
+            },
+            {
+                path: 'porque-wavem',
+                element: withSuspense(WhyWavem),
             },
             {
                 path: 'sobre',

@@ -12,6 +12,7 @@ const socialLinks = [
 
 const footerNavigation = [
     { id: 'inicio', label: 'Início', href: '/' },
+    { id: 'porque-wavem', label: 'Por que Wavem?', href: '/porque-wavem' },
     { id: 'projetos', label: 'Projetos', href: '/projetos' },
     { id: 'sobre', label: 'Sobre', href: '/sobre' },
 ];

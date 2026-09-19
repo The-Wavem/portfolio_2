@@ -25,13 +25,14 @@ function isRouteActive(pathname, routePath) {
 
 const navLinks = [
     { label: 'Início', to: '/' },
-    { label: 'Serviços', to: '/servicos' },
+    { label: 'Por que Wavem?', to: '/porque-wavem' },
     { label: 'Projetos', to: '/projetos' },
     { label: 'Sobre Nós', to: '/sobre' }
 ];
 
 const routePrefetchMap = {
     '/': () => import('@pages/public/Home'),
+    '/porque-wavem': () => import('@pages/public/WhyWavem'),
     '/servicos': () => import('@pages/public/Services'),
     '/projetos': () => import('@pages/public/Projects'),
     '/sobre': () => import('@pages/public/About')

@@ -99,4 +99,11 @@ export {
 	setHomeWhyWavemContentRemote,
 	homeWhyWavemContent
 } from './homeWhyWavem.service';
+export {
+	getWhyWavemContent,
+	getWhyWavemContentRemote,
+	setWhyWavemContentRemote,
+	whyWavemContent
+} from './whyWavem.service';
+
 

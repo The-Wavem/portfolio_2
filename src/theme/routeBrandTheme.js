@@ -1,5 +1,6 @@
 const routeBrandThemeMap = {
     '/': { start: '#7C3AED', end: '#A78BFA' },
+    '/porque-wavem': { start: '#7C3AED', end: '#38BDF8' },
     '/servicos': { start: '#5E1624', end: '#8C2438' },
     '/sobre': { start: '#06B6D4', end: '#38BDF8' },
     '/projetos': { start: '#22C55E', end: '#4ADE80' },

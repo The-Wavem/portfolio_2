@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, Typography, Container, Button, Stack, Chip } from "@mui/material";
+import { Box, Typography, Container, Button, Stack } from "@mui/material";
 import { motion } from "framer-motion";
 import { Link as RouterLink } from "react-router-dom";
 import {
@@ -11,6 +11,66 @@ import NetworkBackground from "./NetworkBackground";
 
 const MotionTypography = motion.create(Typography);
 const MotionBox = motion.create(Box);
+
+const letterVariants = {
+  animate: (characterIdx) => ({
+    y: [0, -1.5, 0, 1.5, 0],
+    transition: {
+      duration: 2.2,
+      delay: characterIdx * 0.08,
+      repeat: Infinity,
+      ease: "easeInOut",
+    },
+  }),
+};
+
+function AnimatedBadges({ badges }) {
+  return (
+    <Stack
+      direction="row"
+      flexWrap="wrap"
+      gap={1.5}
+      justifyContent="center"
+      sx={{ mb: 3 }}
+    >
+      {badges.map((badge) => (
+        <Box
+          key={badge}
+          sx={{
+            bgcolor: "rgba(124, 58, 237, 0.00)",
+            border: "1px solid rgba(124, 58, 237, 0.00)",
+            color: "primary.light",
+            fontWeight: 600,
+            fontSize: "0.85rem",
+            backdropFilter: "blur(8px)",
+            textTransform: "uppercase",
+            px: 1.5,
+            py: 0.5,
+            borderRadius: "16px",
+            letterSpacing: "0.02em",
+            display: "inline-flex",
+            alignItems: "center",
+          }}
+        >
+          {Array.from(badge).map((character, characterIdx) => (
+            <motion.span
+              key={`${badge}-${character}-${characterIdx}`}
+              variants={letterVariants}
+              animate="animate"
+              custom={characterIdx}
+              style={{
+                display: "inline-block",
+                whiteSpace: "pre",
+              }}
+            >
+              {character}
+            </motion.span>
+          ))}
+        </Box>
+      ))}
+    </Stack>
+  );
+}
 
 export default function Hero({ content }) {
   const [hero, setHero] = useState(() => content || getHomeHeroContent());
@@ -93,31 +153,7 @@ export default function Hero({ content }) {
           }}
         >
           <Box>
-            <Stack
-              direction="row"
-              flexWrap="wrap"
-              gap={1.5}
-              justifyContent="center"
-              sx={{ mb: 3 }}
-            >
-              {badges.map((badge, idx) => (
-                <Chip
-                  key={idx}
-                  label={badge}
-                  sx={{
-                    bgcolor: "rgba(124, 58, 237, 0.08)",
-                    border: "1px solid rgba(124, 58, 237, 0.3)",
-                    color: "primary.light",
-                    fontWeight: 600,
-                    fontSize: "0.85rem",
-                    backdropFilter: "blur(8px)",
-                    textTransform: "uppercase",
-                    px: 0.5,
-                    letterSpacing: "0.02em",
-                  }}
-                />
-              ))}
-            </Stack>
+            <AnimatedBadges badges={badges} />
 
             <MotionTypography
               variant="h2"
@@ -132,7 +168,7 @@ export default function Hero({ content }) {
                 mb: 3,
               }}
             >
-              {hero?.titlePrefix || ""} {" "}
+              {hero?.titlePrefix || ""}{" "}
               <span
                 style={{
                   color: "#7C3AED",
@@ -158,7 +194,6 @@ export default function Hero({ content }) {
               }}
             >
               {hero?.description || ""}
-
             </Typography>
 
             <Stack

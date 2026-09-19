@@ -93,3 +93,10 @@ export {
 	setHomeFaqContentRemote,
 	homeFaqContent
 } from './homeFaq.service';
+export {
+	getHomeWhyWavemContent,
+	getHomeWhyWavemContentRemote,
+	setHomeWhyWavemContentRemote,
+	homeWhyWavemContent
+} from './homeWhyWavem.service';
+

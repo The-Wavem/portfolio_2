@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Box } from '@mui/material';
 
 import Hero from '@/section/landing/Hero';
+import WhyWavem from '@/section/landing/WhyWavem';
 import Experience from '@/section/landing/Experience';
 import Process from '@/section/landing/Process';
 import Portfolio from '@/section/landing/Portfolio';
@@ -18,8 +19,10 @@ export default function Home() {
         <Box component="main">
             {/* 1. Dobra Principal */}
             <Hero />
+            <WhyWavem />
             <Portfolio />
             <Process />
+
             <Experience />
             <Contact />
             <FAQ />

@@ -34,8 +34,8 @@ const wavemAdvantages = [
         desc: 'Zero burocracia ou manuais complicados: você entra, altera o que precisa em 2 cliques e volta a cuidar do seu faturamento.',
     },
     {
-        title: 'R$ 0 em mensalidades de manutenção de conteúdo',
-        desc: 'Autonomia definitiva para atualizar textos, imagens, tabelas e chamadas sem pagar horas técnicas adicionais para ninguém.',
+        title: 'Autonomia total para gerenciar conteúdo',
+        desc: 'Sua equipe atualiza textos, imagens e cadastros pelo CMS próprio com a regra dos 2 cliques, sem dependência de chamados pagos.',
     },
     {
         title: 'Patrimônio digital definitivo do seu negócio',
@@ -52,7 +52,7 @@ export default function WhyWavemCmsSection({ content }) {
                 <div className={styles.headerWrapper}>
                     <SectionTitle
                         eyebrow={cms?.tag || 'IMPACTO OPERACIONAL & FINANCEIRO'}
-                        title={cms?.title || 'O Fim dos Sistemas Travados e Mensalidades Ocultas'}
+                        title={cms?.title || 'O Fim dos Sistemas Travados e dos Pedágios Técnicos'}
                         align="center"
                         maxWidth={860}
                     />

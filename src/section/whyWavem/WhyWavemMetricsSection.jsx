@@ -31,13 +31,13 @@ const storySteps = [
   },
   {
     id: 2,
-    tag: "AUTONOMIA TÉCNICA & CUSTO OPERACIONAL",
-    stat: "R$ 0",
+    tag: "AUTONOMIA TÉCNICA & TRANSPARÊNCIA",
+    stat: "100%",
     directLabel:
-      "de mensalidades técnicas para trocas de texto, banners e conteúdo",
-    title: "O Fim da Dependência de Agências e Plugins Lentos",
+      "autonomia para trocas de texto, banners e gestão do dia a dia",
+    title: "Autonomia Total de Conteúdo: Sem Pedágio de Agência",
     insight:
-      "Com o CMS sob medida da Wavem, você tem controle instantâneo com 1 clique, zero mensalidades técnicas ocultas e código blindado contra invasões.",
+      "Você gerencia todo o conteúdo da sua empresa com liberdade em 2 cliques. A Wavem garante servidor estável, suporte transparente e novas engenharias formalizadas sob contrato.",
   },
 ];
 
@@ -436,10 +436,10 @@ function AutonomyVisual() {
           <span className={styles.compSubTrad}>WordPress &amp; Agências</span>
         </div>
         <div className={styles.compValueTrad}>
-          R$ 800 a R$ 2.500<span className={styles.perYear}>/mês</span>
+          Horas Pagas<span className={styles.perYear}>/chamado</span>
         </div>
         <div className={styles.compDetailTrad}>
-          Mensalidades recorrentes, horas técnicas e licenças de plugins
+          Dependência de agências e cobranças recorrentes para alterar um simples texto ou banner
         </div>
       </div>
 
@@ -449,13 +449,13 @@ function AutonomyVisual() {
       <div className={styles.comparisonRow}>
         <div className={styles.compHeader}>
           <span className={styles.compLabelWavem}>CMS Sob Medida Wavem</span>
-          <span className={styles.compSubWavem}>Independência Permanente</span>
+          <span className={styles.compSubWavem}>Independência Operacional</span>
         </div>
         <div className={styles.compValueWavem}>
-          R$ 0<span className={styles.zeroUnit}> taxas recorrentes</span>
+          100%<span className={styles.zeroUnit}> Autônomo</span>
         </div>
         <div className={styles.compDetailWavem}>
-          Controle total em 1 clique sem amarras ou mensalidades com agências
+          Você no controle do seu conteúdo em 2 cliques; infraestrutura e servidor estáveis na nuvem
         </div>
       </div>
     </div>

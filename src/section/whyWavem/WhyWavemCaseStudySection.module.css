@@ -49,13 +49,14 @@
 
 .videoWrapper {
     width: 100%;
+    max-width: 860px;
     aspect-ratio: 16 / 9;
     border-radius: 16px;
     overflow: hidden;
     border: 1px solid rgba(255, 255, 255, 0.1);
     background-color: #06090e;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-    margin-bottom: 48px;
+    margin: 0 auto 40px auto;
 }
 
 .videoFrame {
@@ -73,7 +74,7 @@
     padding: 24px 0;
     border-top: 1px solid rgba(255, 255, 255, 0.08);
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    margin-bottom: 40px;
+    margin-bottom: 24px;
 }
 
 .metricItem {
@@ -98,6 +99,15 @@
     line-height: 1.4;
 }
 
+.commitmentText {
+    font-size: 0.86rem;
+    color: rgba(228, 228, 231, 0.5);
+    line-height: 1.55;
+    max-width: 680px;
+    margin: 0 auto 36px auto;
+    text-align: center;
+}
+
 .ctaWrapper {
     display: flex;
     justify-content: center;
@@ -116,5 +126,11 @@
     .metricsGrid {
         grid-template-columns: 1fr;
         gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .commitmentText {
+        font-size: 0.82rem;
+        margin-bottom: 28px;
     }
 }

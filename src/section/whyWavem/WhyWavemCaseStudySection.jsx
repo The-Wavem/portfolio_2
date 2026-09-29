@@ -58,12 +58,24 @@ export default function WhyWavemCaseStudySection({ content }) {
                     ))}
                 </motion.div>
 
+                {caseStudy.contractCommitment && (
+                    <motion.p
+                        className={styles.commitmentText}
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        viewport={{ once: true, margin: '-60px' }}
+                        transition={{ duration: 0.5, delay: 0.22 }}
+                    >
+                        {caseStudy.contractCommitment}
+                    </motion.p>
+                )}
+
                 <motion.div
                     className={styles.ctaWrapper}
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: '-60px' }}
-                    transition={{ duration: 0.55, delay: 0.24, ease: [0.16, 1, 0.3, 1] }}
+                    transition={{ duration: 0.55, delay: 0.26, ease: [0.16, 1, 0.3, 1] }}
                 >
                     <GlowButton
                         to={caseStudy.ctaLink || '/contato'}

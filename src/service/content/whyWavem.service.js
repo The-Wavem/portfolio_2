@@ -5,7 +5,7 @@ export const defaultWhyWavemContent = {
         overtitle: 'ENGENHARIA SOB MEDIDA',
         title: 'Sua empresa não precisa de mais um site. Precisa de um sistema que devolva o seu tempo.',
         description:
-            'Sites comuns viram panfletos esquecidos e plataformas lentas drenam a paciência da sua equipe. Criamos ecossistemas digitais rápidos, centralizados e sem mensalidades ocultas, desenhados para a realidade da sua operação.',
+            'Projetamos plataformas rápidas, centralizadas e com segurança jurídica. Você ganha autonomia total para gerenciar seu conteúdo pelo CMS próprio, com infraestrutura estável na nuvem e suporte técnico transparente.',
         ctaText: 'Construir meu Sistema Wavem',
         ctaLink: '/contato'
     },
@@ -30,23 +30,49 @@ export const defaultWhyWavemContent = {
             }
         ]
     },
+    costOfInaction: {
+        tag: 'Realidade Operacional',
+        title: 'O custo real de manter sistemas engessados',
+        intro:
+            'Empresas perdem dias de trabalho tentando operar ferramentas desconectadas e dependendo de chamados caros para qualquer ajuste básico:',
+        metrics: [
+            {
+                stat: '> 75%',
+                source: 'Stanford Web Credibility',
+                description:
+                    'Mais de 75% dos consumidores julgam a credibilidade da empresa pela fluidez e acabamento da sua presença oficial.'
+            },
+            {
+                stat: '3s = Abandono',
+                source: 'Google Research',
+                description:
+                    '53% dos acessos abandonam páginas lentas. Sistemas mal otimizados geram lentidão e perda silenciosa de clientes.'
+            },
+            {
+                stat: '100% Autônomo',
+                source: 'CMS Sob Medida',
+                description:
+                    'Altere dados, fotos e cadastros pelo seu painel sem pagar chamados extras. Você no controle do dia a dia do seu negócio.'
+            }
+        ]
+    },
     caseStudy: {
         overtitle: 'CASO REAL EM OPERAÇÃO',
         title: 'Como a Imobiliária Valdinei transformou horas de trabalho manual em 2 cliques',
-        subtitle:
-            'Desenvolvemos uma plataforma sob medida com integração total: cadastros centralizados que sincronizam instantaneamente com todos os canais de venda, sem planilhas ou retrabalho.',
         youtubeVideoId: 'dQw4w9WgXcQ',
         metrics: [
             { value: 'Integração Total', label: 'Sincronização em tempo real' },
-            { value: '-80% de esforço', label: 'Fim do trabalho braçal' },
-            { value: '2 Cliques', label: 'Para gerenciar e publicar' }
+            { value: '-80% de esforço', label: 'Fim do cadastro manual' },
+            { value: 'Regra dos 2 Cliques', label: 'Agilidade na publicação' }
         ],
+        contractCommitment:
+            'Contrato claro de 12 meses, suporte corretivo garantido, autonomia de conteúdo e manutenção transparente de infraestrutura.',
         ctaText: 'Quero automatizar minha operação',
         ctaLink: '/contato'
     },
     cmsSection: {
         tag: 'IMPACTO OPERACIONAL & FINANCEIRO',
-        title: 'O Fim dos Sistemas Travados e Mensalidades Ocultas',
+        title: 'O Fim dos Sistemas Travados e dos Pedágios Técnicos',
         subtitle:
             'Compare a realidade de quem terceiriza em plataformas genéricas versus quem possui um ecossistema próprio que trabalha a favor do faturamento.',
         comparison: {
@@ -64,16 +90,16 @@ export const defaultWhyWavemContent = {
                 items: [
                     'Painel exclusivo e blindado, construído para a rotina daquela empresa específica',
                     'Regra dos 2 cliques: sua equipe resolve demandas operacionais em segundos',
-                    'Zero taxas e zero mensalidades para manutenção e troca de conteúdo',
+                    'Autonomia total para atualização de conteúdo pelo CMS próprio sem pedágio por chamado',
                     'Código proprietário veloz, sem plugins de terceiros e com resposta instantânea'
                 ]
             }
         }
     },
     cta: {
-        title: 'Pronto para ter um sistema que trabalha com a sua empresa, e não contra ela?',
+        title: 'Pronto para ter um sistema que trabalha com a sua empresa?',
         description:
-            'Vamos conversar diretamente sobre os gargalos do seu dia a dia e desenhar a ferramenta sob medida para a sua operação.',
+            'Vamos desenhar a ferramenta exata que seu negócio precisa, com escopo fechado, contrato transparente e sem surpresas.',
         buttonText: 'Falar com os Desenvolvedores',
         link: '/contato'
     }

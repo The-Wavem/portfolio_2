@@ -7,39 +7,39 @@ import styles from './WhyWavemCmsSection.module.css';
 
 const traditionalBottlenecks = [
     {
-        title: 'Plugins vulneráveis e quebras constantes',
-        desc: 'Dezenas de extensões de terceiros sujeitas a brechas críticas de segurança, incompatibilidades estruturais e instabilidades após atualizações automáticas.',
+        title: 'Plataformas de terceiros inchadas e instáveis',
+        desc: 'Sistemas genéricos dependentes de dezenas de plugins que quebram após atualizações e expõem os dados da sua empresa a vulnerabilidades.',
     },
     {
-        title: 'Lentidão estrutural e código inchado',
-        desc: 'Templates genéricos e acúmulo de scripts pesados que sabotam o tempo de resposta, afundam o ranqueamento no Google (Core Web Vitals) e encarecem o tráfego pago.',
+        title: 'Suporte lento que trava operações críticas',
+        desc: 'Chamados técnicos que demoram dias ou semanas para responder solicitações simples enquanto sua equipe perde vendas.',
     },
     {
-        title: 'Mensalidades ocultas de manutenção técnica',
-        desc: 'Custos contínuos de R$ 800 a R$ 2.500/ano e dependência forçada de agências apenas para efetuar alterações pontuais de textos, fotos ou banners.',
+        title: 'Mensalidades ocultas e dependência de horas técnicas',
+        desc: 'Cobranças recorrentes e horas pagas a agências apenas para alterar um texto, atualizar um banner ou cadastrar novos produtos.',
     },
     {
-        title: 'Plataformas de aluguel e aprisionamento',
-        desc: 'Você nunca é o proprietário definitivo do código; se parar de pagar as mensalidades da plataforma, seu site é retirado do ar e seu negócio perde o histórico.',
+        title: 'Plataformas de aluguel e perda de patrimônio',
+        desc: 'Se você parar de pagar as mensalidades da ferramenta de terceiros, sua empresa perde o site, os dados e todo o histórico construído.',
     },
 ];
 
 const wavemAdvantages = [
     {
-        title: 'Código otimizado sem dependências',
-        desc: 'Arquitetura sob medida, ultraveloz e sem plugins de terceiros. Código limpo, estável e com blindagem nativa contra falhas e invasões.',
+        title: 'Painel exclusivo, blindado e sem plugins',
+        desc: 'Interface proprietária desenvolvida sob medida para a rotina da sua equipe. Código nativo com resposta instantânea e máxima segurança.',
     },
     {
-        title: 'Painel CMS sob medida para seu negócio',
-        desc: 'Interface administrativa intuitiva projetada para a rotina da sua equipe. Atualize textos, fotos, depoimentos e chamadas em 1 clique, sem burocracia.',
+        title: 'Regra dos 2 cliques para qualquer rotina',
+        desc: 'Zero burocracia ou manuais complicados: você entra, altera o que precisa em 2 cliques e volta a cuidar do seu faturamento.',
     },
     {
-        title: 'R$ 0 de mensalidades para trocas de conteúdo',
-        desc: 'Independência técnica permanente. Elimine de vez custos recorrentes com chamados de agências para gerenciar o conteúdo do seu próprio site.',
+        title: 'R$ 0 em mensalidades de manutenção de conteúdo',
+        desc: 'Autonomia definitiva para atualizar textos, imagens, tabelas e chamadas sem pagar horas técnicas adicionais para ninguém.',
     },
     {
-        title: 'Patrimônio digital definitivo da sua empresa',
-        desc: 'O ecossistema pertence 100% à sua empresa, com engenharia focada obsessivamente em autoridade de marca, SEO técnico e alta conversão de clientes.',
+        title: 'Patrimônio digital definitivo do seu negócio',
+        desc: 'O código e a base são 100% da sua empresa, integrados aos seus canais de vendas e escaláveis conforme a sua demanda cresce.',
     },
 ];
 
@@ -51,13 +51,8 @@ export default function WhyWavemCmsSection({ content }) {
             <Container maxWidth="lg">
                 <div className={styles.headerWrapper}>
                     <SectionTitle
-                        eyebrow="ARQUITETURA & AUTONOMIA"
-                        title={cms?.title || 'Esqueça a dependência de agências e plugins lentos'}
-                        subtitle={
-                            cms?.subtitle ||
-                            cms?.description ||
-                            'Liberdade total para gerenciar seu conteúdo com velocidade instantânea e segurança através da engenharia sob medida da Wavem.'
-                        }
+                        eyebrow={cms?.tag || 'IMPACTO OPERACIONAL & FINANCEIRO'}
+                        title={cms?.title || 'O Fim dos Sistemas Travados e Mensalidades Ocultas'}
                         align="center"
                         maxWidth={860}
                     />
@@ -78,9 +73,6 @@ export default function WhyWavemCmsSection({ content }) {
                             <h3 className={styles.colTitle}>
                                 WordPress &amp; Plataformas de Aluguel
                             </h3>
-                            <p className={styles.colSubtitle}>
-                                Gargalos estruturais provocados por código inchado e custos contínuos de suporte.
-                            </p>
                         </div>
 
                         <div className={styles.dividerSubtle} />
@@ -113,9 +105,6 @@ export default function WhyWavemCmsSection({ content }) {
                             <h3 className={styles.colTitle}>
                                 Ecossistema &amp; CMS Sob Medida
                             </h3>
-                            <p className={styles.colSubtitle}>
-                                Engenharia de alta performance, velocidade instantânea e autonomia definitiva.
-                            </p>
                         </div>
 
                         <div className={styles.dividerSubtle} />

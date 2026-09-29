@@ -124,12 +124,12 @@ export default function WhyWavem() {
 
                             {/* Headline de Impacto */}
                             <motion.h2 variants={itemVariants} className={styles.headline}>
-                                Seu site está perdendo vendas para concorrentes com soluções piores?
+                                Sua empresa está perdendo clientes ou perdendo tempo com sistemas que travam?
                             </motion.h2>
 
                             {/* Descrição */}
                             <motion.p variants={itemVariants} className={styles.description}>
-                                Páginas lentas e designs amadores drenam a margem de lucro da sua empresa silenciosamente. Na Wavem, projetamos ecossistemas sob medida com CMS proprietário e velocidade instantânea — sem plugins inchados ou dependência de agências.
+                                Páginas lentas e processos manuais drenam o lucro silenciosamente. Criamos sistemas digitais sob medida com CMS próprio e automações reais para centralizar sua operação com a regra dos 2 cliques.
                             </motion.p>
 
                             {/* CTA com Leve Onda de Pulso Convidativa ao Entrar na Tela */}
@@ -157,11 +157,11 @@ export default function WhyWavem() {
                                             page: 'home',
                                             section: 'why_wavem_split',
                                             action: 'click_discover_effect',
-                                            label: 'Entenda como blindamos o seu site',
+                                            label: 'Entenda como blindamos o seu negócio',
                                         })
                                     }
                                 >
-                                    Entenda como blindamos o seu site →
+                                    Entenda como blindamos o seu negócio →
                                 </GlowButton>
                             </motion.div>
                         </motion.div>

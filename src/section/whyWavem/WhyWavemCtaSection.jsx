@@ -26,13 +26,13 @@ export default function WhyWavemCtaSection({ content }) {
                     <span className={styles.overtitle}>PRÓXIMO PASSO</span>
 
                     <h2 className={styles.title}>
-                        {cta?.title || 'Não deixe sua margem de lucro na mesa'}
+                        {cta?.title || 'Pronto para ter um sistema que trabalha com a sua empresa, e não contra ela?'}
                     </h2>
 
                     <p className={styles.subtitle}>
                         {cta?.description ||
                             cta?.subtitle ||
-                            'Vamos desenhar a presença digital definitiva da sua marca e colocar seu site para vender todos os dias.'}
+                            'Vamos conversar diretamente sobre os gargalos do seu dia a dia e desenhar a ferramenta sob medida para a sua operação.'}
                     </p>
 
                     <div className={styles.actions}>
@@ -54,16 +54,16 @@ export default function WhyWavemCtaSection({ content }) {
                                     page: 'why_wavem',
                                     section: 'cta_final',
                                     action: 'click_final_cta',
-                                    label: cta?.buttonText || 'Quero um Site que Vende'
+                                    label: cta?.buttonText || 'Falar com os Desenvolvedores'
                                 })
                             }
                         >
-                            {cta?.buttonText || 'Quero um Site que Vende'}
+                            {cta?.buttonText || 'Falar com os Desenvolvedores'}
                         </GlowButton>
 
                         <Button
                             component="a"
-                            href="https://wa.me/5541995424186?text=Ol%C3%A1%2C%20The%20Wavem!%20Quero%20conversar%20sobre%20um%20site%20para%20o%20meu%20neg%C3%B3cio."
+                            href="https://wa.me/5541995424186?text=Ol%C3%A1%2C%20The%20Wavem!%20Quero%20conversar%20sobre%20um%20sistema%20para%20o%20meu%20neg%C3%B3cio."
                             target="_blank"
                             rel="noopener noreferrer"
                             variant="outlined"

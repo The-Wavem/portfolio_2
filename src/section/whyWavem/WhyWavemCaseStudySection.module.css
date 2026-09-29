@@ -1,0 +1,120 @@
+.sectionContainer {
+    width: 100%;
+    padding: 100px 24px;
+    background-color: transparent;
+    display: flex;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+.contentWrapper {
+    width: 100%;
+    max-width: 880px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.header {
+    margin-bottom: 40px;
+}
+
+.overtitle {
+    display: block;
+    font-family: 'Fira Code', monospace, sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    color: #FB7185;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+}
+
+.title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1.25;
+    margin-bottom: 16px;
+    letter-spacing: -0.025em;
+}
+
+.subtitle {
+    font-size: 1.05rem;
+    color: rgba(255, 255, 255, 0.65);
+    line-height: 1.6;
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.videoWrapper {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: #06090e;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    margin-bottom: 48px;
+}
+
+.videoFrame {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+}
+
+.metricsGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    width: 100%;
+    padding: 24px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    margin-bottom: 40px;
+}
+
+.metricItem {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+    text-align: center;
+}
+
+.metricValue {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+    font-family: 'Inter', sans-serif;
+}
+
+.metricLabel {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.5);
+    line-height: 1.4;
+}
+
+.ctaWrapper {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    .sectionContainer {
+        padding: 60px 16px;
+    }
+
+    .title {
+        font-size: 1.7rem;
+    }
+
+    .metricsGrid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+}

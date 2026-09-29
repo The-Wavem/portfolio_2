@@ -1,16 +1,16 @@
-/* Container com 300vh para permitir 3 etapas completas de rolagem com pinagem */
-.section {
-    min-height: 300vh;
+/* Trilho de rolagem de 300vh para permitir 3 passos completos */
+.scrollContainer {
     position: relative;
-    /* Atenção ao Overflow: overflow deve ser visible para permitir position: sticky */
-    overflow: visible;
+    height: 300vh;
+    background: transparent;
 }
 
-/* O elemento interno fixo na tela durante todo o trajeto dos 300vh */
-.stickyFrame {
+/* O elemento sticky fixado em 100vh que permanece na tela durante os 300vh */
+.stickyViewport {
     position: sticky;
     top: 0;
     height: 100vh;
+    width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -26,7 +26,7 @@
     flex-direction: column;
     justify-content: center;
     height: 100%;
-    padding-top: 24px;
+    padding-top: 40px;
     padding-bottom: 24px;
     box-sizing: border-box;
 }
@@ -351,59 +351,71 @@
 /* Ajuste Mobile Real (< 768px): layout compacto para manter tudo perfeitamente dentro dos 100vh */
 @media (max-width: 767px) {
     .frameContainer {
-        padding-top: 76px; /* Desconto da navbar fixa */
-        padding-bottom: 16px;
+        padding-top: 72px; /* Espaço para a barra de navegação */
+        padding-bottom: 12px;
         justify-content: space-evenly;
     }
 
     .stageControlBar {
-        margin-bottom: 12px;
-        padding-bottom: 10px;
+        margin-bottom: 8px;
+        padding-bottom: 8px;
     }
 
     .stageGrid {
         display: flex;
-        flex-direction: column-reverse; /* Gráfico acima do texto ou texto acima compacto */
-        gap: 16px;
+        flex-direction: column;
+        gap: 12px;
         align-items: center;
     }
 
     .visualColumn {
-        min-height: 160px;
-        max-height: 180px;
-        transform: scale(0.85);
+        min-height: 140px;
+        max-height: 160px;
+        transform: scale(0.8);
+        transform-origin: center center;
     }
 
     .narrativeColumn {
         min-height: auto;
     }
 
+    .blockOvertitle {
+        font-size: 0.65rem;
+        margin-bottom: 6px;
+    }
+
+    .displayRow {
+        margin-bottom: 8px;
+        gap: 2px;
+    }
+
     .displayNumber {
-        font-size: 2.5rem;
+        font-size: 2.3rem;
     }
 
     .directLabel {
-        font-size: 0.82rem;
+        font-size: 0.8rem;
+        line-height: 1.3;
     }
 
     .storyTitle {
-        font-size: 1.15rem;
-        margin-bottom: 8px;
+        font-size: 1.1rem;
+        margin-bottom: 6px;
     }
 
     .storyDescription {
-        font-size: 0.88rem;
-        line-height: 1.5;
-        margin-bottom: 12px;
+        font-size: 0.84rem;
+        line-height: 1.45;
+        margin-bottom: 8px;
         display: -webkit-box;
-        -webkit-line-clamp: 3;
+        -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
 
     .storyInsight {
-        font-size: 0.8rem;
-        line-height: 1.45;
-        padding-left: 10px;
+        font-size: 0.78rem;
+        line-height: 1.4;
+        padding-left: 8px;
     }
 }

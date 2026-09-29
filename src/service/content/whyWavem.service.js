@@ -2,92 +2,79 @@ import { getFirebaseContent, setFirebaseContent } from '@/service/firebase';
 
 export const defaultWhyWavemContent = {
     hero: {
-        tag: 'Estratégia de Conversão',
-        title: 'O Poder de um Site Sob Medida',
-        question: 'O seu negócio está perdendo clientes neste exato momento para concorrentes com sites piores que o seu? Ou pior: porque você não tem um?',
-        description: 'No digital, a sua vitrine é a primeira e muitas vezes a única impressão. Transforme cliques em receita com um ecossistema digital feito sob medida para escalar o seu faturamento.',
-        ctaText: 'Quero um Site que Vende',
+        overtitle: 'ENGENHARIA SOB MEDIDA',
+        title: 'Sua empresa não precisa de mais um site. Precisa de um sistema que devolva o seu tempo.',
+        description:
+            'Sites comuns viram panfletos esquecidos e plataformas lentas drenam a paciência da sua equipe. Criamos ecossistemas digitais rápidos, centralizados e sem mensalidades ocultas, desenhados para a realidade da sua operação.',
+        ctaText: 'Construir meu Sistema Wavem',
         ctaLink: '/contato'
     },
-    consultiveApproach: {
-        tag: 'Abordagem Consultiva',
-        title: 'Desenvolvimento 100% customizado, focado na sua dor real',
-        description: 'Antes de escrever uma única linha de código, nós conversamos de verdade com você. Entendemos o seu modelo de negócio, o perfil dos seus clientes e as suas metas para desenhar a arquitetura perfeita — sem soluções genéricas de prateleira.',
-        features: [
+    corePillars: {
+        overtitle: 'A FILOSOFIA WAVEM',
+        title: 'Por que empresários sérios investem em sistemas proprietários?',
+        pillars: [
             {
-                title: 'Diagnóstico Estratégico',
-                description: 'Mapeamento aprofundado dos gargalos da sua presença online atual.',
-                iconKey: 'target'
+                title: 'A Regra dos 2 Cliques',
+                description:
+                    'Se uma tarefa exige mais de dois cliques ou um manual de instruções, o software falhou. Nosso CMS é enxuto: você entra, resolve em segundos e volta a cuidar do seu negócio.'
             },
             {
-                title: 'Projetado para Conversão',
-                description: 'Cada botão, texto e transição pensado para guiar o visitante até a compra.',
-                iconKey: 'layout'
+                title: 'Fim da Fragmentação Operacional',
+                description:
+                    'Chega de perder horas copiando dados entre WhatsApp, planilhas pesadas do Excel e abas travadas. Unificamos o contato com o cliente, formulários e banco de dados em um único lugar.'
             },
             {
-                title: 'Contato Direto com Devs',
-                description: 'Sem intermediários ou gerentes de conta burocráticos. Você fala direto com quem constrói.',
-                iconKey: 'users'
+                title: 'Velocidade Real (Sem Rodas Girando)',
+                description:
+                    'Sem temas pesados de WordPress, sem dezenas de plugins que quebram na atualização. Código nativo e limpo com resposta instantânea no computador da empresa ou no celular.'
             }
         ]
     },
-    costOfInaction: {
-        tag: 'Realidade de Mercado',
-        title: 'Quanto custa ser invisível na internet?',
-        intro: 'O mercado mudou. O amadorismo digital drena o seu lucro silenciosamente todos os dias. Veja o que os dados revelam sobre o comportamento do consumidor moderno:',
+    caseStudy: {
+        overtitle: 'CASO REAL EM OPERAÇÃO',
+        title: 'Como a Imobiliária Valdinei transformou horas de trabalho manual em 2 cliques',
+        subtitle:
+            'Desenvolvemos uma plataforma sob medida com integração total: cadastros centralizados que sincronizam instantaneamente com todos os canais de venda, sem planilhas ou retrabalho.',
+        youtubeVideoId: 'dQw4w9WgXcQ',
         metrics: [
-            {
-                stat: '> 75%',
-                source: 'Stanford Web Credibility',
-                description: 'Mais de 75% dos consumidores julgam a credibilidade de uma empresa com base no design e na fluidez do seu site oficial.',
-                accentColor: '#A78BFA',
-                iconKey: 'shield'
-            },
-            {
-                stat: '-300%',
-                source: 'Meta & Google Ads',
-                description: 'Enviar tráfego pago para redes sociais ou sites lentos é rasgar dinheiro: a conversão despenca em até 300% comparada a uma página profissional.',
-                accentColor: '#F87171',
-                iconKey: 'trendingDown'
-            },
-            {
-                stat: '53%',
-                source: 'Google Research',
-                description: 'Abandonam páginas que demoram mais de 3 segundos. Cada segundo extra reduz conversões em até 20%, entregando margem para a concorrência.',
-                accentColor: '#38BDF8',
-                iconKey: 'bolt'
-            }
-        ]
+            { value: 'Integração Total', label: 'Sincronização em tempo real' },
+            { value: '-80% de esforço', label: 'Fim do trabalho braçal' },
+            { value: '2 Cliques', label: 'Para gerenciar e publicar' }
+        ],
+        ctaText: 'Quero automatizar minha operação',
+        ctaLink: '/contato'
     },
     cmsSection: {
-        tag: 'Autonomia & Segurança',
-        title: 'Esqueça a dependência de agências e plugins lentos',
-        subtitle: 'Liberdade total para gerenciar o seu conteúdo com a segurança e a velocidade que o seu negócio exige através do CMS Próprio da Wavem.',
+        tag: 'IMPACTO OPERACIONAL & FINANCEIRO',
+        title: 'O Fim dos Sistemas Travados e Mensalidades Ocultas',
+        subtitle:
+            'Compare a realidade de quem terceiriza em plataformas genéricas versus quem possui um ecossistema próprio que trabalha a favor do faturamento.',
         comparison: {
             traditional: {
-                title: 'Mercado Tradicional (WordPress & Construtores)',
+                title: 'O Mercado Tradicional (WordPress & Plataformas de Aluguel)',
                 items: [
-                    'Dezenas de plugins de terceiros sujeitos a falhas e invasões',
-                    'Lentidão extrema provocada por código inchado e templates pesados',
-                    'Painéis complexos que geram dependência de agências para trocas simples',
-                    'Custos recorrentes com licenças pagas de temas e plugins'
+                    'Plataformas de terceiros inchadas e instáveis após qualquer atualização',
+                    'Dezenas de plugins vulneráveis que quebram e expõem dados da empresa',
+                    'Suporte técnico que demora dias ou semanas para responder chamados simples',
+                    'Dependência contínua de horas técnicas pagas para alterar um texto ou foto'
                 ]
             },
             wavem: {
-                title: 'O Ecossistema Wavem',
+                title: 'O Sistema Wavem (Engenharia Sob Medida)',
                 items: [
-                    'Arquitetura limpa, segura e blindada contra invasões',
-                    'Performance máxima com carregamento instantâneo focado em SEO',
-                    'CMS próprio e intuitivo, feito sob medida para a sua rotina',
-                    'Autonomia total no dia a dia, sem amarras técnicas ou taxas ocultas'
+                    'Painel exclusivo e blindado, construído para a rotina daquela empresa específica',
+                    'Regra dos 2 cliques: sua equipe resolve demandas operacionais em segundos',
+                    'Zero taxas e zero mensalidades para manutenção e troca de conteúdo',
+                    'Código proprietário veloz, sem plugins de terceiros e com resposta instantânea'
                 ]
             }
         }
     },
     cta: {
-        title: 'Não deixe sua margem de lucro na mesa',
-        description: 'Vamos desenhar a presença digital definitiva da sua marca e colocar seu site para vender todos os dias.',
-        buttonText: 'Quero um Site que Vende',
+        title: 'Pronto para ter um sistema que trabalha com a sua empresa, e não contra ela?',
+        description:
+            'Vamos conversar diretamente sobre os gargalos do seu dia a dia e desenhar a ferramenta sob medida para a sua operação.',
+        buttonText: 'Falar com os Desenvolvedores',
         link: '/contato'
     }
 };

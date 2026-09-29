@@ -1,107 +1,143 @@
 .section {
     position: relative;
-    padding-top: 80px;
+    padding-top: 72px;
     overflow: visible;
 }
 
 @media (min-width: 900px) {
     .section {
-        padding-top: 100px;
+        padding-top: 96px;
     }
 }
 
 .introWrapper {
     text-align: center;
     max-width: 860px;
-    margin: 0 auto 56px auto;
+    margin: 0 auto 48px auto;
 }
 
-/* Pinned Scroll Track: 280vh of scroll distance to cycle through the 3 steps */
+/* Pinned Scroll Track: 260vh de trajeto para rolar e mudar os itens com motion */
 .scrollTrack {
     position: relative;
-    height: 280vh;
+    height: 260vh;
     width: 100%;
 }
 
-/* The Viewport that remains locked on screen */
+/* O Viewport que trava na tela enquanto o usuário rola o mouse */
 .stickyViewport {
     position: sticky;
     top: 72px;
     height: calc(100vh - 72px);
     display: flex;
-    align-items: center;
+    flex-direction: column;
     justify-content: center;
     width: 100%;
     overflow: hidden;
+    padding-bottom: 24px;
 }
 
-/* 2-Column Presentation Grid */
-.stageGrid {
-    display: flex;
-    flex-direction: column;
-    gap: 36px;
-    width: 100%;
-    align-items: center;
-}
-
-@media (min-width: 860px) {
-    .stageGrid {
-        display: grid;
-        grid-template-columns: 1fr 1.15fr;
-        gap: 64px;
-        align-items: center;
-    }
-}
-
-/* Left Column: Morphing Editorial Story */
-.narrativeColumn {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-/* Step Progress Indicator */
-.stepCounterBar {
+/* Barra de Controle e Progresso Técnico das Etapas */
+.stageControlBar {
     display: flex;
     align-items: center;
-    gap: 16px;
-    margin-bottom: 24px;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1140px;
+    margin: 0 auto 36px auto;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.stepCounter {
+    display: flex;
+    align-items: baseline;
+    font-family: 'Fira Code', monospace, sans-serif;
 }
 
 .stepIndex {
-    font-family: 'Fira Code', monospace, sans-serif;
-    font-size: 0.85rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    color: #A78BFA;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #FB7185;
+    letter-spacing: 0.05em;
+}
+
+.stepTotal {
+    font-size: 0.82rem;
+    color: rgba(228, 228, 231, 0.4);
+    letter-spacing: 0.08em;
 }
 
 .stepBars {
     display: flex;
-    gap: 6px;
+    gap: 8px;
     align-items: center;
 }
 
 .stepBarItem {
-    width: 24px;
+    width: 28px;
     height: 3px;
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.12);
     border: none;
     padding: 0;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .stepBarItemActive {
-    background: linear-gradient(90deg, #7C3AED, #38BDF8);
-    width: 44px;
-    box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+    background: linear-gradient(90deg, #E11D48, #FB7185);
+    width: 52px;
+    box-shadow: 0 0 12px rgba(225, 29, 72, 0.6);
 }
 
-/* Morphing Wrapper */
-.textMorphWrapper {
+.scrollHint {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Fira Code', monospace, sans-serif;
+    font-size: 0.72rem;
+    color: rgba(228, 228, 231, 0.45);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+@media (min-width: 680px) {
+    .scrollHint {
+        display: flex;
+    }
+}
+
+.scrollArrow {
+    color: #FB7185;
+    animation: bounceDown 1.8s infinite ease-in-out;
+}
+
+@keyframes bounceDown {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(3px); }
+}
+
+/* Palco Aberto em Grid (Sem caixas ou cards de IA) */
+.stageGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+    align-items: center;
+    max-width: 1140px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+@media (min-width: 860px) {
+    .stageGrid {
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 64px;
+    }
+}
+
+/* Coluna de Narrativa Editorial */
+.narrativeColumn {
+    width: 100%;
     min-height: 280px;
     display: flex;
     flex-direction: column;
@@ -109,67 +145,92 @@
 }
 
 @media (min-width: 860px) {
-    .textMorphWrapper {
+    .narrativeColumn {
         min-height: 320px;
     }
 }
 
-.blockTag {
+.storyContent {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+}
+
+.blockOvertitle {
     font-family: 'Fira Code', monospace, sans-serif;
-    font-size: 0.76rem;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    color: rgba(228, 228, 231, 0.45);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    color: #FB7185;
     text-transform: uppercase;
     margin-bottom: 12px;
 }
 
-.statLarge {
-    font-size: 3.2rem;
-    font-weight: 800;
-    line-height: 1.05;
-    letter-spacing: -0.04em;
+/* Display Row */
+.displayRow {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
     margin-bottom: 16px;
-    font-family: 'Inter', sans-serif;
-    text-shadow: 0 0 32px rgba(124, 58, 237, 0.25);
 }
 
-@media (min-width: 600px) {
-    .statLarge {
-        font-size: 4.4rem;
+@media (min-width: 500px) {
+    .displayRow {
+        flex-direction: row;
+        align-items: baseline;
+        gap: 16px;
     }
 }
 
+.displayNumber {
+    font-size: clamp(3.2rem, 5.5vw, 4.6rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    font-family: 'Inter', sans-serif;
+    color: #FB7185;
+    text-shadow: 0 0 32px rgba(225, 29, 72, 0.35);
+}
+
+.directLabel {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: rgba(228, 228, 231, 0.78);
+    line-height: 1.4;
+    max-width: 320px;
+}
+
 .storyTitle {
-    font-size: 1.55rem;
+    font-size: 1.45rem;
     font-weight: 800;
     line-height: 1.25;
     letter-spacing: -0.02em;
     color: #FFFFFF;
-    margin-bottom: 16px;
+    margin: 0 0 14px 0;
 }
 
 @media (min-width: 600px) {
     .storyTitle {
-        font-size: 1.95rem;
+        font-size: 1.8rem;
     }
 }
 
 .storyDescription {
-    font-size: 1.05rem;
-    line-height: 1.7;
-    color: rgba(228, 228, 231, 0.78);
-    margin-bottom: 20px;
-    max-width: 500px;
+    font-size: 1.02rem;
+    line-height: 1.68;
+    color: rgba(228, 228, 231, 0.76);
+    margin: 0 0 20px 0;
+    max-width: 540px;
 }
 
 .storyInsight {
-    font-size: 0.94rem;
-    line-height: 1.65;
-    color: rgba(228, 228, 231, 0.92);
+    font-size: 0.92rem;
+    line-height: 1.62;
+    color: rgba(228, 228, 231, 0.88);
     padding-left: 14px;
-    border-left: 2px solid #7C3AED;
-    max-width: 500px;
+    border-left: 2px solid #E11D48;
+    max-width: 540px;
 }
 
 .storyInsight strong {
@@ -177,26 +238,142 @@
     font-weight: 700;
 }
 
-/* Right Column: Chart Column */
-.chartColumn {
+/* Coluna Visual Técnica */
+.visualColumn {
     width: 100%;
+    min-height: 240px;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.visualWrapper {
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.minimalSvg {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    display: block;
+}
+
+/* Comparativo Técnico CMS Aberto */
+.comparisonTable {
+    width: 100%;
+    max-width: 380px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    text-align: left;
+}
+
+.comparisonRow {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.compHeader {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.compLabelTrad {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: rgba(228, 228, 231, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.compSubTrad {
+    font-size: 0.75rem;
+    color: rgba(228, 228, 231, 0.35);
+}
+
+.compValueTrad {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: rgba(228, 228, 231, 0.6);
+    letter-spacing: -0.02em;
+    text-decoration: line-through;
+    text-decoration-color: rgba(225, 29, 72, 0.6);
+}
+
+.perYear {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: rgba(228, 228, 231, 0.45);
+    text-decoration: none;
+    display: inline-block;
+    margin-left: 2px;
+}
+
+.compDetailTrad {
+    font-size: 0.84rem;
+    color: rgba(228, 228, 231, 0.55);
+    line-height: 1.5;
+}
+
+.compDivider {
+    width: 100%;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.compLabelWavem {
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: #FB7185;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.compSubWavem {
+    font-size: 0.75rem;
+    color: rgba(251, 113, 133, 0.75);
+}
+
+.compValueWavem {
+    font-size: 2.1rem;
+    font-weight: 800;
+    color: #FB7185;
+    letter-spacing: -0.03em;
+    text-shadow: 0 0 24px rgba(225, 29, 72, 0.35);
+}
+
+.zeroUnit {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: rgba(251, 113, 133, 0.9);
+    margin-left: 6px;
+}
+
+.compDetailWavem {
+    font-size: 0.86rem;
+    color: rgba(228, 228, 231, 0.85);
+    line-height: 1.5;
 }
 
 @media (max-width: 859px) {
     .stickyViewport {
         height: auto;
         min-height: calc(100vh - 72px);
-        padding: 24px 0;
+        padding-top: 16px;
     }
 
-    .chartColumn {
-        max-height: 300px;
+    .visualColumn {
+        min-height: 200px;
     }
 
-    .textMorphWrapper {
+    .narrativeColumn {
         min-height: 240px;
     }
 }

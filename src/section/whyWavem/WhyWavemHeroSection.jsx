@@ -1,6 +1,6 @@
 import { Box, Container, Button } from '@mui/material';
 import { motion } from 'framer-motion';
-import { TbSparkles, TbArrowRight, TbCheck, TbArrowDown } from 'react-icons/tb';
+import { TbArrowRight, TbArrowDown } from 'react-icons/tb';
 
 import GlowButton from '@/components/ui/GlowButton';
 import { trackAction } from '@/service/analytics/tracking.service';
@@ -8,15 +8,9 @@ import styles from './WhyWavemHeroSection.module.css';
 
 export default function WhyWavemHeroSection({ content }) {
     const hero = content?.hero;
-    const badges = [
-        '100% Sob Medida',
-        'CMS Próprio & Rápido',
-        'Performance Implacável',
-        'Contato Direto com Devs'
-    ];
 
     const scrollToContent = () => {
-        const target = document.getElementById('abordagem-consultiva');
+        const target = document.getElementById('metricas-pesquisas') || document.getElementById('cms-wavem');
         if (target) {
             target.scrollIntoView({ behavior: 'smooth' });
         }
@@ -24,21 +18,23 @@ export default function WhyWavemHeroSection({ content }) {
 
     return (
         <Box component="section" className={styles.heroSection}>
-            <div className={styles.bgGlowPurple} aria-hidden />
-            <div className={styles.bgGlowCyan} aria-hidden />
+            <div className={styles.bgGlowRose} aria-hidden />
+            <div className={styles.bgGlowCrimson} aria-hidden />
 
             <Container maxWidth="lg">
                 <div className={styles.contentWrapper}>
+                    {/* Overtitle sutil: texto puro com tracking largo na cor da rota */}
                     <motion.div
                         initial={{ opacity: 0, y: 16 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.45, ease: 'easeOut' }}
                     >
-                        <div className={styles.eyebrowBadge}>
-                            <span>{hero?.tag || 'Estratégia de Conversão'}</span>
-                        </div>
+                        <span className={styles.overtitle}>
+                            {hero?.tag || 'ESTRATÉGIA & CONVERSÃO'}
+                        </span>
                     </motion.div>
 
+                    {/* Headline Principal */}
                     <motion.h1
                         className={styles.heroTitle}
                         initial={{ opacity: 0, y: 22 }}
@@ -49,11 +45,12 @@ export default function WhyWavemHeroSection({ content }) {
                         <span className={styles.titleGradient}>Site Sob Medida</span>
                     </motion.h1>
 
+                    {/* Citação Editorial Aberta */}
                     {hero?.question && (
                         <motion.div
-                            className={styles.questionCard}
-                            initial={{ opacity: 0, scale: 0.98, y: 16 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            className={styles.questionBlock}
+                            initial={{ opacity: 0, y: 16 }}
+                            animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5, delay: 0.16, ease: 'easeOut' }}
                         >
                             <p className={styles.questionText}>
@@ -62,6 +59,7 @@ export default function WhyWavemHeroSection({ content }) {
                         </motion.div>
                     )}
 
+                    {/* Descrição Editorial */}
                     <motion.p
                         className={styles.heroSubtitle}
                         initial={{ opacity: 0, y: 18 }}
@@ -72,6 +70,7 @@ export default function WhyWavemHeroSection({ content }) {
                             'No digital, a sua vitrine é a primeira e muitas vezes a única impressão. Transforme cliques em receita com um ecossistema digital feito sob medida para escalar o seu faturamento.'}
                     </motion.p>
 
+                    {/* Ações / CTAs */}
                     <motion.div
                         className={styles.actionsRow}
                         initial={{ opacity: 0, y: 20 }}
@@ -82,7 +81,15 @@ export default function WhyWavemHeroSection({ content }) {
                             to={hero?.ctaLink || '/contato'}
                             variant="primary"
                             size="large"
-                            endIcon={<TbArrowRight size={18} />}
+                            endIcon={<TbArrowRight size={18} strokeWidth={1.5} />}
+                            sx={{
+                                background: 'linear-gradient(135deg, #E11D48 0%, #BE123C 50%, #FB7185 100%)',
+                                boxShadow: '0 0 24px rgba(225, 29, 72, 0.45)',
+                                '&:hover': {
+                                    background: 'linear-gradient(135deg, #F43F5E 0%, #E11D48 50%, #FB7185 100%)',
+                                    boxShadow: '0 0 32px rgba(225, 29, 72, 0.65)',
+                                }
+                            }}
                             onClick={() =>
                                 trackAction({
                                     page: 'why_wavem',
@@ -99,7 +106,7 @@ export default function WhyWavemHeroSection({ content }) {
                             variant="outlined"
                             size="large"
                             onClick={scrollToContent}
-                            endIcon={<TbArrowDown size={18} />}
+                            endIcon={<TbArrowDown size={18} strokeWidth={1.5} />}
                             sx={{
                                 borderRadius: '999px',
                                 px: { xs: 3, md: 3.5 },
@@ -109,8 +116,8 @@ export default function WhyWavemHeroSection({ content }) {
                                 fontWeight: 700,
                                 textTransform: 'none',
                                 '&:hover': {
-                                    borderColor: 'primary.main',
-                                    background: 'rgba(124, 58, 237, 0.08)'
+                                    borderColor: '#FB7185',
+                                    background: 'rgba(225, 29, 72, 0.08)'
                                 }
                             }}
                         >

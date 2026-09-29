@@ -7,7 +7,6 @@ import {
 } from '@/service/content';
 import { trackPageView } from '@/service/analytics/tracking.service';
 import WhyWavemHeroSection from '@/section/whyWavem/WhyWavemHeroSection';
-import WhyWavemConsultingSection from '@/section/whyWavem/WhyWavemConsultingSection';
 import WhyWavemCmsSection from '@/section/whyWavem/WhyWavemCmsSection';
 import WhyWavemMetricsSection from '@/section/whyWavem/WhyWavemMetricsSection';
 import WhyWavemCtaSection from '@/section/whyWavem/WhyWavemCtaSection';
@@ -41,9 +40,8 @@ export default function WhyWavem() {
     }, []);
 
     return (
-        <Box component="main">
+        <Box component="main" sx={{ overflowX: 'hidden', minHeight: '100vh', position: 'relative' }}>
             <WhyWavemHeroSection content={content} />
-            {/* <WhyWavemConsultingSection content={content} /> */}
             <WhyWavemCmsSection content={content} />
             <WhyWavemMetricsSection content={content} />
             <WhyWavemCtaSection content={content} />

@@ -1,34 +1,22 @@
 .section {
     position: relative;
-    padding-top: 70px;
-    padding-bottom: 70px;
-    overflow: visible;
+    padding-top: 72px;
+    padding-bottom: 72px;
+    overflow: hidden;
 }
 
 @media (min-width: 900px) {
     .section {
-        padding-top: 90px;
-        padding-bottom: 90px;
+        padding-top: 96px;
+        padding-bottom: 96px;
     }
 }
 
-.bgGlow {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 800px;
-    height: 450px;
-    background: radial-gradient(circle, rgba(124, 58, 237, 0.08) 0%, rgba(0, 240, 255, 0.03) 40%, transparent 70%);
-    pointer-events: none;
-    z-index: 0;
-}
-
-/* 2-Column Split Grid (55% Copy / 45% Chart) */
+/* Grid de 2 colunas no desktop (1fr 1.2fr) e 1 coluna vertical no mobile, sobre o fundo nativo */
 .splitGrid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 48px;
+    gap: 40px;
     align-items: center;
     max-width: 1200px;
     margin: 0 auto;
@@ -36,12 +24,12 @@
 
 @media (min-width: 900px) {
     .splitGrid {
-        grid-template-columns: 1.18fr 0.92fr;
+        grid-template-columns: 1fr 1.2fr;
         gap: 56px;
     }
 }
 
-/* Left Column: Narrative & CTA */
+/* Coluna de Texto */
 .textColumn {
     display: flex;
     flex-direction: column;
@@ -49,40 +37,23 @@
     text-align: left;
 }
 
-/* Top Badge */
-.topBadge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(0, 240, 255, 0.06);
-    border: 1px solid rgba(0, 240, 255, 0.25);
-    border-radius: 999px;
-    padding: 5px 14px;
-    margin-bottom: 20px;
-}
-
-.badgeDot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #00F0FF;
-    box-shadow: 0 0 8px #00F0FF;
-}
-
-.badgeText {
+/* Overtitle sutil: texto puro com tracking largo, sem pill */
+.overtitle {
     font-family: 'Fira Code', monospace, sans-serif;
     font-size: 0.74rem;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    color: #00F0FF;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    color: rgba(228, 228, 231, 0.6);
     text-transform: uppercase;
+    margin-bottom: 16px;
+    display: inline-block;
 }
 
-/* Headline */
+/* Headline de Impacto */
 .headline {
     font-size: 1.85rem;
     font-weight: 800;
-    line-height: 1.22;
+    line-height: 1.2;
     letter-spacing: -0.03em;
     color: #FFFFFF;
     margin: 0 0 18px 0;
@@ -90,23 +61,23 @@
 
 @media (min-width: 600px) {
     .headline {
-        font-size: 2.3rem;
+        font-size: 2.25rem;
     }
 }
 
 @media (min-width: 1024px) {
     .headline {
-        font-size: 2.65rem;
+        font-size: 2.6rem;
     }
 }
 
-/* Description */
+/* Descrição */
 .description {
     font-size: 1.05rem;
     line-height: 1.7;
     color: rgba(228, 228, 231, 0.76);
     margin: 0 0 32px 0;
-    max-width: 560px;
+    max-width: 540px;
 }
 
 @media (min-width: 600px) {
@@ -120,38 +91,28 @@
     display: flex;
 }
 
-/* Right Column: Chart Column */
+/* Coluna Visual */
 .chartColumn {
     display: flex;
     justify-content: center;
+    align-items: center;
     width: 100%;
 }
 
-/* Compact Glass Frame for the Mini Chart */
-.chartFrame {
+/* Canvas aberto para o gráfico: zero cards, zero bordas roxas pesadas, zero blur liquid glass */
+.chartWrapper {
     width: 100%;
-    max-width: 460px;
-    min-height: 300px;
-    background: rgba(10, 15, 25, 0.55);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 20px;
-    backdrop-filter: blur(20px);
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 240, 255, 0.03);
-    padding: 20px 16px;
+    max-width: 580px;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    padding: 12px 0;
 }
 
-.chartFrame:hover {
-    border-color: rgba(0, 240, 255, 0.25);
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(0, 240, 255, 0.06);
-}
-
+/* Gráfico vetorial SVG perfeitamente responsivo (360px a telas ultra-wide) */
 .chartSvg {
     width: 100%;
     height: auto;
-    max-height: 280px;
     overflow: visible;
+    display: block;
 }

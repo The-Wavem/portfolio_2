@@ -9,65 +9,60 @@ import styles from './WhyWavem.module.css';
 export default function WhyWavem() {
     return (
         <Box component="section" id="por-que-wavem" className={styles.section}>
-            <div className={styles.bgGlow} aria-hidden />
-
             <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
                 <div className={styles.splitGrid}>
-                    {/* Left Column: Narrative & CTA (55%) */}
+                    {/* Coluna 1: Narrativa e CTA (1fr) */}
                     <motion.div
                         className={styles.textColumn}
-                        initial={{ opacity: 0, x: -24 }}
-                        whileInView={{ opacity: 1, x: 0 }}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: '-60px' }}
                         transition={{ duration: 0.6, ease: 'easeOut' }}
                     >
-                        {/* Top Badge */}
-                        <div className={styles.topBadge}>
-                            <span className={styles.badgeDot} />
-                            <span className={styles.badgeText}>POR QUE A WAVEM?</span>
-                        </div>
+                        {/* Overtitle sutil: apenas texto cinza claro com tracking largo, sem pill */}
+                        <span className={styles.overtitle}>DIAGNÓSTICO & PERFORMANCE</span>
 
-                        {/* Impact Headline */}
+                        {/* Headline de Impacto */}
                         <h2 className={styles.headline}>
-                            Seu site está perdendo clientes para concorrentes com soluções piores?
+                            Seu site está perdendo vendas para concorrentes com soluções piores?
                         </h2>
 
-                        {/* Concise Paragraph */}
+                        {/* Descrição */}
                         <p className={styles.description}>
-                            O amadorismo digital drena o lucro da sua empresa silenciosamente. Desenvolvemos ecossistemas sob medida com CMS próprio e performance extrema, garantindo que nenhum cliente escape por lentidão ou falta de credibilidade.
+                            Páginas lentas e designs amadores drenam a margem de lucro da sua empresa silenciosamente. Na Wavem, projetamos ecossistemas sob medida com CMS proprietário e velocidade instantânea — sem plugins inchados ou dependência de agências.
                         </p>
 
-                        {/* CTA Button */}
+                        {/* CTA */}
                         <div className={styles.ctaWrapper}>
                             <GlowButton
                                 to="/porque-wavem"
                                 variant="primary"
                                 size="large"
-                                endIcon={<TbArrowRight size={18} />}
+                                endIcon={<TbArrowRight size={18} strokeWidth={1.5} />}
                                 onClick={() =>
                                     trackAction({
                                         page: 'home',
                                         section: 'why_wavem_split',
                                         action: 'click_discover_effect',
-                                        label: 'Conheça o Efeito Wavem',
+                                        label: 'Entenda como blindamos o seu site',
                                     })
                                 }
                             >
-                                Conheça o Efeito Wavem
+                                Entenda como blindamos o seu site →
                             </GlowButton>
                         </div>
                     </motion.div>
 
-                    {/* Right Column: Mini Vector Chart SVG (45%) */}
+                    {/* Coluna 2: Gráfico Vetorial de Retenção vs Tempo (1.2fr) - Direto no Canvas */}
                     <motion.div
                         className={styles.chartColumn}
-                        initial={{ opacity: 0, x: 24 }}
-                        whileInView={{ opacity: 1, x: 0 }}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: '-60px' }}
                         transition={{ duration: 0.6, delay: 0.15, ease: 'easeOut' }}
                     >
-                        <div className={styles.chartFrame}>
-                            <MiniConversionSpeedChart />
+                        <div className={styles.chartWrapper}>
+                            <ConversionSpeedChart />
                         </div>
                     </motion.div>
                 </div>
@@ -77,68 +72,93 @@ export default function WhyWavem() {
 }
 
 // -------------------------------------------------------------
-// Mini Gráfico Vetorial SVG: Curva de Conversão vs Tempo
+// Gráfico Vetorial SVG: Benchmark de Conversão (Retenção vs Tempo)
+// Renderizado diretamente no canvas, sem caixas de janela ou bordas pesadas
 // -------------------------------------------------------------
-function MiniConversionSpeedChart() {
+function ConversionSpeedChart() {
     return (
         <svg
-            viewBox="0 0 420 260"
+            viewBox="0 0 500 220"
             className={styles.chartSvg}
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
+            role="img"
+            aria-label="Gráfico de retenção de visitantes em relação ao tempo de carregamento da página"
         >
             <defs>
-                <linearGradient id="miniCurveGrad" x1="0" y1="0" x2="1" y2="0">
+                {/* Gradiente da Curva: Ciano -> Azul -> Coral -> Vermelho de Alerta */}
+                <linearGradient id="retentionCurveGrad" x1="0" y1="0" x2="1" y2="0">
                     <stop offset="0%" stopColor="#00F0FF" />
-                    <stop offset="35%" stopColor="#38BDF8" />
-                    <stop offset="65%" stopColor="#FB7185" />
+                    <stop offset="30%" stopColor="#00F0FF" />
+                    <stop offset="50%" stopColor="#38BDF8" />
+                    <stop offset="75%" stopColor="#FB7185" />
                     <stop offset="100%" stopColor="#FF3366" />
                 </linearGradient>
 
-                <linearGradient id="miniAreaGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#FF3366" stopOpacity="0.16" />
+                {/* Área sob a curva */}
+                <linearGradient id="retentionAreaGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#00F0FF" stopOpacity="0.12" />
+                    <stop offset="60%" stopColor="#FF3366" stopOpacity="0.04" />
                     <stop offset="100%" stopColor="#FF3366" stopOpacity="0.0" />
                 </linearGradient>
 
-                <filter id="miniCyanGlow" x="-30%" y="-30%" width="160%" height="160%">
-                    <feDropShadow dx="0" dy="0" stdDeviation="6" floodColor="#00F0FF" floodOpacity="0.6" />
+                {/* Glow sutil pontual */}
+                <filter id="cyanPointGlow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#00F0FF" floodOpacity="0.7" />
                 </filter>
-
-                <filter id="miniRedGlow" x="-30%" y="-30%" width="160%" height="160%">
-                    <feDropShadow dx="0" dy="0" stdDeviation="6" floodColor="#FF3366" floodOpacity="0.6" />
+                <filter id="redPointGlow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#FF3366" floodOpacity="0.7" />
                 </filter>
             </defs>
 
-            {/* Background Grid Lines */}
-            <g stroke="rgba(255, 255, 255, 0.05)" strokeWidth="1">
-                <line x1="45" y1="72" x2="385" y2="72" strokeDasharray="3 3" />
-                <line x1="45" y1="128" x2="385" y2="128" strokeDasharray="3 3" />
-                <line x1="45" y1="185" x2="385" y2="185" stroke="rgba(255, 255, 255, 0.12)" />
+            {/* Linhas de Grade Técnica Sutis */}
+            <g stroke="rgba(255, 255, 255, 0.06)" strokeWidth="1">
+                {/* Linha de Pico (98% retenção) */}
+                <line x1="45" y1="58" x2="475" y2="58" strokeDasharray="3 3" />
+                {/* Linha Intermediária */}
+                <line x1="45" y1="116" x2="475" y2="116" strokeDasharray="3 3" />
+                {/* Linha do Eixo X */}
+                <line x1="45" y1="175" x2="475" y2="175" stroke="rgba(255, 255, 255, 0.12)" />
+                {/* Guias verticais pontilhadas nos marcadores de tempo */}
+                <line x1="45" y1="58" x2="45" y2="175" strokeDasharray="2 4" stroke="rgba(255, 255, 255, 0.04)" />
+                <line x1="135" y1="58" x2="135" y2="175" strokeDasharray="2 4" stroke="rgba(255, 255, 255, 0.04)" />
+                <line x1="235" y1="58" x2="235" y2="175" strokeDasharray="2 4" stroke="rgba(255, 255, 255, 0.04)" />
+                <line x1="335" y1="58" x2="335" y2="175" strokeDasharray="2 4" stroke="rgba(255, 255, 255, 0.04)" />
+                <line x1="450" y1="58" x2="450" y2="175" strokeDasharray="2 4" stroke="rgba(255, 255, 255, 0.04)" />
             </g>
 
-            {/* X-Axis Labels */}
-            <g fill="rgba(228, 228, 231, 0.45)" fontSize="10" fontWeight="600" textAnchor="middle">
-                <text x="80" y="206" fill="#00F0FF">1s</text>
-                <text x="160" y="206">2s</text>
-                <text x="250" y="206" fill="#FF3366" fontWeight="700">3s</text>
-                <text x="340" y="206">4s+</text>
+            {/* Marcadores Técnicos do Eixo X */}
+            <g fill="rgba(228, 228, 231, 0.45)" fontSize="10" fontFamily="'Fira Code', monospace, sans-serif" fontWeight="500" textAnchor="middle">
+                <text x="45" y="194">0s</text>
+                <text x="135" y="194">1s</text>
+                <text x="235" y="194">2s</text>
+                <text x="335" y="194">3s</text>
+                <text x="450" y="194">4s+</text>
             </g>
 
-            {/* Area Fill */}
+            {/* Rótulo de Eixo Técnico */}
+            <text x="45" y="212" fill="rgba(228, 228, 231, 0.35)" fontSize="8.5" fontFamily="'Inter', sans-serif">
+                Tempo de carregamento (segundos)
+            </text>
+            <text x="475" y="212" fill="rgba(228, 228, 231, 0.35)" fontSize="8.5" fontFamily="'Inter', sans-serif" textAnchor="end">
+                Taxa de retenção
+            </text>
+
+            {/* Área Sombreada sob a Curva */}
             <motion.path
-                d="M 80 72 C 130 72, 170 88, 215 132 C 245 162, 280 182, 340 185 L 340 185 L 80 185 Z"
-                fill="url(#miniAreaGrad)"
+                d="M 45 58 L 153 58 C 185 58, 220 64, 260 84 C 300 104, 335 126, 385 154 C 415 163, 435 167, 455 168 L 455 175 L 45 175 Z"
+                fill="url(#retentionAreaGrad)"
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.2 }}
             />
 
-            {/* The Drop Curve */}
+            {/* Curva Vetorial: Mantém pico (98%) até 1.5s e entra em queda acentuada a partir dos 3s */}
             <motion.path
-                d="M 80 72 C 130 72, 170 88, 215 132 C 245 162, 280 182, 340 185"
-                stroke="url(#miniCurveGrad)"
-                strokeWidth="3.5"
+                d="M 45 58 L 153 58 C 185 58, 220 64, 260 84 C 300 104, 335 126, 385 154 C 415 163, 435 167, 455 168"
+                stroke="url(#retentionCurveGrad)"
+                strokeWidth="3"
                 strokeLinecap="round"
                 initial={{ pathLength: 0 }}
                 whileInView={{ pathLength: 1 }}
@@ -146,85 +166,87 @@ function MiniConversionSpeedChart() {
                 transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
             />
 
-            {/* Highlight 1: Wavem Peak Conversion (1.2s) */}
+            {/* PONTO WAVEM: 1.2s • Carregamento Instantâneo Wavem */}
             <g>
-                <circle cx="80" cy="72" r="5" fill="#00F0FF" filter="url(#miniCyanGlow)" />
-                <circle cx="80" cy="72" r="9" stroke="#00F0FF" strokeWidth="1.2" opacity="0.6" />
+                {/* Linha guia técnica vertical */}
+                <line
+                    x1="153"
+                    y1="54"
+                    x2="153"
+                    y2="28"
+                    stroke="#00F0FF"
+                    strokeWidth="1"
+                    strokeDasharray="2 2"
+                    opacity="0.7"
+                />
 
-                {/* Badge Wavem */}
-                <g transform="translate(16, 26)">
-                    <rect
-                        x="0"
-                        y="0"
-                        width="186"
-                        height="26"
-                        rx="6"
-                        fill="rgba(0, 240, 255, 0.12)"
-                        stroke="rgba(0, 240, 255, 0.35)"
-                        strokeWidth="1"
-                    />
-                    <text
-                        x="93"
-                        y="17"
-                        fill="#00F0FF"
-                        fontSize="8.5"
-                        fontWeight="800"
-                        textAnchor="middle"
-                        letterSpacing="0.03em"
-                    >
-                        Wavem (1.2s) • Pico de Conversão
-                    </text>
-                </g>
-                <line x1="80" y1="52" x2="80" y2="67" stroke="#00F0FF" strokeWidth="1" strokeDasharray="2 2" opacity="0.5" />
+                {/* Marcador pontual sutil com traço ciano */}
+                <circle cx="153" cy="58" r="4.5" fill="#00F0FF" filter="url(#cyanPointGlow)" />
+                <circle cx="153" cy="58" r="8" stroke="#00F0FF" strokeWidth="1" opacity="0.45" />
+
+                {/* Texto display: 1.2s • Carregamento Instantâneo Wavem (sem pill/badge) */}
+                <text
+                    x="153"
+                    y="22"
+                    fill="#00F0FF"
+                    fontSize="10"
+                    fontFamily="'Inter', sans-serif"
+                    fontWeight="700"
+                    textAnchor="middle"
+                    letterSpacing="0.03em"
+                >
+                    1.2s • Carregamento Instantâneo Wavem
+                </text>
             </g>
 
-            {/* Highlight 2: Market Drop (>3s) */}
+            {/* PONTO CRÍTICO: > 3s • 53% de abandono de visitantes (Google Research) */}
             <motion.g
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.4 }}
+                transition={{ duration: 0.5, delay: 0.35 }}
             >
-                <circle cx="280" cy="174" r="5" fill="#FF3366" filter="url(#miniRedGlow)" />
+                {/* Linha guia técnica vertical */}
+                <line
+                    x1="385"
+                    y1="148"
+                    x2="385"
+                    y2="92"
+                    stroke="#FF3366"
+                    strokeWidth="1"
+                    strokeDasharray="2 2"
+                    opacity="0.6"
+                />
 
-                {/* Badge Market */}
-                <g transform="translate(230, 115)">
-                    <rect
-                        x="0"
-                        y="0"
-                        width="164"
-                        height="26"
-                        rx="6"
-                        fill="rgba(255, 51, 102, 0.12)"
-                        stroke="rgba(255, 51, 102, 0.35)"
-                        strokeWidth="1"
-                    />
-                    <text
-                        x="82"
-                        y="17"
-                        fill="#FF3366"
-                        fontSize="8.5"
-                        fontWeight="800"
-                        textAnchor="middle"
-                        letterSpacing="0.03em"
-                    >
-                        &gt; 3s • 53% de abandono
-                    </text>
-                </g>
-                <line x1="280" y1="141" x2="280" y2="169" stroke="#FF3366" strokeWidth="1" strokeDasharray="2 2" opacity="0.5" />
+                {/* Marcador pontual sutil */}
+                <circle cx="385" cy="154" r="4.5" fill="#FF3366" filter="url(#redPointGlow)" />
+                <circle cx="385" cy="154" r="8" stroke="#FF3366" strokeWidth="1" opacity="0.4" />
+
+                {/* Texto display limpo e contido (sem pill/badge) */}
+                <text
+                    x="475"
+                    y="80"
+                    fill="#FF3366"
+                    fontSize="9.5"
+                    fontFamily="'Inter', sans-serif"
+                    fontWeight="700"
+                    textAnchor="end"
+                    letterSpacing="0.02em"
+                >
+                    &gt; 3s • 53% de abandono de visitantes
+                </text>
+                <text
+                    x="475"
+                    y="93"
+                    fill="rgba(255, 51, 102, 0.75)"
+                    fontSize="8.5"
+                    fontFamily="'Inter', sans-serif"
+                    fontWeight="500"
+                    textAnchor="end"
+                >
+                    (Google Research)
+                </text>
             </motion.g>
-
-            {/* Bottom Caption */}
-            <text
-                x="210"
-                y="238"
-                fill="rgba(228, 228, 231, 0.4)"
-                fontSize="9"
-                fontWeight="500"
-                textAnchor="middle"
-            >
-                Tempo de resposta vs taxa de retenção de leads (Google Research)
-            </text>
         </svg>
     );
 }

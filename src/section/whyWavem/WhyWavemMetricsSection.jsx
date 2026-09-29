@@ -2,7 +2,6 @@ import { useState, useRef } from 'react';
 import { Box, Container } from '@mui/material';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
 
-import SectionTitle from '@/components/ui/SectionTitle';
 import styles from './WhyWavemMetricsSection.module.css';
 
 const storySteps = [
@@ -41,22 +40,21 @@ const storySteps = [
     },
 ];
 
-export default function WhyWavemMetricsSection({ content }) {
+export default function WhyWavemMetricsSection() {
     const [activeStep, setActiveStep] = useState(0);
-    const trackRef = useRef(null);
-    const data = content?.costOfInaction || content?.marketData;
+    const containerRef = useRef(null);
     const currentStory = storySteps[activeStep] || storySteps[0];
 
-    // Controlador de Scroll Pinned: a tela trava no viewport e avança as etapas ao rolar o mouse
+    // Sincronização de Scroll com useScroll: Trilho de rolagem de 300vh
     const { scrollYProgress } = useScroll({
-        target: trackRef,
+        target: containerRef,
         offset: ['start start', 'end end'],
     });
 
     useMotionValueEvent(scrollYProgress, 'change', (latest) => {
-        if (latest < 0.33) {
+        if (latest <= 0.33) {
             setActiveStep(0);
-        } else if (latest < 0.67) {
+        } else if (latest <= 0.66) {
             setActiveStep(1);
         } else {
             setActiveStep(2);
@@ -65,138 +63,126 @@ export default function WhyWavemMetricsSection({ content }) {
 
     const handleJumpToStep = (index) => {
         setActiveStep(index);
-        if (trackRef.current) {
-            const rect = trackRef.current.getBoundingClientRect();
+        if (containerRef.current) {
+            const rect = containerRef.current.getBoundingClientRect();
             const scrollTop = window.scrollY + rect.top;
-            const stepOffset = (trackRef.current.offsetHeight / 3) * index;
+            const totalDistance = containerRef.current.offsetHeight - window.innerHeight;
+            const targetRatio = index === 0 ? 0.08 : index === 1 ? 0.5 : 0.92;
             window.scrollTo({
-                top: scrollTop + stepOffset + 20,
+                top: scrollTop + totalDistance * targetRatio,
                 behavior: 'smooth',
             });
         }
     };
 
     return (
-        <Box component="section" id="metricas-pesquisas" className={styles.section}>
-            <Container maxWidth="lg">
-                <div className={styles.introWrapper}>
-                    <SectionTitle
-                        eyebrow="REALIDADE & PERFORMANCE DE MERCADO"
-                        title={data?.title || 'Quanto custa ser invisível na internet?'}
-                        subtitle={
-                            data?.intro ||
-                            data?.subtitle ||
-                            'O mercado mudou. Cada fração de segundo define quem escala e quem perde vendas. Veja o que os dados revelam sobre o comportamento do consumidor moderno:'
-                        }
-                        align="center"
-                        maxWidth={860}
-                    />
-                </div>
-            </Container>
-
-            {/* Pinned Scrollytelling Stage: a tela para ao descer o mouse e os itens mudam horizontalmente com motion */}
-            <div ref={trackRef} className={styles.scrollTrack}>
-                <div className={styles.stickyViewport}>
-                    <Container maxWidth="lg">
-                        {/* Barra Técnica de Progresso das Etapas */}
-                        <div className={styles.stageControlBar}>
-                            <div className={styles.stepCounter}>
-                                <span className={styles.stepIndex}>
-                                    0{activeStep + 1}
-                                </span>
-                                <span className={styles.stepTotal}> // 03</span>
-                            </div>
-
-                            <div className={styles.stepBars}>
-                                {storySteps.map((story) => (
-                                    <button
-                                        key={story.id}
-                                        type="button"
-                                        className={`${styles.stepBarItem} ${
-                                            activeStep === story.id
-                                                ? styles.stepBarItemActive
-                                                : ''
-                                        }`}
-                                        onClick={() => handleJumpToStep(story.id)}
-                                        aria-label={`Ir para etapa 0${story.id + 1}: ${story.title}`}
-                                    />
-                                ))}
-                            </div>
-
-                            <div className={styles.scrollHint}>
-                                <span>Role para explorar</span>
-                                <span className={styles.scrollArrow}>↓</span>
-                            </div>
+        <section
+            ref={containerRef}
+            id="metricas-pesquisas"
+            className={styles.section}
+            aria-label="Pesquisas de mercado e performance técnica"
+        >
+            {/* Elemento Sticky de 100vh que trava na tela durante a rolagem dos 300vh */}
+            <div className={styles.stickyFrame}>
+                <Container maxWidth="lg" className={styles.frameContainer}>
+                    {/* Barra Técnica de Controle e Progresso */}
+                    <div className={styles.stageControlBar}>
+                        <div className={styles.stepCounter}>
+                            <span className={styles.stepIndex}>
+                                0{activeStep + 1}
+                            </span>
+                            <span className={styles.stepTotal}> // 03</span>
                         </div>
 
-                        {/* Palco Aberto em Grid de 2 Colunas com Transição Horizontal */}
-                        <div className={styles.stageGrid}>
-                            {/* Coluna 1: Narrativa Editorial com Animação Horizontal */}
-                            <div className={styles.narrativeColumn}>
-                                <AnimatePresence mode="wait">
-                                    <motion.div
-                                        key={`narrative-${currentStory.id}`}
-                                        initial={{ opacity: 0, x: 45 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        exit={{ opacity: 0, x: -45 }}
-                                        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                                        className={styles.storyContent}
-                                    >
-                                        <span className={styles.blockOvertitle}>
-                                            {currentStory.tag}
+                        <div className={styles.stepBars}>
+                            {storySteps.map((story) => (
+                                <button
+                                    key={story.id}
+                                    type="button"
+                                    className={`${styles.stepBarItem} ${
+                                        activeStep === story.id
+                                            ? styles.stepBarItemActive
+                                            : ''
+                                    }`}
+                                    onClick={() => handleJumpToStep(story.id)}
+                                    aria-label={`Ir para etapa 0${story.id + 1}: ${story.title}`}
+                                />
+                            ))}
+                        </div>
+
+                        <div className={styles.scrollHint}>
+                            <span>Role para navegar pelos dados</span>
+                            <span className={styles.scrollArrow}>↓</span>
+                        </div>
+                    </div>
+
+                    {/* Palco Aberto em Grid de 2 Colunas com Animações Sincronizadas */}
+                    <div className={styles.stageGrid}>
+                        {/* Coluna 1: Narrativa Editorial com Transição Cinematográfica */}
+                        <div className={styles.narrativeColumn}>
+                            <AnimatePresence mode="wait">
+                                <motion.div
+                                    key={`narrative-${currentStory.id}`}
+                                    initial={{ opacity: 0, y: 15 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -15 }}
+                                    transition={{ duration: 0.35, ease: 'easeOut' }}
+                                    className={styles.storyContent}
+                                >
+                                    <span className={styles.blockOvertitle}>
+                                        {currentStory.tag}
+                                    </span>
+
+                                    <div className={styles.displayRow}>
+                                        <span className={styles.displayNumber}>
+                                            {currentStory.stat}
                                         </span>
+                                        <span className={styles.directLabel}>
+                                            {currentStory.directLabel}
+                                        </span>
+                                    </div>
 
-                                        <div className={styles.displayRow}>
-                                            <span className={styles.displayNumber}>
-                                                {currentStory.stat}
-                                            </span>
-                                            <span className={styles.directLabel}>
-                                                {currentStory.directLabel}
-                                            </span>
-                                        </div>
+                                    <h3 className={styles.storyTitle}>
+                                        {currentStory.title}
+                                    </h3>
 
-                                        <h3 className={styles.storyTitle}>
-                                            {currentStory.title}
-                                        </h3>
+                                    <p className={styles.storyDescription}>
+                                        {currentStory.description}
+                                    </p>
 
-                                        <p className={styles.storyDescription}>
-                                            {currentStory.description}
-                                        </p>
-
-                                        <div className={styles.storyInsight}>
-                                            <strong>Impacto Real:</strong> {currentStory.insight}
-                                        </div>
-                                    </motion.div>
-                                </AnimatePresence>
-                            </div>
-
-                            {/* Coluna 2: Visual Técnico com Animação Horizontal Sincronizada (Sem Cards/Molduras) */}
-                            <div className={styles.visualColumn}>
-                                <AnimatePresence mode="wait">
-                                    <motion.div
-                                        key={`visual-${currentStory.id}`}
-                                        initial={{ opacity: 0, x: 45 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        exit={{ opacity: 0, x: -45 }}
-                                        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                                        className={styles.visualWrapper}
-                                    >
-                                        {currentStory.id === 0 && <StanfordVisual />}
-                                        {currentStory.id === 1 && <SpeedDropVisual />}
-                                        {currentStory.id === 2 && <AutonomyVisual />}
-                                    </motion.div>
-                                </AnimatePresence>
-                            </div>
+                                    <div className={styles.storyInsight}>
+                                        <strong>Impacto Real:</strong> {currentStory.insight}
+                                    </div>
+                                </motion.div>
+                            </AnimatePresence>
                         </div>
-                    </Container>
-                </div>
+
+                        {/* Coluna 2: Visual Técnico com Animação Sincronizada */}
+                        <div className={styles.visualColumn}>
+                            <AnimatePresence mode="wait">
+                                <motion.div
+                                    key={`visual-${currentStory.id}`}
+                                    initial={{ opacity: 0, y: 15 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -15 }}
+                                    transition={{ duration: 0.35, ease: 'easeOut' }}
+                                    className={styles.visualWrapper}
+                                >
+                                    {currentStory.id === 0 && <StanfordVisual />}
+                                    {currentStory.id === 1 && <SpeedDropVisual />}
+                                    {currentStory.id === 2 && <AutonomyVisual />}
+                                </motion.div>
+                            </AnimatePresence>
+                        </div>
+                    </div>
+                </Container>
             </div>
-        </Box>
+        </section>
     );
 }
 
 // -------------------------------------------------------------
-// Visual 1: Stanford Research Minimal Ring (Identidade Coesa Rose/Crimson)
+// Visual 1: Stanford Research Minimal Ring (Identidade Rose/Crimson)
 // -------------------------------------------------------------
 function StanfordVisual() {
     const radius = 68;
@@ -285,7 +271,7 @@ function StanfordVisual() {
 }
 
 // -------------------------------------------------------------
-// Visual 2: Queda de Conversão de Tráfego (Identidade Coesa Rose/Crimson)
+// Visual 2: Queda de Conversão de Tráfego (Identidade Rose/Crimson)
 // -------------------------------------------------------------
 function SpeedDropVisual() {
     return (

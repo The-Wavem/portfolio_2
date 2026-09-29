@@ -1,65 +1,179 @@
+import { useRef } from 'react';
 import { Box, Container } from '@mui/material';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useSpring } from 'framer-motion';
 import { TbArrowRight } from 'react-icons/tb';
 
 import GlowButton from '@/components/ui/GlowButton';
 import { trackAction } from '@/service/analytics/tracking.service';
 import styles from './WhyWavem.module.css';
 
+// Variantes de Entrada com Stagger Técnico e Curva Bezier Moderna
+const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.1,
+            delayChildren: 0.1,
+        },
+    },
+};
+
+const itemVariants = {
+    hidden: { opacity: 0, y: 22 },
+    visible: {
+        opacity: 1,
+        y: 0,
+        transition: {
+            duration: 0.7,
+            ease: [0.16, 1, 0.3, 1],
+        },
+    },
+};
+
 export default function WhyWavem() {
+    const sectionRef = useRef(null);
+
+    // Traço vetorial SVG animado com useScroll e física de mola conforme a rolagem pela seção
+    const { scrollYProgress } = useScroll({
+        target: sectionRef,
+        offset: ['start 85%', 'end 25%'],
+    });
+
+    const smoothPathLength = useSpring(scrollYProgress, {
+        stiffness: 100,
+        damping: 20,
+        restDelta: 0.001,
+    });
+
     return (
-        <Box component="section" id="por-que-wavem" className={styles.section}>
+        <Box
+            ref={sectionRef}
+            component="section"
+            id="por-que-wavem"
+            className={styles.section}
+        >
             <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
                 <div className={styles.splitGrid}>
-                    {/* Coluna 1: Narrativa e CTA (1fr) */}
-                    <motion.div
-                        className={styles.textColumn}
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, margin: '-60px' }}
-                        transition={{ duration: 0.6, ease: 'easeOut' }}
-                    >
-                        {/* Overtitle sutil: apenas texto cinza claro com tracking largo, sem pill */}
-                        <span className={styles.overtitle}>DIAGNÓSTICO & PERFORMANCE</span>
+                    {/* Coluna 1: Narrativa Editorial com Linha Vetorial Conectora */}
+                    <div className={styles.textColumnWrapper}>
+                        {/* Linha de Traço Vetorial SVG que conecta o início ao botão de ação */}
+                        <svg
+                            className={styles.connectorLineSvg}
+                            viewBox="0 0 16 380"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            aria-hidden
+                        >
+                            <defs>
+                                <linearGradient id="neonConnectorGrad" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stopColor="#00F0FF" stopOpacity="0.8" />
+                                    <stop offset="60%" stopColor="#38BDF8" stopOpacity="0.6" />
+                                    <stop offset="100%" stopColor="#00F0FF" stopOpacity="1" />
+                                </linearGradient>
+                            </defs>
 
-                        {/* Headline de Impacto */}
-                        <h2 className={styles.headline}>
-                            Seu site está perdendo vendas para concorrentes com soluções piores?
-                        </h2>
+                            {/* Linha guia de fundo translúcida */}
+                            <line
+                                x1="8"
+                                y1="4"
+                                x2="8"
+                                y2="376"
+                                stroke="rgba(255, 255, 255, 0.08)"
+                                strokeWidth="1.5"
+                                strokeDasharray="3 3"
+                            />
 
-                        {/* Descrição */}
-                        <p className={styles.description}>
-                            Páginas lentas e designs amadores drenam a margem de lucro da sua empresa silenciosamente. Na Wavem, projetamos ecossistemas sob medida com CMS proprietário e velocidade instantânea — sem plugins inchados ou dependência de agências.
-                        </p>
+                            {/* Ponto inicial */}
+                            <circle cx="8" cy="4" r="3" fill="#00F0FF" />
 
-                        {/* CTA */}
-                        <div className={styles.ctaWrapper}>
-                            <GlowButton
-                                to="/porque-wavem"
-                                variant="primary"
-                                size="large"
-                                endIcon={<TbArrowRight size={18} strokeWidth={1.5} />}
-                                onClick={() =>
-                                    trackAction({
-                                        page: 'home',
-                                        section: 'why_wavem_split',
-                                        action: 'click_discover_effect',
-                                        label: 'Entenda como blindamos o seu site',
-                                    })
-                                }
+                            {/* Linha com traço de luz neon percorrendo suavemente via física de mola */}
+                            <motion.line
+                                x1="8"
+                                y1="4"
+                                x2="8"
+                                y2="376"
+                                stroke="url(#neonConnectorGrad)"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                style={{ pathLength: smoothPathLength }}
+                            />
+
+                            {/* Ponto final sutil no botão */}
+                            <motion.circle
+                                cx="8"
+                                cy="376"
+                                r="3.5"
+                                fill="#00F0FF"
+                                style={{ opacity: smoothPathLength }}
+                            />
+                        </svg>
+
+                        {/* Conteúdo com Staggering Técnico */}
+                        <motion.div
+                            className={styles.textColumn}
+                            variants={containerVariants}
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true, margin: '-60px' }}
+                        >
+                            {/* Overtitle sutil */}
+                            <motion.span variants={itemVariants} className={styles.overtitle}>
+                                DIAGNÓSTICO &amp; PERFORMANCE
+                            </motion.span>
+
+                            {/* Headline de Impacto */}
+                            <motion.h2 variants={itemVariants} className={styles.headline}>
+                                Seu site está perdendo vendas para concorrentes com soluções piores?
+                            </motion.h2>
+
+                            {/* Descrição */}
+                            <motion.p variants={itemVariants} className={styles.description}>
+                                Páginas lentas e designs amadores drenam a margem de lucro da sua empresa silenciosamente. Na Wavem, projetamos ecossistemas sob medida com CMS proprietário e velocidade instantânea — sem plugins inchados ou dependência de agências.
+                            </motion.p>
+
+                            {/* CTA com Leve Onda de Pulso Convidativa ao Entrar na Tela */}
+                            <motion.div
+                                variants={itemVariants}
+                                className={styles.ctaWrapper}
+                                whileInView={{
+                                    scale: [1, 1.025, 1],
+                                }}
+                                viewport={{ once: false }}
+                                transition={{
+                                    duration: 2.8,
+                                    repeat: Infinity,
+                                    repeatDelay: 2.5,
+                                    ease: 'easeInOut',
+                                }}
                             >
-                                Entenda como blindamos o seu site →
-                            </GlowButton>
-                        </div>
-                    </motion.div>
+                                <GlowButton
+                                    to="/porque-wavem"
+                                    variant="primary"
+                                    size="large"
+                                    endIcon={<TbArrowRight size={18} strokeWidth={1.5} />}
+                                    onClick={() =>
+                                        trackAction({
+                                            page: 'home',
+                                            section: 'why_wavem_split',
+                                            action: 'click_discover_effect',
+                                            label: 'Entenda como blindamos o seu site',
+                                        })
+                                    }
+                                >
+                                    Entenda como blindamos o seu site →
+                                </GlowButton>
+                            </motion.div>
+                        </motion.div>
+                    </div>
 
-                    {/* Coluna 2: Gráfico Vetorial de Retenção vs Tempo (1.2fr) - Direto no Canvas */}
+                    {/* Coluna 2: Gráfico Vetorial de Retenção vs Tempo (1.2fr) */}
                     <motion.div
                         className={styles.chartColumn}
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: 24 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: '-60px' }}
-                        transition={{ duration: 0.6, delay: 0.15, ease: 'easeOut' }}
+                        transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
                     >
                         <div className={styles.chartWrapper}>
                             <ConversionSpeedChart />
@@ -73,7 +187,7 @@ export default function WhyWavem() {
 
 // -------------------------------------------------------------
 // Gráfico Vetorial SVG: Benchmark de Conversão (Retenção vs Tempo)
-// Renderizado diretamente no canvas, sem caixas de janela ou bordas pesadas
+// Renderizado diretamente no canvas com aceleração por GPU
 // -------------------------------------------------------------
 function ConversionSpeedChart() {
     return (
@@ -86,7 +200,6 @@ function ConversionSpeedChart() {
             aria-label="Gráfico de retenção de visitantes em relação ao tempo de carregamento da página"
         >
             <defs>
-                {/* Gradiente da Curva: Ciano -> Azul -> Coral -> Vermelho de Alerta */}
                 <linearGradient id="retentionCurveGrad" x1="0" y1="0" x2="1" y2="0">
                     <stop offset="0%" stopColor="#00F0FF" />
                     <stop offset="30%" stopColor="#00F0FF" />
@@ -95,14 +208,12 @@ function ConversionSpeedChart() {
                     <stop offset="100%" stopColor="#FF3366" />
                 </linearGradient>
 
-                {/* Área sob a curva */}
                 <linearGradient id="retentionAreaGrad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="#00F0FF" stopOpacity="0.12" />
                     <stop offset="60%" stopColor="#FF3366" stopOpacity="0.04" />
                     <stop offset="100%" stopColor="#FF3366" stopOpacity="0.0" />
                 </linearGradient>
 
-                {/* Glow sutil pontual */}
                 <filter id="cyanPointGlow" x="-50%" y="-50%" width="200%" height="200%">
                     <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#00F0FF" floodOpacity="0.7" />
                 </filter>
@@ -113,13 +224,9 @@ function ConversionSpeedChart() {
 
             {/* Linhas de Grade Técnica Sutis */}
             <g stroke="rgba(255, 255, 255, 0.06)" strokeWidth="1">
-                {/* Linha de Pico (98% retenção) */}
                 <line x1="45" y1="58" x2="475" y2="58" strokeDasharray="3 3" />
-                {/* Linha Intermediária */}
                 <line x1="45" y1="116" x2="475" y2="116" strokeDasharray="3 3" />
-                {/* Linha do Eixo X */}
                 <line x1="45" y1="175" x2="475" y2="175" stroke="rgba(255, 255, 255, 0.12)" />
-                {/* Guias verticais pontilhadas nos marcadores de tempo */}
                 <line x1="45" y1="58" x2="45" y2="175" strokeDasharray="2 4" stroke="rgba(255, 255, 255, 0.04)" />
                 <line x1="135" y1="58" x2="135" y2="175" strokeDasharray="2 4" stroke="rgba(255, 255, 255, 0.04)" />
                 <line x1="235" y1="58" x2="235" y2="175" strokeDasharray="2 4" stroke="rgba(255, 255, 255, 0.04)" />
@@ -136,7 +243,7 @@ function ConversionSpeedChart() {
                 <text x="450" y="194">4s+</text>
             </g>
 
-            {/* Rótulo de Eixo Técnico */}
+            {/* Rótulos Técnicos */}
             <text x="45" y="212" fill="rgba(228, 228, 231, 0.35)" fontSize="8.5" fontFamily="'Inter', sans-serif">
                 Tempo de carregamento (segundos)
             </text>
@@ -144,7 +251,7 @@ function ConversionSpeedChart() {
                 Taxa de retenção
             </text>
 
-            {/* Área Sombreada sob a Curva */}
+            {/* Área sob a Curva */}
             <motion.path
                 d="M 45 58 L 153 58 C 185 58, 220 64, 260 84 C 300 104, 335 126, 385 154 C 415 163, 435 167, 455 168 L 455 175 L 45 175 Z"
                 fill="url(#retentionAreaGrad)"
@@ -154,7 +261,7 @@ function ConversionSpeedChart() {
                 transition={{ duration: 0.8, delay: 0.2 }}
             />
 
-            {/* Curva Vetorial: Mantém pico (98%) até 1.5s e entra em queda acentuada a partir dos 3s */}
+            {/* Curva Vetorial com Animação Fluida */}
             <motion.path
                 d="M 45 58 L 153 58 C 185 58, 220 64, 260 84 C 300 104, 335 126, 385 154 C 415 163, 435 167, 455 168"
                 stroke="url(#retentionCurveGrad)"
@@ -168,7 +275,6 @@ function ConversionSpeedChart() {
 
             {/* PONTO WAVEM: 1.2s • Carregamento Instantâneo Wavem */}
             <g>
-                {/* Linha guia técnica vertical */}
                 <line
                     x1="153"
                     y1="54"
@@ -179,12 +285,8 @@ function ConversionSpeedChart() {
                     strokeDasharray="2 2"
                     opacity="0.7"
                 />
-
-                {/* Marcador pontual sutil com traço ciano */}
                 <circle cx="153" cy="58" r="4.5" fill="#00F0FF" filter="url(#cyanPointGlow)" />
                 <circle cx="153" cy="58" r="8" stroke="#00F0FF" strokeWidth="1" opacity="0.45" />
-
-                {/* Texto display: 1.2s • Carregamento Instantâneo Wavem (sem pill/badge) */}
                 <text
                     x="153"
                     y="22"
@@ -199,14 +301,13 @@ function ConversionSpeedChart() {
                 </text>
             </g>
 
-            {/* PONTO CRÍTICO: > 3s • 53% de abandono de visitantes (Google Research) */}
+            {/* PONTO CRÍTICO: > 3s • 53% de abandono de visitantes */}
             <motion.g
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.35 }}
             >
-                {/* Linha guia técnica vertical */}
                 <line
                     x1="385"
                     y1="148"
@@ -217,12 +318,8 @@ function ConversionSpeedChart() {
                     strokeDasharray="2 2"
                     opacity="0.6"
                 />
-
-                {/* Marcador pontual sutil */}
                 <circle cx="385" cy="154" r="4.5" fill="#FF3366" filter="url(#redPointGlow)" />
                 <circle cx="385" cy="154" r="8" stroke="#FF3366" strokeWidth="1" opacity="0.4" />
-
-                {/* Texto display limpo e contido (sem pill/badge) */}
                 <text
                     x="475"
                     y="80"

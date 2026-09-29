@@ -40,7 +40,7 @@ export default function WhyWavem() {
     }, []);
 
     return (
-        <Box component="main" sx={{ overflowX: 'hidden', minHeight: '100vh', position: 'relative' }}>
+        <Box component="main" sx={{ minHeight: '100vh', position: 'relative' }}>
             <WhyWavemHeroSection content={content} />
             <WhyWavemCmsSection content={content} />
             <WhyWavemMetricsSection content={content} />

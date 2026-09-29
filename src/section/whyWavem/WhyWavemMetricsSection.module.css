@@ -1,49 +1,43 @@
+/* Container com 300vh para permitir 3 etapas completas de rolagem com pinagem */
 .section {
+    min-height: 300vh;
     position: relative;
-    padding-top: 72px;
+    /* Atenção ao Overflow: overflow deve ser visible para permitir position: sticky */
     overflow: visible;
 }
 
-@media (min-width: 900px) {
-    .section {
-        padding-top: 96px;
-    }
-}
-
-.introWrapper {
-    text-align: center;
-    max-width: 860px;
-    margin: 0 auto 48px auto;
-}
-
-/* Pinned Scroll Track: 260vh de trajeto para rolar e mudar os itens com motion */
-.scrollTrack {
-    position: relative;
-    height: 260vh;
-    width: 100%;
-}
-
-/* O Viewport que trava na tela enquanto o usuário rola o mouse */
-.stickyViewport {
+/* O elemento interno fixo na tela durante todo o trajeto dos 300vh */
+.stickyFrame {
     position: sticky;
-    top: 72px;
-    height: calc(100vh - 72px);
+    top: 0;
+    height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    width: 100%;
     overflow: hidden;
-    padding-bottom: 24px;
+    z-index: 10;
 }
 
-/* Barra de Controle e Progresso Técnico das Etapas */
+.frameContainer {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    padding-top: 24px;
+    padding-bottom: 24px;
+    box-sizing: border-box;
+}
+
+/* Barra Técnica de Controle e Progresso */
 .stageControlBar {
     display: flex;
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    max-width: 1140px;
-    margin: 0 auto 36px auto;
+    margin-bottom: 28px;
     padding-bottom: 16px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
@@ -121,10 +115,8 @@
 .stageGrid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 32px;
+    gap: 28px;
     align-items: center;
-    max-width: 1140px;
-    margin: 0 auto;
     width: 100%;
 }
 
@@ -135,19 +127,13 @@
     }
 }
 
-/* Coluna de Narrativa Editorial */
+/* Coluna 1: Narrativa */
 .narrativeColumn {
     width: 100%;
     min-height: 280px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-}
-
-@media (min-width: 860px) {
-    .narrativeColumn {
-        min-height: 320px;
-    }
 }
 
 .storyContent {
@@ -184,7 +170,7 @@
 }
 
 .displayNumber {
-    font-size: clamp(3.2rem, 5.5vw, 4.6rem);
+    font-size: clamp(3rem, 5.5vw, 4.5rem);
     font-weight: 800;
     line-height: 1;
     letter-spacing: -0.04em;
@@ -202,7 +188,7 @@
 }
 
 .storyTitle {
-    font-size: 1.45rem;
+    font-size: 1.4rem;
     font-weight: 800;
     line-height: 1.25;
     letter-spacing: -0.02em;
@@ -212,21 +198,21 @@
 
 @media (min-width: 600px) {
     .storyTitle {
-        font-size: 1.8rem;
+        font-size: 1.75rem;
     }
 }
 
 .storyDescription {
-    font-size: 1.02rem;
-    line-height: 1.68;
+    font-size: 1rem;
+    line-height: 1.65;
     color: rgba(228, 228, 231, 0.76);
     margin: 0 0 20px 0;
     max-width: 540px;
 }
 
 .storyInsight {
-    font-size: 0.92rem;
-    line-height: 1.62;
+    font-size: 0.9rem;
+    line-height: 1.6;
     color: rgba(228, 228, 231, 0.88);
     padding-left: 14px;
     border-left: 2px solid #E11D48;
@@ -238,7 +224,7 @@
     font-weight: 700;
 }
 
-/* Coluna Visual Técnica */
+/* Coluna 2: Visual Técnico */
 .visualColumn {
     width: 100%;
     min-height: 240px;
@@ -262,20 +248,20 @@
     display: block;
 }
 
-/* Comparativo Técnico CMS Aberto */
+/* Comparativo Técnico CMS */
 .comparisonTable {
     width: 100%;
     max-width: 380px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 18px;
     text-align: left;
 }
 
 .comparisonRow {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 4px;
 }
 
 .compHeader {
@@ -299,7 +285,7 @@
 }
 
 .compValueTrad {
-    font-size: 1.6rem;
+    font-size: 1.55rem;
     font-weight: 800;
     color: rgba(228, 228, 231, 0.6);
     letter-spacing: -0.02em;
@@ -317,7 +303,7 @@
 }
 
 .compDetailTrad {
-    font-size: 0.84rem;
+    font-size: 0.82rem;
     color: rgba(228, 228, 231, 0.55);
     line-height: 1.5;
 }
@@ -342,7 +328,7 @@
 }
 
 .compValueWavem {
-    font-size: 2.1rem;
+    font-size: 2rem;
     font-weight: 800;
     color: #FB7185;
     letter-spacing: -0.03em;
@@ -350,30 +336,74 @@
 }
 
 .zeroUnit {
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     font-weight: 600;
     color: rgba(251, 113, 133, 0.9);
     margin-left: 6px;
 }
 
 .compDetailWavem {
-    font-size: 0.86rem;
+    font-size: 0.84rem;
     color: rgba(228, 228, 231, 0.85);
     line-height: 1.5;
 }
 
-@media (max-width: 859px) {
-    .stickyViewport {
-        height: auto;
-        min-height: calc(100vh - 72px);
-        padding-top: 16px;
+/* Ajuste Mobile Real (< 768px): layout compacto para manter tudo perfeitamente dentro dos 100vh */
+@media (max-width: 767px) {
+    .frameContainer {
+        padding-top: 76px; /* Desconto da navbar fixa */
+        padding-bottom: 16px;
+        justify-content: space-evenly;
+    }
+
+    .stageControlBar {
+        margin-bottom: 12px;
+        padding-bottom: 10px;
+    }
+
+    .stageGrid {
+        display: flex;
+        flex-direction: column-reverse; /* Gráfico acima do texto ou texto acima compacto */
+        gap: 16px;
+        align-items: center;
     }
 
     .visualColumn {
-        min-height: 200px;
+        min-height: 160px;
+        max-height: 180px;
+        transform: scale(0.85);
     }
 
     .narrativeColumn {
-        min-height: 240px;
+        min-height: auto;
+    }
+
+    .displayNumber {
+        font-size: 2.5rem;
+    }
+
+    .directLabel {
+        font-size: 0.82rem;
+    }
+
+    .storyTitle {
+        font-size: 1.15rem;
+        margin-bottom: 8px;
+    }
+
+    .storyDescription {
+        font-size: 0.88rem;
+        line-height: 1.5;
+        margin-bottom: 12px;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .storyInsight {
+        font-size: 0.8rem;
+        line-height: 1.45;
+        padding-left: 10px;
     }
 }

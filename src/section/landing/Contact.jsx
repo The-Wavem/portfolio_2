@@ -450,16 +450,6 @@ export default function Contact({ content: overrideContent }) {
                   {displayPhone}
                 </div>
 
-                {/* Preview da mensagem que será enviada (Altura Travada) */}
-                <div className={styles.readyMessageStrip}>
-                  <span className={styles.readyMessagePrefix}>
-                    Mensagem pronta:
-                  </span>
-                  <span className={styles.readyMessageText}>
-                    &ldquo;{selectedIntent.message}&rdquo;
-                  </span>
-                </div>
-
                 {/* Botão de Redirecionamento Imediato */}
                 <div className={styles.whatsappMainCta}>
                   <TbBrandWhatsapp size={22} />

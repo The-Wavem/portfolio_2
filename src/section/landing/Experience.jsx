@@ -376,7 +376,6 @@ export default function Experience() {
                   </div>
 
                   <h3 className={styles.layerTitle}>{layer.title}</h3>
-                  <p className={styles.layerHumanDesc}>{layer.humanDesc}</p>
                 </button>
               );
             })}
@@ -404,9 +403,6 @@ export default function Experience() {
                     : activeLayer.reactorStatus}
                 </span>
               </div>
-              <span className={styles.reactorHudRight}>
-                SINAPSE TÉCNICA AO VIVO
-              </span>
             </div>
 
             {/* 2. GRANDE CIRCUITO SINÁPTICO EM SVG (PROTAGONISTA DA SEÇÃO - 680x300) */}

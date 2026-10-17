@@ -406,14 +406,6 @@
   }
 }
 
-.liveDot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background-color: #34d399;
-  box-shadow: 0 0 10px #34d399;
-}
-
 /* KPIs Monumentais Soltos no Espaço (Mostra os 3 indicadores tanto no Mobile quanto no Desktop) */
 .openKpiRow {
   display: grid;

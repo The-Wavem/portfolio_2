@@ -1,20 +1,32 @@
 import { getFirebaseContent, setFirebaseContent } from '@/service/firebase';
 
 export const homeHeroContent = {
-    badges: ['Design', 'Engenharia', 'Performance'],
-    titlePrefix: 'Engenharia Sólida e',
-    titleHighlight: 'Design para Problemas Reais.',
+    version: 2,
+    badges: [],
+    titlePrefix: 'De pessoas para pessoas:',
+    titleHighlight: 'sistemas simples que organizam o seu negócio.',
     description:
-        'Equilibramos estética, clareza de fluxo e arquitetura de ponta para gerar resultados contínuos.',
+        'Organize sua rotina, venda seus produtos ou mostre sua arte em poucos cliques — com a nossa equipe ao seu lado do cafezinho ao código.',
     primaryCTA: {
-        label: 'Iniciar Projeto',
+        label: 'Conversar com a equipe',
         link: '#contato'
     },
     secondaryCTA: {
-        label: 'Ver Portfolio',
-        link: '/portfolio'
+        label: 'Ver projetos reais',
+        link: '/projetos'
     }
 };
+
+const LEGACY_TITLE_PREFIXES = [
+    'A tecnologia que',
+    'Engenharia Sólida e'
+];
+
+export function isLegacyHeroContent(data) {
+    if (!data) return true;
+    if (data.version && data.version >= 2) return false;
+    return LEGACY_TITLE_PREFIXES.includes((data.titlePrefix || '').trim());
+}
 
 export function getHomeHeroContent() {
     return homeHeroContent;
@@ -34,6 +46,9 @@ export async function setHomeHeroContentRemote(data) {
     return setFirebaseContent({
         page: 'home',
         section: 'hero',
-        data
+        data: {
+            ...data,
+            version: 2
+        }
     });
 }

@@ -3050,10 +3050,11 @@ function ContentEditor({ config }) {
                       </Box>
                       <Box sx={{ gridColumn: "1 / -1" }}>
                         <TextField
-                          label="Detalhes"
+                          label="Detalhes do Projeto (Estudo de Caso)"
                           fullWidth
                           multiline
-                          rows={3}
+                          rows={6}
+                          helperText="Use Enter para separar parágrafos, '•' ou '-' no início da linha para criar listas (bullets) e 'Título:' (ex: Contexto:, Resultados:) para criar blocos destacados."
                           value={project.details ?? ""}
                           onChange={(event) =>
                             handleProjectChange(
@@ -3067,6 +3068,9 @@ function ContentEditor({ config }) {
                               bgcolor: "rgba(7,7,8,0.86)",
                               borderRadius: "12px",
                               color: "#F5F5F5",
+                            },
+                            "& .MuiFormHelperText-root": {
+                              color: "rgba(228,228,231,0.58)",
                             },
                           }}
                         />

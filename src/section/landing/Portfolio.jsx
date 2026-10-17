@@ -1,13 +1,8 @@
-import { useEffect, useState } from "react";
-import {
-  Box,
-  Button,
-  Container,
-  Stack,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { useEffect, useState, lazy, Suspense } from "react";
+import { Box, Button, Container, Stack, Typography } from "@mui/material";
+import { motion } from "framer-motion";
 import { Link as RouterLink } from "react-router-dom";
+import { TbArrowUpRight } from "react-icons/tb";
 import {
   getHomePortfolioContent,
   getHomePortfolioContentRemote,
@@ -15,13 +10,23 @@ import {
   getPortfolioProjectsRemote,
 } from "@/service/content";
 import ProjectCard from "@/components/organism/ProjectCard";
-import ProjectDetailsModal from "@/components/organism/ProjectDetailsModal";
 import { trackAction } from "@/service/analytics/tracking.service";
 import styles from "./Portfolio.module.css";
 
+const ProjectDetailsModal = lazy(
+  () => import("@/components/organism/ProjectDetailsModal")
+);
+
+function getBentoPosition(index) {
+  if (index === 0) return "featured";
+  if (index === 3) return "wide";
+  return "side";
+}
+
 export default function Portfolio({ content }) {
-  const theme = useTheme();
-  const [portfolio, setPortfolio] = useState(() => content || getHomePortfolioContent());
+  const [portfolio, setPortfolio] = useState(
+    () => content || getHomePortfolioContent()
+  );
   const [allProjects, setAllProjects] = useState(() => getPortfolioProjects());
 
   useEffect(() => {
@@ -50,7 +55,7 @@ export default function Portfolio({ content }) {
           setPortfolio(remotePortfolio);
         }
 
-        if (Array.isArray(remoteProjects)) {
+        if (Array.isArray(remoteProjects) && remoteProjects.length > 0) {
           setAllProjects(remoteProjects);
         }
       } catch {
@@ -90,72 +95,167 @@ export default function Portfolio({ content }) {
   return (
     <Box
       component="section"
-      sx={{ py: { xs: 10, md: 15 }, position: "relative" }}
+      sx={{
+        py: { xs: 8, md: 14 },
+        position: "relative",
+        overflow: "hidden",
+      }}
     >
-      <Container maxWidth="lg">
+      {/* Atmosfera Roxo Wavem Integrada ao Fundo */}
+      <motion.div
+        aria-hidden
+        animate={{
+          opacity: [0.14, 0.24, 0.14],
+          scale: [1, 1.06, 1],
+        }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        style={{
+          position: "absolute",
+          left: "-120px",
+          top: "14%",
+          width: 480,
+          height: 480,
+          borderRadius: "50%",
+          background:
+            "radial-gradient(circle, rgba(124, 58, 237, 0.34) 0%, rgba(124, 58, 237, 0) 70%)",
+          filter: "blur(64px)",
+          pointerEvents: "none",
+          zIndex: 0,
+        }}
+      />
+
+      <motion.div
+        aria-hidden
+        animate={{
+          opacity: [0.1, 0.18, 0.1],
+          scale: [1, 1.08, 1],
+        }}
+        transition={{
+          duration: 12,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 2,
+        }}
+        style={{
+          position: "absolute",
+          right: "-140px",
+          bottom: "8%",
+          width: 440,
+          height: 440,
+          borderRadius: "50%",
+          background:
+            "radial-gradient(circle, rgba(167, 139, 250, 0.26) 0%, rgba(124, 58, 237, 0) 70%)",
+          filter: "blur(64px)",
+          pointerEvents: "none",
+          zIndex: 0,
+        }}
+      />
+
+      <Container maxWidth="lg" sx={{ position: "relative", zIndex: 2 }}>
         <div className={styles.headerWrapper}>
-          <Typography
-            variant="overline"
-            color="primary"
-            className={styles.eyebrow}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.55, ease: "easeOut" }}
           >
-            {portfolio?.topTitle}
-          </Typography>
+            <Stack
+              direction="row"
+              alignItems="center"
+              spacing={1}
+              sx={{ mb: 1.4 }}
+            >
+              <Typography variant="overline" className={styles.eyebrow}>
+                {portfolio?.topTitle || "PORTFÓLIO SELECIONADO"}
+              </Typography>
+            </Stack>
 
-          <Typography variant="h2" component="h2" className={styles.title}>
-            {portfolio?.titleStart}{" "}
-            <span style={{ color: theme.palette.primary.main }}>
-              {portfolio?.titleHighlight}
-            </span>
-          </Typography>
+            <Typography variant="h2" component="h2" className={styles.title}>
+              {portfolio?.titleStart || "Projetos reais com foco em"}{" "}
+              <Box
+                component="span"
+                sx={{
+                  background:
+                    "linear-gradient(95deg, #C4B5FD 0%, #7C3AED 58%, #38BDF8 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                }}
+              >
+                {portfolio?.titleHighlight || "resultado e confiança."}
+              </Box>
+            </Typography>
 
-          <Button
-            component={RouterLink}
-            to="/projetos"
-            onClick={() =>
-              trackAction({
-                page: "home",
-                section: "portfolio",
-                action: "click_portfolio_cta",
-                label: portfolio?.buttonText,
-              })
-            }
-            variant="outlined"
-            className={styles.ctaButton}
+            <Typography
+              sx={{
+                mt: 1.5,
+                maxWidth: 540,
+                color: "rgba(228, 228, 231, 0.72)",
+                fontSize: { xs: "0.94rem", md: "1.02rem" },
+                lineHeight: 1.58,
+              }}
+            >
+              Sistemas, lojas e páginas pensadas para simplificar a rotina de
+              quem empreende e destacar marcas no mundo real.
+            </Typography>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.55, delay: 0.1, ease: "easeOut" }}
+            whileHover={{ y: -2, scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
-            {portfolio?.buttonText}
-          </Button>
+            <Button
+              component={RouterLink}
+              to="/projetos"
+              onClick={() =>
+                trackAction({
+                  page: "home",
+                  section: "portfolio",
+                  action: "click_portfolio_cta",
+                  label: portfolio?.buttonText,
+                })
+              }
+              variant="outlined"
+              endIcon={<TbArrowUpRight size={18} />}
+              className={styles.ctaButton}
+            >
+              {portfolio?.buttonText || "Ver página completa de projetos"}
+            </Button>
+          </motion.div>
         </div>
 
         <div className={styles.bentoGrid}>
-          {projects.map((project, index) => (
-            <div key={project.id} className={styles.bentoItem}>
-              <ProjectCard
-                project={project}
-                index={index}
-                onOpen={handleOpenProject}
-                variant="home"
-                titleSx={{
-                  fontSize: {
-                    xs: "1.58rem",
-                    md: project.id <= 2 ? "2.05rem" : "1.7rem",
-                  },
-                  maxWidth: { xs: "95%", md: "82%" },
-                }}
-                summarySx={{ maxWidth: { xs: "98%", md: "86%" } }}
-              />
-            </div>
-          ))}
+          {projects.map((project, index) => {
+            const bentoPosition = getBentoPosition(index);
+            return (
+              <div key={project.id || index} className={styles.bentoItem}>
+                <ProjectCard
+                  project={project}
+                  index={index}
+                  onOpen={handleOpenProject}
+                  variant="home"
+                  bentoPosition={bentoPosition}
+                />
+              </div>
+            );
+          })}
         </div>
       </Container>
 
-      <ProjectDetailsModal
-        project={selectedProject}
-        open={Boolean(selectedProject)}
-        onClose={() => setSelectedProject(null)}
-        actionLabel="Acessar projeto"
-        coverMinHeight={{ xs: 250, md: 350 }}
-      />
+      {selectedProject && (
+        <Suspense fallback={null}>
+          <ProjectDetailsModal
+            project={selectedProject}
+            open={Boolean(selectedProject)}
+            onClose={() => setSelectedProject(null)}
+            actionLabel="Acessar projeto"
+            coverMinHeight={{ xs: 250, md: 350 }}
+          />
+        </Suspense>
+      )}
     </Box>
   );
 }

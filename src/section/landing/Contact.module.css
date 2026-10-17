@@ -1,97 +1,513 @@
 .container {
-    padding-top: 8rem;
-    padding-bottom: 8rem;
-    position: relative;
-    overflow: hidden;
+  padding-top: 104px;
+  padding-bottom: 112px;
+  position: relative;
+  overflow: hidden;
+}
+
+@media (min-width: 900px) {
+  .container {
+    padding-top: 140px;
+    padding-bottom: 148px;
+  }
+}
+
+/* Marca d'água monumental com desfoque de profundidade (lente de câmera) */
+.spatialWatermark {
+  position: absolute;
+  top: 10%;
+  left: 0;
+  white-space: nowrap;
+  font-size: clamp(3rem, 7.8vw, 7rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  color: transparent;
+  -webkit-text-stroke: 1.2px rgba(167, 139, 250, 0.065);
+  filter: blur(3.5px);
+  opacity: 0.72;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+
+/* Feixes de sinal de fundo desfocados */
+.bgSignalContainer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  filter: blur(5.5px);
+  opacity: 0.62;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.bgSignalSvg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.ambientGlowPurple {
+  position: absolute;
+  left: -140px;
+  bottom: 12%;
+  width: 480px;
+  height: 480px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(124, 58, 237, 0.22) 0%,
+    rgba(124, 58, 237, 0) 70%
+  );
+  filter: blur(72px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ambientGlowEmerald {
+  position: absolute;
+  right: -120px;
+  top: 18%;
+  width: 520px;
+  height: 520px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(16, 185, 129, 0.16) 0%,
+    rgba(124, 58, 237, 0.1) 48%,
+    transparent 72%
+  );
+  filter: blur(76px);
+  pointer-events: none;
+  z-index: 0;
 }
 
 .grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 4rem;
-    align-items: center;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 52px;
+  align-items: center;
+  position: relative;
+  z-index: 2;
 }
 
-@media (min-width: 900px) {
-    .grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 6rem;
-    }
+@media (min-width: 960px) {
+  .grid {
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+    gap: 64px;
+  }
 }
 
+/* ==========================================================================
+   EIXO ESQUERDO: CHAMADA DIRETA + GATILHOS DE ASSUNTO EM 1 CLIQUE
+   ========================================================================== */
 .actionAxis {
-    display: flex;
-    flex-direction: column;
-    gap: 3rem;
-    align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  min-width: 0;
 }
 
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: #a78bfa;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.headline {
+  font-size: clamp(2.15rem, 4.2vw, 3.45rem);
+  font-weight: 800;
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+  color: #ffffff;
+  margin: 0 0 18px 0;
+}
+
+.description {
+  max-width: 490px;
+  color: rgba(228, 228, 231, 0.74);
+  line-height: 1.65;
+  font-size: 0.98rem;
+  margin: 0 0 28px 0;
+}
+
+.description strong {
+  color: #ede9fe;
+  font-weight: 700;
+}
+
+/* Seletor Rápido de Assunto (Zero Cards, Linhas Abertas e Altura Travada) */
+.quickIntentWrapper {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.quickIntentTitle {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(228, 228, 231, 0.48);
+  margin-bottom: 4px;
+}
+
+.quickIntentBtn {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  height: 48px;
+  padding: 0 14px 0 18px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+  text-align: left;
+  overflow: hidden;
+  transition: background-color 0.2s ease;
+}
+
+.quickIntentBtn:first-of-type {
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.quickIntentBtn:hover {
+  background: linear-gradient(
+    90deg,
+    rgba(124, 58, 237, 0.08) 0%,
+    transparent 100%
+  );
+}
+
+.quickIntentBtnActive {
+  background: linear-gradient(
+    90deg,
+    rgba(52, 211, 153, 0.11) 0%,
+    rgba(124, 58, 237, 0.05) 65%,
+    transparent 100%
+  );
+}
+
+.intentLeftBar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  transition: opacity 0.2s ease, background-color 0.2s ease;
+}
+
+.intentLabelGroup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+}
+
+.intentLabelText {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.intentActionHint {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #34d399;
+  white-space: nowrap;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: opacity 0.2s ease;
+}
+
+/* ==========================================================================
+   EIXO DIREITO: PORTAL MONUMENTAL DO WHATSAPP OFICIAL (+55 41 8841-0374)
+   Zero quebra de texto, clicável por inteiro, com e-mail como secundário
+   ========================================================================== */
 .presenceAxis {
-    display: flex;
-    flex-direction: column;
-    gap: 3rem;
-    align-items: flex-start;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  min-width: 0;
 }
 
-@media (min-width: 900px) {
-    .presenceAxis {
-        align-items: flex-end;
-        text-align: right;
-    }
+/* Portal Principal Clicável do WhatsApp (Sem borda de caixa fechada, integrado ao espaço) */
+.whatsappPortalLink {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  text-decoration: none;
+  cursor: pointer;
+  padding: 20px 0 28px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.emailOversized {
-    font-size: clamp(2.2rem, 4.5vw, 4rem);
-    font-weight: 800;
-    line-height: 1.1;
-    letter-spacing: -0.04em;
-    color: #ffffff;
-    text-decoration: none;
-    transition: color 0.3s ease;
-    word-break: break-all;
-    display: inline-block;
+/* Ondas de Radar / Sinal atrás do Número Oficial */
+.portalRadarSvg {
+  position: absolute;
+  right: -20px;
+  top: -10px;
+  width: 320px;
+  height: 220px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.75;
 }
 
-.emailOversized:hover {
-    color: var(--primary-color, #A78BFA);
+@keyframes signalRipple {
+  0% {
+    transform: scale(0.75);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+}
+
+.radarPulseCircle {
+  transform-origin: 220px 110px;
+  animation: signalRipple 3.2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+.radarPulseCircleDelay {
+  transform-origin: 220px 110px;
+  animation: signalRipple 3.2s cubic-bezier(0.16, 1, 0.3, 1) 1.6s infinite;
+}
+
+.whatsappStatusRow {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.liveChipDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #34d399;
+  box-shadow: 0 0 12px #34d399;
+  flex-shrink: 0;
+}
+
+.liveChipLabel {
+  font-family: "Fira Code", monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #34d399;
+}
+
+/* Número Monumental do Chip Oficial (NUNCA quebra linha) */
+.whatsappOversizedNumber {
+  position: relative;
+  z-index: 1;
+  font-size: clamp(1.95rem, 4.1vw, 3.55rem);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  color: #ffffff;
+  white-space: nowrap;
+  margin: 4px 0 14px 0;
+  transition: color 0.25s ease, text-shadow 0.25s ease;
+}
+
+.whatsappPortalLink:hover .whatsappOversizedNumber {
+  background: linear-gradient(92deg, #ffffff 0%, #c4b5fd 50%, #34d399 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 36px rgba(124, 58, 237, 0.35);
+}
+
+/* Preview da mensagem pronta (Altura Travada em 1 linha para Zero Pulo) */
+.readyMessageStrip {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.readyMessagePrefix {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #a78bfa;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.readyMessageText {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: rgba(228, 228, 231, 0.72);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+/* Botão Principal Integrado ao Portal */
+.whatsappMainCta {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  height: 54px;
+  padding: 0 28px;
+  border-radius: 999px;
+  background: linear-gradient(95deg, #7c3aed 0%, #10b981 100%);
+  color: #ffffff;
+  font-size: 0.96rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  box-shadow: 0 10px 32px rgba(124, 58, 237, 0.38),
+    0 4px 16px rgba(16, 185, 129, 0.24);
+  transition: box-shadow 0.25s ease, filter 0.25s ease;
+  white-space: nowrap;
+}
+
+.whatsappPortalLink:hover .whatsappMainCta {
+  box-shadow: 0 14px 40px rgba(124, 58, 237, 0.55),
+    0 6px 22px rgba(16, 185, 129, 0.42);
+  filter: brightness(1.08);
+}
+
+/* ==========================================================================
+   CANAL SECUNDÁRIO: E-MAIL PROFISSIONAL + REDES SOCIAIS (SEM QUEBRAR PALAVRAS)
+   ========================================================================== */
+.secondaryFooterRow {
+  width: 100%;
+  padding-top: 22px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.secondaryEmailBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-width: 0;
+}
+
+.secondaryEmailCaption {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(228, 228, 231, 0.48);
+}
+
+.secondaryEmailBtn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: clamp(0.92rem, 1.4vw, 1.08rem);
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.secondaryEmailBtn:hover {
+  color: #a78bfa;
+}
+
+.copyPillHint {
+  font-family: "Fira Code", monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: rgba(167, 139, 250, 0.14);
+  color: #c4b5fd;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.secondaryEmailBtn:hover .copyPillHint {
+  background: rgba(167, 139, 250, 0.26);
+  color: #ffffff;
 }
 
 .socialRow {
-    display: flex;
-    gap: 1.5rem;
-    align-items: center;
-    flex-wrap: wrap;
+  display: flex;
+  gap: 12px;
+  align-items: center;
 }
 
 .socialIcon {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #ffffff;
-    cursor: pointer;
-    transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
-    text-decoration: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.82);
+  cursor: pointer;
+  transition: background-color 0.22s ease, border-color 0.22s ease,
+    color 0.22s ease;
+  text-decoration: none;
 }
 
 .socialIcon:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.2);
-    color: var(--primary-color, #ffffff);
+  background: rgba(124, 58, 237, 0.16);
+  border-color: #a78bfa;
+  color: #ffffff;
 }
 
 .wordContainer {
-    display: inline-block;
-    overflow: hidden;
-    margin-right: 0.25em;
-    padding-bottom: 0.1em;
-    vertical-align: top;
+  display: inline-block;
+  overflow: hidden;
+  margin-right: 0.25em;
+  padding-bottom: 0.1em;
+  vertical-align: top;
 }
 
 .wordInner {
-    display: inline-block;
+  display: inline-block;
 }

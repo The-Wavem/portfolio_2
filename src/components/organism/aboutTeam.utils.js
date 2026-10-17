@@ -91,8 +91,44 @@ export function getToolMeta(tool) {
     };
 }
 
+const KEYWORD_ICON_FALLBACKS = [
+    { pattern: /firebase|firestore/i, alias: 'firebase' },
+    { pattern: /react/i, alias: 'react' },
+    { pattern: /next(\.js|js)?/i, alias: 'nextdotjs' },
+    { pattern: /node(\.js|js)?/i, alias: 'nodedotjs' },
+    { pattern: /css\s*\.?\s*module/i, alias: 'cssmodules' },
+    { pattern: /\bcss\b/i, alias: 'css3' },
+    { pattern: /\bhtml\b/i, alias: 'html5' },
+    { pattern: /material\s*ui|\bmui\b/i, alias: 'mui' },
+    { pattern: /tailwind/i, alias: 'tailwindcss' },
+    { pattern: /framer\s*motion/i, alias: 'framer' },
+    { pattern: /postgres/i, alias: 'postgresql' },
+    { pattern: /typescript|\bts\b/i, alias: 'typescript' },
+    { pattern: /javascript|\bjs\b/i, alias: 'javascript' },
+    { pattern: /python/i, alias: 'python' },
+    { pattern: /docker/i, alias: 'docker' },
+    { pattern: /stripe/i, alias: 'stripe' },
+    { pattern: /cloudflare/i, alias: 'cloudflare' },
+    { pattern: /vercel/i, alias: 'vercel' },
+    { pattern: /netlify/i, alias: 'netlify' },
+    { pattern: /figma/i, alias: 'figma' },
+    { pattern: /git\b/i, alias: 'git' },
+    { pattern: /github/i, alias: 'github' },
+    { pattern: /mysql|sql/i, alias: 'mysql' },
+    { pattern: /mongodb|mongo/i, alias: 'mongodb' },
+    { pattern: /aws|amazon/i, alias: 'amazonaws' },
+    { pattern: /vite/i, alias: 'vite' }
+];
+
 export function getStackIcon(toolMeta) {
-    const directAliases = [toolMeta.key, toolMeta.name];
+    const rawString = `${toolMeta.key || ''} ${toolMeta.name || ''}`.trim();
+    const directAliases = [
+        toolMeta.key,
+        toolMeta.name,
+        // Strip version numbers like "React 19" -> "React" or "API v4"
+        String(toolMeta.name || '').replace(/\b(v?\d+(\.\d+)*)\b/gi, '').trim()
+    ].filter(Boolean);
+
     const allAliases = [
         ...directAliases.flatMap((value) => expandTokenVariants(value)),
         ...directAliases.flatMap((value) => getAcronyms(value).flatMap((alias) => expandTokenVariants(alias)))
@@ -102,6 +138,31 @@ export function getStackIcon(toolMeta) {
         const icon = iconAliasMap.get(alias);
         if (icon) {
             return icon;
+        }
+    }
+
+    for (const { pattern, alias } of KEYWORD_ICON_FALLBACKS) {
+        if (pattern.test(rawString)) {
+            const icon = iconAliasMap.get(alias);
+            if (icon) {
+                return icon;
+            }
+        }
+    }
+
+    // Try matching individual words (longest first) for compound names
+    const words = rawString
+        .toLowerCase()
+        .split(/[^a-z0-9+#.]+/)
+        .filter((w) => w.length >= 3)
+        .sort((a, b) => b.length - a.length);
+
+    for (const word of words) {
+        for (const variant of expandTokenVariants(word)) {
+            const icon = iconAliasMap.get(variant);
+            if (icon) {
+                return icon;
+            }
         }
     }
 

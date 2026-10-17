@@ -67,6 +67,7 @@ export {
 	getHomeHeroContent,
 	getHomeHeroContentRemote,
 	setHomeHeroContentRemote,
+	isLegacyHeroContent,
 	homeHeroContent
 } from './homeHero.service';
 export {

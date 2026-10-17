@@ -1,151 +1,757 @@
 .section {
-    position: relative;
-    padding-top: 72px;
-    padding-bottom: 72px;
-    overflow: hidden;
+  position: relative;
+  padding-top: 64px;
+  padding-bottom: 68px;
+  overflow: hidden;
 }
 
 @media (min-width: 900px) {
-    .section {
-        padding-top: 96px;
-        padding-bottom: 96px;
-    }
+  .section {
+    padding-top: 130px;
+    padding-bottom: 130px;
+  }
 }
 
-/* Grid de 2 colunas no desktop (1fr 1.2fr) e 1 coluna vertical no mobile */
+/* Marca d'água monumental que desliza com o scroll pelo fundo (Com desfoque de profundidade) */
+.spatialWatermark {
+  position: absolute;
+  top: 6%;
+  left: 0;
+  white-space: nowrap;
+  font-size: clamp(2.4rem, 8vw, 7.2rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  color: transparent;
+  -webkit-text-stroke: 1.2px rgba(167, 139, 250, 0.07);
+  filter: blur(3.5px);
+  opacity: 0.75;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+
+/* Onda vetorial que atravessa 100% da largura da tela conforme o scroll (Suave no plano de fundo) */
+.fullBleedWaveContainer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  filter: blur(5.5px);
+  opacity: 0.65;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.fullBleedWaveSvg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.ambientGlowLeft {
+  position: absolute;
+  left: -160px;
+  top: 20%;
+  width: 480px;
+  height: 480px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(124, 58, 237, 0.22) 0%,
+    rgba(124, 58, 237, 0) 70%
+  );
+  filter: blur(70px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ambientGlowRight {
+  position: absolute;
+  right: -120px;
+  top: 28%;
+  width: 520px;
+  height: 520px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(56, 189, 248, 0.14) 0%,
+    rgba(124, 58, 237, 0.08) 45%,
+    transparent 72%
+  );
+  filter: blur(76px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* IMPORTANTE: minmax(0, 1fr) impede que elementos nowrap estourem a largura da tela no celular */
 .splitGrid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 40px;
-    align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 36px;
+  align-items: center;
+  max-width: 1220px;
+  margin: 0 auto;
+  width: 100%;
 }
 
-@media (min-width: 900px) {
-    .splitGrid {
-        grid-template-columns: 1fr 1.2fr;
-        gap: 56px;
-    }
+@media (min-width: 960px) {
+  .splitGrid {
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+    gap: 64px;
+  }
 }
 
-/* Wrapper da Coluna de Texto com a Linha Conectora SVG */
+/* Coluna Esquerda */
 .textColumnWrapper {
-    position: relative;
-    display: flex;
-    width: 100%;
+  position: relative;
+  display: flex;
+  width: 100%;
+  min-width: 0;
 }
 
-/* Linha de Traço Vetorial SVG que Conecta o Título ao Botão */
 .connectorLineSvg {
-    position: absolute;
-    left: 0;
-    top: 4px;
-    bottom: 8px;
-    width: 16px;
-    height: calc(100% - 12px);
-    overflow: visible;
-    pointer-events: none;
+  position: absolute;
+  left: 0;
+  top: 4px;
+  bottom: 8px;
+  width: 16px;
+  height: calc(100% - 12px);
+  overflow: visible;
+  pointer-events: none;
 }
 
-/* Coluna de Texto com Recuo para a Linha Guia */
 .textColumn {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    text-align: left;
-    padding-left: 28px;
-    width: 100%;
-    will-change: transform, opacity;
-    transform: translate3d(0, 0, 0);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  padding-left: 30px;
+  width: 100%;
+  min-width: 0;
 }
 
 @media (max-width: 599px) {
-    .textColumn {
-        padding-left: 22px;
-    }
+  .textColumn {
+    padding-left: 20px;
+  }
 }
 
-/* Overtitle sutil: texto puro com tracking largo, sem pill */
+.overtitleRow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  max-width: 100%;
+}
+
 .overtitle {
-    font-family: 'Fira Code', monospace, sans-serif;
-    font-size: 0.74rem;
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    color: #00F0FF;
-    text-transform: uppercase;
-    margin-bottom: 16px;
-    display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #a78bfa;
+  text-transform: uppercase;
 }
 
-/* Headline de Impacto */
+@media (max-width: 599px) {
+  .overtitle {
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+  }
+}
+
 .headline {
-    font-size: 1.85rem;
-    font-weight: 800;
-    line-height: 1.2;
-    letter-spacing: -0.03em;
-    color: #FFFFFF;
-    margin: 0 0 18px 0;
+  font-size: 1.65rem;
+  font-weight: 800;
+  line-height: 1.14;
+  letter-spacing: -0.03em;
+  color: #ffffff;
+  margin: 0 0 14px 0;
+}
+
+.headlineHighlight {
+  background: linear-gradient(95deg, #c4b5fd 0%, #7c3aed 55%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 @media (min-width: 600px) {
-    .headline {
-        font-size: 2.25rem;
-    }
+  .headline {
+    font-size: 2.3rem;
+    margin: 0 0 18px 0;
+  }
 }
 
 @media (min-width: 1024px) {
-    .headline {
-        font-size: 2.6rem;
-    }
+  .headline {
+    font-size: 2.6rem;
+  }
 }
 
-/* Descrição */
 .description {
-    font-size: 1.05rem;
-    line-height: 1.7;
-    color: rgba(228, 228, 231, 0.76);
-    margin: 0 0 32px 0;
-    max-width: 540px;
+  font-size: 0.9rem;
+  line-height: 1.58;
+  color: rgba(228, 228, 231, 0.76);
+  margin: 0 0 20px 0;
+  max-width: 520px;
 }
 
 @media (min-width: 600px) {
-    .description {
-        font-size: 1.1rem;
-    }
+  .description {
+    font-size: 0.98rem;
+    line-height: 1.66;
+    margin: 0 0 28px 0;
+  }
 }
 
-/* CTA Wrapper com aceleração de GPU */
+.description strong {
+  color: #ede9fe;
+  font-weight: 700;
+}
+
+/* Marcos Abertos na Esquerda (Zero Card, conectados direto à linha guia) */
+.openCheckpointsList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+@media (min-width: 600px) {
+  .openCheckpointsList {
+    gap: 18px;
+    margin-bottom: 34px;
+  }
+}
+
+.openCheckpointRow {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  min-width: 0;
+}
+
+@media (min-width: 600px) {
+  .openCheckpointRow {
+    gap: 14px;
+  }
+}
+
+.checkpointNodeDot {
+  position: absolute;
+  left: -25.5px;
+  top: 6px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+@media (max-width: 599px) {
+  .checkpointNodeDot {
+    left: -15.5px;
+    width: 6px;
+    height: 6px;
+  }
+}
+
+.checkpointMetric {
+  font-size: 0.84rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  min-width: 66px;
+  flex-shrink: 0;
+}
+
+@media (min-width: 600px) {
+  .checkpointMetric {
+    font-size: 0.95rem;
+    min-width: 78px;
+  }
+}
+
+.checkpointCopy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.checkpointTitle {
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+@media (min-width: 600px) {
+  .checkpointTitle {
+    font-size: 0.9rem;
+    line-height: 1.25;
+  }
+}
+
 .ctaWrapper {
-    display: flex;
-    will-change: transform;
-    transform: translate3d(0, 0, 0);
+  display: flex;
+  width: 100%;
 }
 
-/* Coluna Visual */
-.chartColumn {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    will-change: transform, opacity;
-    transform: translate3d(0, 0, 0);
+@media (min-width: 600px) {
+  .ctaWrapper {
+    width: auto;
+  }
 }
 
-/* Canvas aberto para o gráfico: zero cards, zero molduras pesadas */
-.chartWrapper {
-    width: 100%;
-    max-width: 580px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 12px 0;
+/* ==========================================================================
+   COLUNA DIREITA: PALCO ESPACIAL ABERTO (100% Responsivo no Mobile e Desktop)
+   ========================================================================== */
+.openSpatialStage {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Gráfico vetorial SVG responsivo */
-.chartSvg {
-    width: 100%;
-    height: auto;
-    overflow: visible;
-    display: block;
+.openHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  gap: 12px;
+  padding-bottom: 12px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  min-width: 0;
+}
+
+@media (min-width: 600px) {
+  .openHeaderRow {
+    padding-bottom: 14px;
+    margin-bottom: 24px;
+  }
+}
+
+.openModeSwitcher {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+
+@media (min-width: 600px) {
+  .openModeSwitcher {
+    gap: 24px;
+  }
+}
+
+.openModeBtn {
+  position: relative;
+  background: transparent;
+  border: none;
+  padding: 6px 0;
+  color: rgba(228, 228, 231, 0.5);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+@media (min-width: 600px) {
+  .openModeBtn {
+    font-size: 0.86rem;
+  }
+}
+
+.openModeBtn:hover {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.openModeBtnActive {
+  color: #ffffff;
+}
+
+.openModeLaser {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -13px;
+  height: 2px;
+  background: linear-gradient(90deg, #7c3aed, #38bdf8);
+  box-shadow: 0 0 12px rgba(124, 58, 237, 0.9);
+}
+
+@media (min-width: 600px) {
+  .openModeLaser {
+    bottom: -15px;
+  }
+}
+
+.livePulseIndicator {
+  display: none;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: rgba(221, 214, 254, 0.72);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+@media (min-width: 600px) {
+  .livePulseIndicator {
+    display: inline-flex;
+  }
+}
+
+.liveDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #34d399;
+  box-shadow: 0 0 10px #34d399;
+}
+
+/* KPIs Monumentais Soltos no Espaço (Mostra os 3 indicadores tanto no Mobile quanto no Desktop) */
+.openKpiRow {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
+  min-height: 54px;
+  align-items: start;
+}
+
+@media (min-width: 600px) {
+  .openKpiRow {
+    gap: 20px;
+    margin-bottom: 24px;
+    min-height: 94px;
+  }
+}
+
+.openKpiItem {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  padding-right: 8px;
+  min-width: 0;
+}
+
+@media (min-width: 600px) {
+  .openKpiItem {
+    padding-right: 12px;
+  }
+}
+
+.openKpiTop {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  height: 28px;
+}
+
+@media (min-width: 600px) {
+  .openKpiTop {
+    gap: 8px;
+    height: 38px;
+  }
+}
+
+.openKpiNumber {
+  font-size: clamp(1.22rem, 4.5vw, 2.3rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.openKpiTitle {
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin-top: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (min-width: 600px) {
+  .openKpiTitle {
+    font-size: 0.84rem;
+    margin-top: 4px;
+  }
+}
+
+.openKpiSub {
+  display: none;
+}
+
+@media (min-width: 600px) {
+  .openKpiSub {
+    color: rgba(228, 228, 231, 0.54);
+    font-size: 0.74rem;
+    line-height: 1.35;
+    margin-top: 2px;
+    height: 2.7em;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+}
+
+.openKpiDivider {
+  position: absolute;
+  right: 0;
+  top: 4px;
+  bottom: 4px;
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    rgba(167, 139, 250, 0),
+    rgba(167, 139, 250, 0.22),
+    rgba(167, 139, 250, 0)
+  );
+}
+
+/* Área do Gráfico Espacial Aberto (100% estável e legível no celular) */
+.openChartWrapper {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  padding: 2px 0;
+}
+
+.liveScannerHud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  gap: 8px;
+  height: 28px;
+  margin-bottom: 6px;
+  overflow: hidden;
+  width: 100%;
+}
+
+@media (min-width: 600px) {
+  .liveScannerHud {
+    height: 32px;
+    margin-bottom: 8px;
+    gap: 12px;
+  }
+}
+
+.scannerHudLeft {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 6px;
+  font-size: 0.75rem;
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+}
+
+@media (min-width: 600px) {
+  .scannerHudLeft {
+    gap: 8px;
+    font-size: 0.8rem;
+  }
+}
+
+.scannerHudTag {
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.68rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: color 0.2s ease;
+}
+
+@media (min-width: 600px) {
+  .scannerHudTag {
+    font-size: 0.72rem;
+  }
+}
+
+.scannerHudVal {
+  color: #ffffff;
+  font-weight: 800;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.scannerHudStatus {
+  color: rgba(228, 228, 231, 0.68);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.openChartSvg {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 540 / 256;
+  overflow: hidden;
+  display: block;
+  user-select: none;
+}
+
+.chartNodeTransition {
+  transition: opacity 0.2s ease, fill 0.2s ease, stroke 0.2s ease;
+}
+
+/* Trilha Interativa do CMS Solta na Base (Compacta no Celular) */
+.openCmsStrip {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+
+@media (min-width: 600px) {
+  .openCmsStrip {
+    margin-top: 18px;
+    padding-top: 18px;
+    gap: 12px;
+  }
+}
+
+.openCmsStripTitle {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(228, 228, 231, 0.56);
+  text-align: left;
+}
+
+@media (min-width: 600px) {
+  .openCmsStripTitle {
+    font-size: 0.75rem;
+  }
+}
+
+.openCmsPillsRow {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  width: 100%;
+}
+
+@media (min-width: 600px) {
+  .openCmsPillsRow {
+    gap: 12px;
+  }
+}
+
+.openCmsTrigger {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 46px;
+  width: 100%;
+  min-width: 0;
+  padding: 0 7px;
+  background: transparent;
+  border: none;
+  border-left: 2px solid rgba(255, 255, 255, 0.14);
+  cursor: pointer;
+  text-align: left;
+  overflow: hidden;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+@media (min-width: 600px) {
+  .openCmsTrigger {
+    gap: 10px;
+    height: 54px;
+    padding: 0 12px;
+  }
+}
+
+.openCmsTrigger:hover {
+  background: rgba(124, 58, 237, 0.06);
+}
+
+.openCmsTriggerActive {
+  border-left-color: #34d399;
+  background: linear-gradient(
+    90deg,
+    rgba(52, 211, 153, 0.08) 0%,
+    transparent 100%
+  );
+}
+
+.openCmsCheck {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+@media (min-width: 600px) {
+  .openCmsCheck {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.openCmsTextGroup {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+}
+
+.openCmsActionName {
+  color: #ffffff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (min-width: 600px) {
+  .openCmsActionName {
+    font-size: 0.78rem;
+    line-height: 1.25;
+  }
+}
+
+.openCmsActionState {
+  font-size: 0.62rem;
+  font-weight: 600;
+  line-height: 1.2;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.2s ease;
+}
+
+@media (min-width: 600px) {
+  .openCmsActionState {
+    font-size: 0.7rem;
+    line-height: 1.25;
+  }
 }

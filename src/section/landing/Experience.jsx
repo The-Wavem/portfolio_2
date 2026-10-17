@@ -1,389 +1,791 @@
-import { Box, Container, Typography, Stack, useTheme } from '@mui/material';
-import { motion } from 'framer-motion';
-import { VscJson, VscCode, VscSymbolRuler } from 'react-icons/vsc';
-import { getServicesContent, getServicesContentRemote } from '@/service/content';
-import { useRef, useEffect, useState } from 'react';
-import styles from './Experience.module.css';
+import { useEffect, useRef, useState } from "react";
+import { Box, Container } from "@mui/material";
+import {
+  motion,
+  useScroll,
+  useSpring,
+  useTransform,
+} from "framer-motion";
+import {
+  TbBrandReact,
+  TbBrandFigma,
+  TbBrandFramerMotion,
+  TbBrandNodejs,
+  TbBrandFirebase,
+  TbBrandPython,
+  TbDatabase,
+  TbShieldLock,
+} from "react-icons/tb";
+import {
+  getServicesContent,
+  getServicesContentRemote,
+} from "@/service/content";
+import { trackAction } from "@/service/analytics/tracking.service";
+import styles from "./Experience.module.css";
 
-function hexToRgba(hex, alpha) {
-    if (typeof hex !== 'string') {
-        return hex;
-    }
+const SYSTEM_LAYERS = [
+  {
+    id: "interface",
+    code: "01 // TELA & INTERAÇÃO",
+    shortSvgLabel: "01 · VISUAL & TELA",
+    title: "O que o seu cliente vê e sente",
+    humanDesc:
+      "Telas rápidas, animações que encantam no primeiro segundo e compra sem confusão.",
+    color: "#A78BFA",
+    techIds: ["figma", "react", "motion"],
+    reactorStatus: "Renderizando vitrine fluida em 60fps",
+    sourceY: 46,
+  },
+  {
+    id: "wem",
+    code: "02 // PAINEL & GESTÃO WEM",
+    shortSvgLabel: "02 · PAINEL WEM",
+    title: "Onde você controla tudo em 2 cliques",
+    humanDesc:
+      "Seu painel sob medida para trocar fotos, atualizar catálogo e ver métricas sozinho.",
+    color: "#38BDF8",
+    techIds: ["react", "firebase", "sql"],
+    reactorStatus: "Sincronizando painel WEM em tempo real",
+    sourceY: 115,
+  },
+  {
+    id: "engine",
+    code: "03 // MOTOR & AUTOMAÇÃO",
+    shortSvgLabel: "03 · MOTOR 24H",
+    title: "O cérebro invisível que nunca trava",
+    humanDesc:
+      "Pagamentos automáticos, cálculo de frete, agendamentos e integrações rodando 24h.",
+    color: "#34D399",
+    techIds: ["node", "python", "sql", "firebase"],
+    reactorStatus: "Processando pedidos, APIs e automações",
+    sourceY: 185,
+  },
+  {
+    id: "shield",
+    code: "04 // BLINDAGEM & ESCALA",
+    shortSvgLabel: "04 · BLINDAGEM",
+    title: "Segurança bancária no celular e na web",
+    humanDesc:
+      "Proteção total dos dados da sua empresa, login blindado e estabilidade em picos.",
+    color: "#C4B5FD",
+    techIds: ["shield", "firebase", "node"],
+    reactorStatus: "Criptografia e proteção ativa na nuvem",
+    sourceY: 254,
+  },
+];
 
-    const value = hex.replace('#', '');
-    const isShort = value.length === 3;
-    const isLong = value.length === 6;
-
-    if (!isShort && !isLong) {
-        return hex;
-    }
-
-    const normalized = isShort
-        ? value.split('').map((char) => `${char}${char}`).join('')
-        : value;
-
-    const red = Number.parseInt(normalized.slice(0, 2), 16);
-    const green = Number.parseInt(normalized.slice(2, 4), 16);
-    const blue = Number.parseInt(normalized.slice(4, 6), 16);
-
-    return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
-}
-
-// Componente para desenhar "Artefatos Técnicos" no fundo
-const BackgroundArtifact = ({ type, color, intensity = 0.05 }) => {
-    const baseOpacity = Math.min(Math.max(intensity, 0.028), 0.078);
-    const artifactTuning = {
-        code: {
-            width: '57%',
-            height: '74%',
-            top: 18,
-            right: 18,
-            blur: 'blur(0.22px)',
-            mask: 'linear-gradient(180deg, rgba(0,0,0,0.9), rgba(0,0,0,0.2) 58%, transparent 82%)',
-            snippetOpacity: baseOpacity + 0.008,
-            lineHeight: 1.34
-        },
-        json: {
-            width: '54%',
-            height: '70%',
-            top: 20,
-            right: 20,
-            blur: 'blur(0.28px)',
-            mask: 'linear-gradient(180deg, rgba(0,0,0,0.86), rgba(0,0,0,0.25) 52%, transparent 78%)',
-            snippetOpacity: Math.max(baseOpacity - 0.004, 0.03),
-            lineHeight: 1.31
-        },
-        grid: {
-            width: '62%',
-            height: '76%',
-            top: 14,
-            right: 14,
-            blur: 'blur(0.44px)',
-            mask: 'linear-gradient(180deg, rgba(0,0,0,0.82), rgba(0,0,0,0.2) 56%, transparent 80%)',
-            snippetOpacity: Math.min(baseOpacity + 0.016, 0.082),
-            lineHeight: 1.35
-        }
-    };
-
-    const resolved = artifactTuning[type] ?? artifactTuning.code;
-
-    const codeSnippet = (
-        <Box sx={{ fontFamily: '"Fira Code", monospace', fontSize: '0.52rem', color: color, opacity: resolved.snippetOpacity, lineHeight: resolved.lineHeight }}>
-            <div>{`const WavemInterface = () => {`}</div>
-            <div style={{ paddingLeft: 10 }}>{`const [state, setState] = useState(null);`}</div>
-            <div style={{ paddingLeft: 10 }}>{`return (`}</div>
-            <div style={{ paddingLeft: 20 }}>{`<motion.div animate={{ opacity: 1 }}>`}</div>
-            <div style={{ paddingLeft: 30 }}>{`<Header sticky={true} />`}</div>
-            <div style={{ paddingLeft: 30 }}>{`<HeroSection data={data} />`}</div>
-            <div style={{ paddingLeft: 20 }}>{`</motion.div>`}</div>
-            <div style={{ paddingLeft: 10 }}>{`);`}</div>
-            <div>{`};`}</div>
-        </Box>
-    );
-
-    const jsonSnippet = (
-        <Box sx={{ fontFamily: '"Fira Code", monospace', fontSize: '0.52rem', color: color, opacity: resolved.snippetOpacity, lineHeight: resolved.lineHeight }}>
-            <div>{`{`}</div>
-            <div style={{ paddingLeft: 10 }}>{`"status": 200,`}</div>
-            <div style={{ paddingLeft: 10 }}>{`"server": "Wavem-Core-V2",`}</div>
-            <div style={{ paddingLeft: 10 }}>{`"data": {`}</div>
-            <div style={{ paddingLeft: 20 }}>{`"users_active": 1402,`}</div>
-            <div style={{ paddingLeft: 20 }}>{`"region": "us-east-1",`}</div>
-            <div style={{ paddingLeft: 20 }}>{`"latency": "24ms"`}</div>
-            <div style={{ paddingLeft: 10 }}>{`}`}</div>
-            <div>{`}`}</div>
-        </Box>
-    );
-
-    const gridPattern = (
-        <Box sx={{
-            width: '100%', height: '100%',
-            backgroundImage: `linear-gradient(${color} 1px, transparent 1px), linear-gradient(90deg, ${color} 1px, transparent 1px)`,
-            backgroundSize: '16px 16px',
-            opacity: resolved.snippetOpacity * 0.7,
-            transform: 'perspective(400px) rotateX(45deg) scale(1.4)',
-            transformOrigin: 'top center'
-        }} />
-    );
-
-    return (
-        <Box
-            sx={{
-                position: 'absolute',
-                top: resolved.top, right: resolved.right,
-                width: resolved.width, height: resolved.height,
-                pointerEvents: 'none', userSelect: 'none', zIndex: 0,
-                filter: resolved.blur, WebkitMaskImage: resolved.mask, maskImage: resolved.mask
-            }}
-        >
-            {type === 'code' && codeSnippet}
-            {type === 'json' && jsonSnippet}
-            {type === 'grid' && gridPattern}
-        </Box>
-    );
-};
-
-const NeuralCard = ({ item, variant = 'small' }) => {
-    const cardRef = useRef(null);
-    const isHero = variant === 'hero';
-
-    const handleMouseMove = (e) => {
-        if (!cardRef.current) return;
-        const rect = cardRef.current.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        cardRef.current.style.setProperty('--mouse-x', `${x}px`);
-        cardRef.current.style.setProperty('--mouse-y', `${y}px`);
-    };
-
-    const itemChipBg = hexToRgba(item.color, 0.08);
-    const itemChipBorder = hexToRgba(item.color, 0.22);
-    const itemGlowSoft = hexToRgba(item.color, 0.14);
-
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: 32 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            whileHover={{ y: -6, scale: 1.01 }}
-            transition={{ type: 'spring', stiffness: 260, damping: 24 }}
-            className={styles.cardWrapper}
-        >
-            <Box
-                ref={cardRef}
-                onMouseMove={handleMouseMove}
-                className={styles.neuralCard}
-                style={{
-                    '--card-color': item.color,
-                    background: isHero
-                        ? `linear-gradient(140deg, ${itemGlowSoft} 0%, rgba(10,10,10,0.72) 32%, rgba(10,10,10,0.72) 100%)`
-                        : `linear-gradient(140deg, ${hexToRgba(item.color, 0.08)} 0%, rgba(10,10,10,0.62) 30%, rgba(10,10,10,0.62) 100%)`,
-                }}
-                sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    backdropFilter: 'blur(16px)',
-                    border: `1px solid ${hexToRgba(item.color, 0.18)}`,
-                    borderRadius: '18px',
-                    p: { xs: 2.6, sm: 2.9, md: isHero ? 4.1 : 3.2 },
-                    minHeight: { xs: 280, md: isHero ? 318 : 298 },
-                    height: '100%',
-                    position: 'relative',
-                    overflow: 'hidden',
-                    transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
-                    '&:hover': {
-                        borderColor: item.color,
-                        boxShadow: `0 8px 34px ${item.color}16`,
-                    }
-                }}
-            >
-                <BackgroundArtifact type={item.bgType} color={item.color} intensity={isHero ? 0.06 : 0.04} />
-
-                <Stack direction="row" spacing={1.6} alignItems="center" mb={2.2} position="relative" zIndex={1}>
-                    <Box
-                        sx={{
-                            p: isHero ? 1.05 : 0.92,
-                            borderRadius: '8px',
-                            background: itemChipBg,
-                            border: `1px solid ${itemChipBorder}`,
-                        }}
-                    >
-                        {item.bgType === 'code' && <VscCode size={24} color={item.color} />}
-                        {item.bgType === 'json' && <VscJson size={24} color={item.color} />}
-                        {item.bgType === 'grid' && <VscSymbolRuler size={24} color={item.color} />}
-                    </Box>
-                    <Box>
-                        <Typography
-                            variant="caption"
-                            sx={{
-                                color: item.color,
-                                letterSpacing: 1.8,
-                                fontWeight: 700,
-                                fontFamily: 'monospace',
-                                textTransform: 'uppercase',
-                                opacity: 0.95,
-                                fontSize: { xs: '0.62rem', md: '0.68rem' }
-                            }}
-                        >
-                            {`// ${item.role.toUpperCase()}`}
-                        </Typography>
-                        <Typography
-                            variant={isHero ? 'h5' : 'h6'}
-                            fontWeight={isHero ? 800 : 700}
-                            sx={{
-                                color: '#fff',
-                                lineHeight: 1.12,
-                                letterSpacing: '-0.015em',
-                                fontSize: isHero
-                                    ? { xs: '1.56rem', md: '1.82rem' }
-                                    : { xs: '1.42rem', md: '1.58rem' },
-                                textWrap: 'balance'
-                            }}
-                        >
-                            {item.title}
-                        </Typography>
-                    </Box>
-                </Stack>
-
-                <Typography
-                    variant="body2"
-                    sx={{
-                        color: 'rgba(228,228,231,0.74)',
-                        mb: isHero ? 3.5 : 2.8,
-                        lineHeight: 1.7,
-                        fontSize: isHero ? { xs: '0.94rem', md: '0.98rem' } : { xs: '0.86rem', md: '0.9rem' },
-                        letterSpacing: '0.01em',
-                        position: 'relative',
-                        zIndex: 1,
-                        maxWidth: isHero ? '88%' : '96%',
-                        display: '-webkit-box',
-                        WebkitLineClamp: isHero ? 4 : 5,
-                        WebkitBoxOrient: 'vertical',
-                        overflow: 'hidden'
-                    }}
-                >
-                    {item.description}
-                </Typography>
-
-                {item.tags && item.tags.length > 0 && (
-                    <div className={styles.tagsContainer}>
-                        {item.tags.map(tag => (
-                            <div
-                                key={tag}
-                                className={styles.badge}
-                                style={{
-                                    '--badge-border': hexToRgba(item.color, 0.25),
-                                    '--badge-bg-hover': hexToRgba(item.color, 0.08),
-                                    '--badge-border-hover': item.color,
-                                    '--badge-glow': hexToRgba(item.color, 0.3)
-                                }}
-                            >
-                                {tag}
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </Box>
-        </motion.div>
-    );
-};
+const TECH_ECOSYSTEM = [
+  {
+    id: "figma",
+    name: "Figma UI/UX",
+    role: "Prototipação viva",
+    humanTranslation:
+      "Você aprova e testa o visual de cada tela junto com a gente antes do código nascer.",
+    color: "#F472B6",
+    icon: TbBrandFigma,
+    targetX: 525,
+    targetY: 36,
+  },
+  {
+    id: "react",
+    name: "React 19",
+    role: "Telas instantâneas",
+    humanTranslation:
+      "Faz o seu sistema abrir na hora e trocar de tela sem recarregar a página.",
+    color: "#38BDF8",
+    icon: TbBrandReact,
+    targetX: 635,
+    targetY: 62,
+  },
+  {
+    id: "motion",
+    name: "Framer Motion",
+    role: "Animações fluidas",
+    humanTranslation:
+      "Cria transições que surpreendem o visitante e destacam a sua marca da concorrência.",
+    color: "#A78BFA",
+    icon: TbBrandFramerMotion,
+    targetX: 525,
+    targetY: 102,
+  },
+  {
+    id: "firebase",
+    name: "Firebase Cloud",
+    role: "Tempo real",
+    humanTranslation:
+      "Mudou algo no seu painel WEM? Atualiza no celular do cliente no mesmo segundo.",
+    color: "#FBBF24",
+    icon: TbBrandFirebase,
+    targetX: 635,
+    targetY: 134,
+  },
+  {
+    id: "node",
+    name: "Node.js",
+    role: "Motor de alta carga",
+    humanTranslation:
+      "Conecta pagamentos, WhatsApp e regras do seu negócio sem fila nem lentidão.",
+    color: "#34D399",
+    icon: TbBrandNodejs,
+    targetX: 525,
+    targetY: 172,
+  },
+  {
+    id: "python",
+    name: "Python",
+    role: "Dados & automação",
+    humanTranslation:
+      "Organiza relatórios inteligentes e tarefas repetitivas para economizar horas da sua semana.",
+    color: "#60A5FA",
+    icon: TbBrandPython,
+    targetX: 635,
+    targetY: 204,
+  },
+  {
+    id: "sql",
+    name: "SQL & Dados",
+    role: "Memória organizada",
+    humanTranslation:
+      "Guarda clientes, histórico de vendas e estoque com precisão cirúrgica.",
+    color: "#818CF8",
+    icon: TbDatabase,
+    targetX: 525,
+    targetY: 242,
+  },
+  {
+    id: "shield",
+    name: "Auth & Cloud",
+    role: "Blindagem 24/7",
+    humanTranslation:
+      "Protege o acesso ao seu sistema com a mesma infraestrutura usada por grandes bancos.",
+    color: "#C4B5FD",
+    icon: TbShieldLock,
+    targetX: 635,
+    targetY: 268,
+  },
+];
 
 export default function Experience() {
-    const theme = useTheme();
-    const [content, setContent] = useState(() => getServicesContent());
+  const sectionRef = useRef(null);
+  const [content, setContent] = useState(() => getServicesContent());
+  const [activeLayerId, setActiveLayerId] = useState("interface");
+  const [hoveredTechId, setHoveredTechId] = useState(null);
 
-    useEffect(() => {
-        let isMounted = true;
-        async function fetchContent() {
-            try {
-                const remote = await getServicesContentRemote();
-                if (isMounted && remote) {
-                    setContent(remote);
-                }
-            } catch (err) {
-                console.error("Failed to load services content", err);
-            }
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchContent() {
+      try {
+        const remote = await getServicesContentRemote();
+        if (isMounted && remote) {
+          setContent(remote);
         }
-        fetchContent();
-        return () => { isMounted = false; };
-    }, []);
+      } catch {
+        // Fallback silencioso para manter segurança em produção
+      }
+    }
+    fetchContent();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
-    const defaultColors = ['#A78BFA', '#34D399', '#60A5FA', '#F87171', '#FBBF24', '#C084FC'];
-    const defaultBgTypes = ['code', 'json', 'grid', 'code', 'grid', 'json'];
+  // Scroll-driven motion exclusivamente para os elementos atmosféricos de fundo
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
 
-    const rawServices = content?.servicesList || [];
-    const experiences = rawServices.map((service, index) => ({
-        ...service,
-        color: defaultColors[index % defaultColors.length],
-        bgType: defaultBgTypes[index % defaultBgTypes.length],
-        role: service.role || `Especialidade 0${index + 1}`
-    }));
+  const smoothScroll = useSpring(scrollYProgress, {
+    stiffness: 85,
+    damping: 24,
+    restDelta: 0.001,
+  });
 
-    return (
-        <Box component="section" sx={{ py: { xs: 10, md: 15 }, position: 'relative', overflow: 'hidden' }}>
-            <Box
-                aria-hidden
-                sx={{
-                    position: 'absolute',
-                    top: -10,
-                    left: -180,
-                    width: 360,
-                    height: 360,
-                    borderRadius: '50%',
-                    background: `radial-gradient(circle, ${theme.palette.primary.main}30 0%, rgba(0,0,0,0) 72%)`,
-                    filter: 'blur(16px)',
-                    pointerEvents: 'none'
-                }}
-            />
+  const watermarkX = useTransform(smoothScroll, [0, 1], ["-14%", "12%"]);
+  const bgBeamLength = useTransform(smoothScroll, [0.1, 0.65], [0, 1]);
 
-            <Box
-                aria-hidden
-                sx={{
-                    position: 'absolute',
-                    bottom: -10,
-                    right: -180,
-                    width: 320,
-                    height: 320,
-                    borderRadius: '50%',
-                    background: 'radial-gradient(circle, rgba(255,255,255,0.08) 0%, rgba(0,0,0,0) 74%)',
-                    filter: 'blur(22px)',
-                    pointerEvents: 'none'
-                }}
-            />
+  const activeLayer =
+    SYSTEM_LAYERS.find((l) => l.id === activeLayerId) || SYSTEM_LAYERS[0];
+  const focusedTech = hoveredTechId
+    ? TECH_ECOSYSTEM.find((t) => t.id === hoveredTechId)
+    : null;
 
-            <Container maxWidth="lg">
-                <Box mb={{ xs: 7, md: 10 }} textAlign="left" position="relative" zIndex={2}>
-                    <Typography variant="overline" color="primary" sx={{ letterSpacing: 4, fontWeight: 700, fontSize: '0.72rem', opacity: 0.95, textTransform: 'uppercase' }}>
-                        {content?.highlightsEyebrow || "NOSSO DNA TÉCNICO"}
-                    </Typography>
-                    <Typography
-                        variant="h3"
-                        fontWeight={800}
-                        sx={{
-                            mt: 1.4,
-                            mb: 2.4,
-                            maxWidth: 760,
-                            fontSize: { xs: '2rem', sm: '2.35rem', md: '3.1rem' },
-                            lineHeight: 1.06,
-                            letterSpacing: '-0.03em',
-                            color: '#fff'
-                        }}
-                    >
-                        {content?.highlightsTitle || "Mais que ferramentas,"} <br />
-                        <span style={{ color: theme.palette.primary.main }}>
-                            {content?.highlightsTitleHighlight || "domínio tecnológico."}
-                        </span>
-                    </Typography>
-                </Box>
+  const isTechActive = (techId) => {
+    if (hoveredTechId) {
+      return hoveredTechId === techId;
+    }
+    return activeLayer.techIds.includes(techId);
+  };
 
-                <Box
-                    sx={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(12, minmax(0, 1fr))',
-                        gap: { xs: 2.4, sm: 2.8, md: 3.2 },
-                        alignItems: 'stretch'
-                    }}
+  return (
+    <Box
+      ref={sectionRef}
+      component="section"
+      id="dna-tecnico"
+      className={styles.section}
+    >
+      {/* 1. MARCA D'ÁGUA MONUMENTAL DESFOCADA QUE DESLIZA COM O SCROLL */}
+      <motion.div
+        aria-hidden
+        style={{ x: watermarkX }}
+        className={styles.spatialWatermark}
+      >
+        REACT · FIGMA · FRAMER MOTION · NODE.JS · FIREBASE · PYTHON · SQL
+      </motion.div>
+
+      {/* 2. CIRCUITO DE FUNDO DESFOCADO (PROFUNDIDADE DE CAMPO) */}
+      <div className={styles.bgCircuitContainer} aria-hidden>
+        <svg
+          viewBox="0 0 1600 520"
+          preserveAspectRatio="none"
+          className={styles.bgCircuitSvg}
+        >
+          <defs>
+            <linearGradient
+              id="dnaBgCircuitGrad"
+              x1="0%"
+              y1="50%"
+              x2="100%"
+              y2="50%"
+            >
+              <stop offset="0%" stopColor="#38BDF8" stopOpacity="0" />
+              <stop offset="30%" stopColor="#7C3AED" stopOpacity="0.34" />
+              <stop offset="65%" stopColor="#A78BFA" stopOpacity="0.42" />
+              <stop offset="100%" stopColor="#34D399" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+          <motion.path
+            d="M -40 120 C 380 140, 640 360, 1020 320 C 1300 290, 1460 410, 1640 430"
+            fill="none"
+            stroke="url(#dnaBgCircuitGrad)"
+            strokeWidth="4.5"
+            style={{ pathLength: bgBeamLength }}
+          />
+        </svg>
+      </div>
+
+      {/* Luzes Atmosféricas */}
+      <div className={styles.ambientGlowPurple} aria-hidden />
+      <div className={styles.ambientGlowCyan} aria-hidden />
+
+      <Container maxWidth="lg" sx={{ position: "relative", zIndex: 2 }}>
+        {/* CABEÇALHO DIRETO E HUMANO */}
+        <div className={styles.headerRow}>
+          <div>
+            <motion.span
+              initial={{ opacity: 0, x: -14 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.45 }}
+              className={styles.eyebrow}
+            >
+              {content?.highlightsEyebrow || "NOSSO DNA TÉCNICO"}
+            </motion.span>
+            <motion.h2
+              initial={{ opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.55, delay: 0.05 }}
+              className={styles.headline}
+            >
+              {content?.highlightsTitle || "Mais que ferramentas,"}{" "}
+              <span className={styles.headlineHighlight}>
+                {content?.highlightsTitleHighlight || "domínio tecnológico."}
+              </span>
+            </motion.h2>
+          </div>
+
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.55, delay: 0.12 }}
+            className={styles.headerLead}
+          >
+            Escolha abaixo <strong>qual parte do seu sistema</strong> quer
+            espiar e veja as conexões neurais que a nossa equipe aciona para
+            dar vida a ela.
+          </motion.p>
+        </div>
+
+        {/* PALCO ABERTO: SELETOR COMPACTO (0.66fr) + GRANDE MAPA DE LIGAÇÕES SINÁPTICAS (1.34fr) */}
+        <div className={styles.architectureStage}>
+          {/* COLUNA ESQUERDA ENXUTA: AS 4 CAMADAS DO SISTEMA */}
+          <div className={styles.layersColumn}>
+            <span className={styles.layersColumnHint}>
+              Camadas do sistema (passe o mouse):
+            </span>
+
+            {SYSTEM_LAYERS.map((layer) => {
+              const isSelected = layer.id === activeLayer.id;
+              return (
+                <button
+                  key={layer.id}
+                  type="button"
+                  onMouseEnter={() => {
+                    setHoveredTechId(null);
+                    setActiveLayerId(layer.id);
+                  }}
+                  onClick={() => {
+                    setHoveredTechId(null);
+                    setActiveLayerId(layer.id);
+                    trackAction({
+                      page: "home",
+                      section: "dna_tecnico",
+                      action: "select_system_layer",
+                      label: layer.id,
+                    });
+                  }}
+                  className={`${styles.layerItemBtn} ${
+                    isSelected ? styles.layerItemBtnActive : ""
+                  }`}
                 >
-                    {experiences.map((item, index) => (
-                        <Box
-                            key={item.id || index}
-                            sx={{
-                                gridColumn: { xs: '1 / -1', md: 'span 6' }
-                            }}
-                        >
-                            <motion.div
-                                initial={{ opacity: 0, y: 24 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.5, delay: index * 0.1 }}
-                                viewport={{ once: true, amount: 0.35 }}
-                                style={{ height: '100%' }}
-                            >
-                                <NeuralCard item={item} variant={index === 0 ? 'hero' : 'small'} />
-                            </motion.div>
-                        </Box>
-                    ))}
-                </Box>
-            </Container>
-        </Box>
-    );
+                  <span className={styles.layerRailTrack} aria-hidden />
+                  <span
+                    aria-hidden
+                    className={styles.layerRailActive}
+                    style={{
+                      backgroundColor: layer.color,
+                      boxShadow: `0 0 14px ${layer.color}`,
+                      opacity: isSelected ? 1 : 0,
+                      transform: isSelected ? "scaleY(1)" : "scaleY(0.35)",
+                    }}
+                  />
+
+                  <div className={styles.layerTopBar}>
+                    <span
+                      className={styles.layerCodeTag}
+                      style={{
+                        color: isSelected
+                          ? layer.color
+                          : "rgba(167, 139, 250, 0.55)",
+                      }}
+                    >
+                      {layer.code}
+                    </span>
+                    <span
+                      className={styles.layerTechCount}
+                      style={{
+                        color: isSelected
+                          ? "#FFFFFF"
+                          : "rgba(228, 228, 231, 0.42)",
+                      }}
+                    >
+                      {layer.techIds.length} conexões
+                    </span>
+                  </div>
+
+                  <h3 className={styles.layerTitle}>{layer.title}</h3>
+                  <p className={styles.layerHumanDesc}>{layer.humanDesc}</p>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* COLUNA DIREITA PROTAGONISTA: GRANDE CIRCUITO DE LIGAÇÕES SINÁPTICAS */}
+          <div className={styles.constellationStage}>
+            {/* 1. HUD Superior (Altura Fixa: Zero Pulos) */}
+            <div className={styles.reactorHudHeader}>
+              <div className={styles.reactorHudLeft}>
+                <span
+                  className={styles.reactorPulseDot}
+                  style={{
+                    backgroundColor: focusedTech
+                      ? focusedTech.color
+                      : activeLayer.color,
+                    boxShadow: `0 0 10px ${
+                      focusedTech ? focusedTech.color : activeLayer.color
+                    }`,
+                  }}
+                />
+                <span className={styles.reactorHudTitle}>
+                  {focusedTech
+                    ? `${focusedTech.name} · ${focusedTech.role}`
+                    : activeLayer.reactorStatus}
+                </span>
+              </div>
+              <span className={styles.reactorHudRight}>
+                SINAPSE TÉCNICA AO VIVO
+              </span>
+            </div>
+
+            {/* 2. GRANDE CIRCUITO SINÁPTICO EM SVG (PROTAGONISTA DA SEÇÃO - 680x300) */}
+            <div className={styles.synapseCanvasWrapper}>
+              <svg
+                viewBox="0 0 680 300"
+                className={styles.synapseSvg}
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                role="img"
+                aria-label="Circuito interativo conectando as camadas do sistema às tecnologias da Wavem"
+              >
+                <defs>
+                  <linearGradient
+                    id="synapseActiveBeam"
+                    x1="0%"
+                    y1="50%"
+                    x2="100%"
+                    y2="50%"
+                  >
+                    <stop
+                      offset="0%"
+                      stopColor={activeLayer.color}
+                      stopOpacity="0.95"
+                    />
+                    <stop offset="48%" stopColor="#7C3AED" stopOpacity="0.95" />
+                    <stop
+                      offset="100%"
+                      stopColor={
+                        focusedTech ? focusedTech.color : "#38BDF8"
+                      }
+                      stopOpacity="1"
+                    />
+                  </linearGradient>
+
+                  <radialGradient id="coreHubGlow" cx="50%" cy="50%" r="50%">
+                    <stop
+                      offset="0%"
+                      stopColor={
+                        focusedTech ? focusedTech.color : activeLayer.color
+                      }
+                      stopOpacity="0.42"
+                    />
+                    <stop offset="60%" stopColor="#7C3AED" stopOpacity="0.1" />
+                    <stop offset="100%" stopColor="#050505" stopOpacity="0" />
+                  </radialGradient>
+
+                  <filter
+                    id="synapseNeonGlow"
+                    x="-20%"
+                    y="-20%"
+                    width="140%"
+                    height="140%"
+                  >
+                    <feDropShadow
+                      dx="0"
+                      dy="0"
+                      stdDeviation="4"
+                      floodColor="#A78BFA"
+                      floodOpacity="0.55"
+                    />
+                  </filter>
+                </defs>
+
+                {/* Linhas Guia Espaciais de Fundo */}
+                <line
+                  x1="0"
+                  y1="150"
+                  x2="680"
+                  y2="150"
+                  stroke="rgba(255,255,255,0.035)"
+                  strokeDasharray="3 7"
+                />
+                <circle
+                  cx="280"
+                  cy="150"
+                  r="112"
+                  stroke="rgba(167,139,250,0.04)"
+                  strokeDasharray="2 8"
+                />
+
+                {/* FEIXES DA ESQUERDA (4 Camadas -> Núcleo Central WEM em x=280, y=150) */}
+                {SYSTEM_LAYERS.map((layer) => {
+                  const isActive = layer.id === activeLayer.id;
+                  const pathD = `M 22 ${layer.sourceY} C 135 ${layer.sourceY}, 175 150, 280 150`;
+                  return (
+                    <g
+                      key={`left-beam-${layer.id}`}
+                      style={{ cursor: "pointer" }}
+                      onMouseEnter={() => {
+                        setHoveredTechId(null);
+                        setActiveLayerId(layer.id);
+                      }}
+                      onClick={() => {
+                        setHoveredTechId(null);
+                        setActiveLayerId(layer.id);
+                      }}
+                    >
+                      {/* Trilha base inativa */}
+                      <path
+                        d={pathD}
+                        stroke="rgba(255,255,255,0.07)"
+                        strokeWidth="1.6"
+                      />
+
+                      {/* Feixe principal aceso */}
+                      <path
+                        d={pathD}
+                        stroke={layer.color}
+                        strokeWidth="3"
+                        filter="url(#synapseNeonGlow)"
+                        opacity={isActive ? 0.92 : 0}
+                        style={{ transition: "opacity 0.22s ease" }}
+                      />
+
+                      {/* Pulso de energia correndo pelo cabo ativo */}
+                      <path
+                        d={pathD}
+                        stroke="#FFFFFF"
+                        strokeWidth="2.2"
+                        strokeLinecap="round"
+                        opacity={isActive ? 0.85 : 0}
+                        className={styles.synapseFlowPulse}
+                      />
+
+                      {/* Halo e Nó de Origem */}
+                      <circle
+                        cx="22"
+                        cy={layer.sourceY}
+                        r="12"
+                        fill={layer.color}
+                        opacity={isActive ? 0.25 : 0.04}
+                        style={{ transition: "opacity 0.22s ease" }}
+                      />
+                      <circle
+                        cx="22"
+                        cy={layer.sourceY}
+                        r="5.5"
+                        fill={isActive ? "#FFFFFF" : "rgba(255,255,255,0.22)"}
+                        stroke={isActive ? layer.color : "transparent"}
+                        strokeWidth="2.5"
+                        style={{ transition: "fill 0.2s ease, stroke 0.2s ease" }}
+                      />
+                      <text
+                        x="38"
+                        y={layer.sourceY + 4}
+                        fill={
+                          isActive ? "#FFFFFF" : "rgba(228,228,231,0.4)"
+                        }
+                        fontSize="10"
+                        fontWeight="700"
+                        fontFamily="'Fira Code', monospace"
+                        style={{ transition: "fill 0.2s ease" }}
+                      >
+                        {layer.shortSvgLabel}
+                      </text>
+                    </g>
+                  );
+                })}
+
+                {/* FEIXES DA DIREITA (Núcleo Central WEM x=280, y=150 -> 8 Tecnologias) */}
+                {TECH_ECOSYSTEM.map((tech) => {
+                  const active = isTechActive(tech.id);
+                  const pathD = `M 280 150 C 390 150, 415 ${tech.targetY}, ${tech.targetX} ${tech.targetY}`;
+                  return (
+                    <g
+                      key={`right-beam-${tech.id}`}
+                      style={{ cursor: "pointer" }}
+                      onMouseEnter={() => setHoveredTechId(tech.id)}
+                      onMouseLeave={() => setHoveredTechId(null)}
+                      onClick={() =>
+                        setHoveredTechId((prev) =>
+                          prev === tech.id ? null : tech.id
+                        )
+                      }
+                    >
+                      {/* Área de clique invisível no nó */}
+                      <circle
+                        cx={tech.targetX}
+                        cy={tech.targetY}
+                        r="24"
+                        fill="transparent"
+                      />
+
+                      {/* Trilha tracejada inativa */}
+                      <path
+                        d={pathD}
+                        stroke="rgba(255,255,255,0.065)"
+                        strokeWidth="1.4"
+                        strokeDasharray="3 6"
+                      />
+
+                      {/* Feixe sináptico iluminado */}
+                      <path
+                        d={pathD}
+                        stroke="url(#synapseActiveBeam)"
+                        strokeWidth="2.6"
+                        filter="url(#synapseNeonGlow)"
+                        opacity={active ? 0.95 : 0}
+                        style={{ transition: "opacity 0.22s ease" }}
+                      />
+
+                      {/* Pulso de dados viajando até a tecnologia */}
+                      <path
+                        d={pathD}
+                        stroke="#FFFFFF"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        opacity={active ? 0.8 : 0}
+                        className={styles.synapseFlowPulse}
+                      />
+
+                      {/* Anel externo do nó tecnológico */}
+                      <circle
+                        cx={tech.targetX}
+                        cy={tech.targetY}
+                        r="15"
+                        stroke={tech.color}
+                        strokeWidth="1"
+                        opacity={active ? 0.42 : 0}
+                        style={{ transition: "opacity 0.22s ease" }}
+                      />
+
+                      {/* Halo luminoso do nó */}
+                      <circle
+                        cx={tech.targetX}
+                        cy={tech.targetY}
+                        r="10.5"
+                        fill={tech.color}
+                        opacity={active ? 0.26 : 0.05}
+                        style={{ transition: "opacity 0.22s ease" }}
+                      />
+
+                      {/* Núcleo do nó tecnológico */}
+                      <circle
+                        cx={tech.targetX}
+                        cy={tech.targetY}
+                        r="5.2"
+                        fill={active ? "#FFFFFF" : "rgba(255,255,255,0.22)"}
+                        stroke={active ? tech.color : "transparent"}
+                        strokeWidth="2.5"
+                        style={{
+                          transition: "fill 0.22s ease, stroke 0.22s ease",
+                        }}
+                      />
+
+                      {/* Nome da Tecnologia e Papel no Sistema */}
+                      <text
+                        x={tech.targetX - 14}
+                        y={tech.targetY - 9}
+                        fill={
+                          active ? "#FFFFFF" : "rgba(228,228,231,0.36)"
+                        }
+                        fontSize="10.5"
+                        fontWeight="800"
+                        textAnchor="end"
+                        fontFamily="'Inter', sans-serif"
+                        style={{ transition: "fill 0.22s ease" }}
+                      >
+                        {tech.name}
+                      </text>
+                    </g>
+                  );
+                })}
+
+                {/* NÚCLEO CENTRAL WAVEM (x=280, y=150) */}
+                <circle cx="280" cy="150" r="64" fill="url(#coreHubGlow)" />
+                <circle
+                  cx="280"
+                  cy="150"
+                  r="38"
+                  stroke={focusedTech ? focusedTech.color : activeLayer.color}
+                  strokeWidth="1.3"
+                  strokeDasharray="7 7"
+                  opacity="0.85"
+                  className={styles.coreOrbitRing}
+                />
+                <circle
+                  cx="280"
+                  cy="150"
+                  r="30"
+                  stroke="#7C3AED"
+                  strokeWidth="1"
+                  strokeDasharray="3 6"
+                  opacity="0.6"
+                  className={styles.coreOrbitRingInner}
+                />
+                <circle
+                  cx="280"
+                  cy="150"
+                  r="23"
+                  fill="#09080F"
+                  stroke={focusedTech ? focusedTech.color : activeLayer.color}
+                  strokeWidth="2.2"
+                  style={{ transition: "stroke 0.22s ease" }}
+                />
+                <text
+                  x="280"
+                  y="153.5"
+                  fill="#FFFFFF"
+                  fontSize="10.5"
+                  fontWeight="900"
+                  textAnchor="middle"
+                  fontFamily="'Inter', sans-serif"
+                  letterSpacing="0.08em"
+                >
+                  WEM
+                </text>
+              </svg>
+            </div>
+
+            {/* 3. BARRA COMPACTA DE MOTORES (Apenas 36px de altura para complementar o circuito) */}
+            <div
+              className={styles.compactTechStrip}
+              onMouseLeave={() => setHoveredTechId(null)}
+            >
+              {TECH_ECOSYSTEM.map((tech) => {
+                const Icon = tech.icon;
+                const highlighted = isTechActive(tech.id);
+                return (
+                  <button
+                    key={tech.id}
+                    type="button"
+                    onMouseEnter={() => setHoveredTechId(tech.id)}
+                    onFocus={() => setHoveredTechId(tech.id)}
+                    onClick={() => {
+                      setHoveredTechId((prev) =>
+                        prev === tech.id ? null : tech.id
+                      );
+                      trackAction({
+                        page: "home",
+                        section: "dna_tecnico",
+                        action: "inspect_tech_node",
+                        label: tech.name,
+                      });
+                    }}
+                    className={`${styles.compactTechBtn} ${
+                      highlighted
+                        ? styles.compactTechBtnActive
+                        : styles.compactTechBtnDimmed
+                    }`}
+                    style={{
+                      borderBottomColor: highlighted
+                        ? tech.color
+                        : "rgba(255, 255, 255, 0.07)",
+                    }}
+                  >
+                    <Icon
+                      size={14}
+                      color={
+                        highlighted ? tech.color : "rgba(228, 228, 231, 0.45)"
+                      }
+                      style={{ flexShrink: 0 }}
+                    />
+                    <span className={styles.compactTechName}>{tech.name}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* 4. BARRA DE TRADUÇÃO HUMANA (Estrutura em 2 linhas fixas: Zero Pulos!) */}
+            <div className={styles.humanTranslatorStrip}>
+              <div className={styles.translatorHeaderRow}>
+                <span className={styles.translatorTag}>
+                  {focusedTech ? focusedTech.name : "NA PRÁTICA"}
+                </span>
+                <span className={styles.translatorContext}>
+                  {focusedTech ? focusedTech.role : activeLayer.title}
+                </span>
+              </div>
+              <div className={styles.translatorText}>
+                {focusedTech
+                  ? focusedTech.humanTranslation
+                  : activeLayer.humanDesc}
+              </div>
+            </div>
+          </div>
+        </div>
+      </Container>
+    </Box>
+  );
 }

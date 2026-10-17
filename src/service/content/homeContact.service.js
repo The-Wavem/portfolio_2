@@ -6,11 +6,12 @@ export const homeContactContent = {
   titleHighlight: "clareza desde o primeiro clique.",
   description:
     "Entre em contato com a The Wavem para discutir seu projeto, esclarecer dúvidas ou solicitar informações. Estamos prontos para ouvir suas ideias e ajudá-lo a alcançar seus objetivos.",
-  ctaLabel: "Iniciar Conversa",
+  ctaLabel: "Chamar no WhatsApp agora",
   ctaLink: "",
-  whatsappNumber: "5541995424186",
+  whatsappNumber: "554188410374",
+  whatsappDisplay: "+55 41 8841-0374",
   emailAddress: "contato.thewavem@gmail.com",
-  emailFeedbackMessage: "E-mail copiado com sucesso.",
+  emailFeedbackMessage: "E-mail copiado para a área de transferência!",
   socials: [
     {
       id: "instagram",
@@ -44,7 +45,18 @@ export async function getHomeContactContentRemote() {
     fallbackData: homeContactContent,
   });
 
-  return response.data;
+  const data = response.data || homeContactContent;
+  // Garante que o número antigo salvo no banco seja atualizado para o chip oficial novo
+  const rawPhone = String(data.whatsappNumber || "").replace(/\D/g, "");
+  if (!rawPhone || rawPhone === "5541995424186") {
+    return {
+      ...data,
+      whatsappNumber: "554188410374",
+      whatsappDisplay: "+55 41 8841-0374",
+    };
+  }
+
+  return data;
 }
 
 export async function setHomeContactContentRemote(data) {

@@ -45,7 +45,7 @@ export default function WhyWavem() {
             <WhyWavemHeroSection content={content} />
             <WhyWavemCmsSection content={content} />
             <WhyWavemMetricsSection content={content} />
-            <WhyWavemCaseStudySection content={content} />
+            {/* <WhyWavemCaseStudySection content={content} /> */}
             <WhyWavemCtaSection content={content} />
         </Box>
     );

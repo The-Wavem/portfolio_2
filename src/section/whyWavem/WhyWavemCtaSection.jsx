@@ -63,7 +63,7 @@ export default function WhyWavemCtaSection({ content }) {
 
                         <Button
                             component="a"
-                            href="https://wa.me/5541995424186?text=Ol%C3%A1%2C%20The%20Wavem!%20Quero%20conversar%20sobre%20um%20sistema%20para%20o%20meu%20neg%C3%B3cio."
+                            href="https://wa.me/554188410374?text=Ol%C3%A1%2C%20The%20Wavem!%20Quero%20conversar%20sobre%20um%20sistema%20para%20o%20meu%20neg%C3%B3cio."
                             target="_blank"
                             rel="noopener noreferrer"
                             variant="outlined"

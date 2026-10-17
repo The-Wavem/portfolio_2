@@ -3,7 +3,7 @@ import { getFirebaseContent, setFirebaseContent } from '@/service/firebase';
 export const homeHeroContent = {
     version: 2,
     badges: [],
-    titlePrefix: 'De pessoas para pessoas:',
+    titlePrefix: 'WAVEM:',
     titleHighlight: 'sistemas simples que organizam o seu negócio.',
     description:
         'Organize sua rotina, venda seus produtos ou mostre sua arte em poucos cliques — com a nossa equipe ao seu lado do cafezinho ao código.',

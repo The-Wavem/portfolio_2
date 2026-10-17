@@ -384,7 +384,7 @@ export default function WhyWavem() {
                 transition={{ duration: 0.6, delay: 0.06 }}
                 className={styles.headline}
               >
-                Mais que um site bonito:{" "}
+                WEM: {" "}
                 <span className={styles.headlineHighlight}>
                   o controle do seu negócio em poucos cliques.
                 </span>
@@ -525,7 +525,6 @@ export default function WhyWavem() {
                         <Icon size={16} color={kpi.color} style={{ flexShrink: 0 }} />
                       </div>
                       <span className={styles.openKpiTitle}>{kpi.label}</span>
-                      <span className={styles.openKpiSub}>{kpi.sub}</span>
                       {idx < currentMode.kpis.length - 1 && (
                         <div className={styles.openKpiDivider} aria-hidden />
                       )}

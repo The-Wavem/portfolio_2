@@ -51,7 +51,6 @@ export default function WhyWavemCmsSection({ content }) {
             <Container maxWidth="lg">
                 <div className={styles.headerWrapper}>
                     <SectionTitle
-                        eyebrow={cms?.tag || 'IMPACTO OPERACIONAL & FINANCEIRO'}
                         title={cms?.title || 'O Fim dos Sistemas Travados e dos Pedágios Técnicos'}
                         align="center"
                         maxWidth={860}

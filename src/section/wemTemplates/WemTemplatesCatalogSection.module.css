@@ -1,0 +1,424 @@
+.catalogSection {
+    position: relative;
+    padding-top: 16px;
+    padding-bottom: 120px;
+    z-index: 1;
+}
+
+.catalogList {
+    display: flex;
+    flex-direction: column;
+    gap: 52px;
+    max-width: 1120px;
+    margin: 0 auto;
+}
+
+@media (min-width: 960px) {
+    .catalogList {
+        gap: 68px;
+    }
+}
+
+/* ==========================================================================
+   ESTRUTURA DO CARD DE TEST DRIVE (2 METADES: SHOWCASE ESQUERDA + AÇÃO DIREITA)
+   ========================================================================== */
+.templateCard {
+    display: grid;
+    grid-template-columns: 1fr;
+    border-radius: 24px;
+    background: rgba(14, 14, 18, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    box-shadow: 0 28px 70px rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(16px);
+    overflow: hidden;
+    transition: border-color 0.35s ease, box-shadow 0.35s ease;
+}
+
+.templateCard:hover {
+    border-color: rgba(251, 113, 133, 0.32);
+    box-shadow: 0 34px 84px rgba(0, 0, 0, 0.72), 0 0 42px rgba(225, 29, 72, 0.12);
+}
+
+@media (min-width: 920px) {
+    .templateCard {
+        grid-template-columns: 1.18fr 0.82fr;
+        min-height: 390px;
+    }
+}
+
+/* ==========================================================================
+   METADE ESQUERDA: MOCKUP EM PERSPECTIVA FRONTAL COM INTERAÇÃO DE ABAS
+   ========================================================================== */
+.showcasePane {
+    position: relative;
+    padding: 24px;
+    background:
+        radial-gradient(circle at 25% 20%, rgba(225, 29, 72, 0.14) 0%, transparent 62%),
+        linear-gradient(145deg, #09090D 0%, #050507 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+@media (min-width: 920px) {
+    .showcasePane {
+        padding: 32px 34px;
+        border-bottom: none;
+        border-right: 1px solid rgba(255, 255, 255, 0.07);
+    }
+}
+
+.appWindowFrame {
+    width: 100%;
+    border-radius: 16px;
+    background: #0B0B10;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.68);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.windowHeaderBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.025);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    gap: 12px;
+}
+
+.windowDots {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.dotCrimson {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #E11D48;
+}
+
+.dotMuted {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.simulatedTabs {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(0, 0, 0, 0.45);
+    padding: 3px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.simTabBtn {
+    border: none;
+    background: transparent;
+    color: rgba(228, 228, 231, 0.58);
+    font-family: 'Fira Code', monospace, sans-serif;
+    font-size: 0.66rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.simTabBtnActive {
+    background: rgba(225, 29, 72, 0.24);
+    color: #FFFFFF;
+}
+
+.quickZoomBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(244, 244, 245, 0.82);
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 4px 9px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.quickZoomBtn:hover {
+    background: rgba(225, 29, 72, 0.18);
+    border-color: rgba(251, 113, 133, 0.45);
+    color: #FFFFFF;
+}
+
+/* Corpo do Mockup Frontal */
+.windowBody {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    min-height: 230px;
+}
+
+@media (max-width: 560px) {
+    .windowBody {
+        grid-template-columns: 1fr;
+    }
+
+    .mockSidebar {
+        display: none;
+    }
+}
+
+.mockSidebar {
+    padding: 16px 12px;
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.012);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.sidebarMenu {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.sidebarItemActive {
+    height: 22px;
+    border-radius: 6px;
+    background: linear-gradient(90deg, rgba(225, 29, 72, 0.26), rgba(225, 29, 72, 0.05));
+    border-left: 2px solid #FB7185;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    font-family: 'Fira Code', monospace, sans-serif;
+    font-size: 0.62rem;
+    color: #FFFFFF;
+}
+
+.sidebarItemBar {
+    height: 8px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.09);
+}
+
+.sidebarStatus {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Fira Code', monospace, sans-serif;
+    font-size: 0.6rem;
+    color: #FB7185;
+}
+
+.statusDot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #FB7185;
+    box-shadow: 0 0 8px #E11D48;
+}
+
+.mockWorkspace {
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+.kpiMiniGrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.kpiMiniCard {
+    padding: 10px 11px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.kpiMiniLabel {
+    font-size: 0.64rem;
+    color: rgba(228, 228, 231, 0.52);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.kpiMiniValue {
+    font-size: 0.96rem;
+    font-weight: 800;
+    color: #FFFFFF;
+    letter-spacing: -0.02em;
+}
+
+.kpiMiniTrend {
+    font-family: 'Fira Code', monospace, sans-serif;
+    font-size: 0.58rem;
+    color: #FB7185;
+}
+
+.chartCanvasBox {
+    position: relative;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: rgba(5, 5, 8, 0.78);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    height: 112px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.chartHeaderRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: 'Fira Code', monospace, sans-serif;
+    font-size: 0.64rem;
+    color: rgba(228, 228, 231, 0.62);
+}
+
+.chartSvg {
+    width: 100%;
+    height: 68px;
+    overflow: visible;
+}
+
+/* ==========================================================================
+   METADE DIREITA: CONTAINER NEUTRO ULTRA-CLEAN (ALTO CONTRASTE & AÇÃO)
+   ========================================================================== */
+.detailsPane {
+    padding: 32px 28px;
+    background: linear-gradient(155deg, rgba(248, 248, 250, 0.97) 0%, rgba(236, 236, 242, 0.95) 100%);
+    color: #09090D;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+@media (min-width: 920px) {
+    .detailsPane {
+        padding: 40px 38px;
+    }
+}
+
+.detailsTop {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.categoryBadge {
+    font-family: 'Fira Code', monospace, sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #BE123C;
+    background: rgba(225, 29, 72, 0.1);
+    border: 1px solid rgba(225, 29, 72, 0.22);
+    padding: 5px 12px;
+    border-radius: 999px;
+    margin-bottom: 16px;
+}
+
+.templateTitle {
+    font-size: 1.75rem;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    line-height: 1.12;
+    color: #09090D;
+    margin: 0 0 14px 0;
+}
+
+@media (min-width: 600px) {
+    .templateTitle {
+        font-size: 2rem;
+    }
+}
+
+.templateDescription {
+    font-size: 0.96rem;
+    line-height: 1.64;
+    color: rgba(15, 15, 22, 0.78);
+    margin: 0 0 20px 0;
+}
+
+.tagsRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.techTag {
+    font-family: 'Fira Code', monospace, sans-serif;
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: rgba(15, 15, 22, 0.72);
+    background: rgba(9, 9, 13, 0.06);
+    border: 1px solid rgba(9, 9, 13, 0.1);
+    padding: 4px 10px;
+    border-radius: 6px;
+}
+
+.detailsFooter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(9, 9, 13, 0.1);
+}
+
+.testDriveBtn {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 28px;
+    border-radius: 999px;
+    border: none;
+    background: linear-gradient(135deg, #09090D 0%, #1C1C26 100%);
+    color: #FFFFFF;
+    font-size: 0.9rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 12px 28px rgba(9, 9, 13, 0.24);
+    transition: all 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.testDriveBtn:hover {
+    background: linear-gradient(135deg, #E11D48 0%, #BE123C 100%);
+    box-shadow: 0 14px 32px rgba(225, 29, 72, 0.42);
+    transform: translateY(-2px);
+}
+
+.testDriveIcon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.25s ease;
+}
+
+.testDriveBtn:hover .testDriveIcon {
+    transform: translateX(4px);
+}

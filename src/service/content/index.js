@@ -106,5 +106,12 @@ export {
 	setWhyWavemContentRemote,
 	whyWavemContent
 } from './whyWavem.service';
+export {
+	getWemTemplates,
+	getWemTemplatesRemote,
+	setWemTemplatesRemote,
+	defaultWemTemplates,
+	wemTemplatesContent
+} from './wemTemplates.service';
 
 

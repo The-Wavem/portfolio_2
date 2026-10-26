@@ -1,0 +1,189 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 760" fill="none">
+  <defs>
+    <radialGradient id="bgAmbient" cx="48%" cy="46%" r="58%">
+      <stop offset="0%" stop-color="#E11D48" stop-opacity="0.22" />
+      <stop offset="45%" stop-color="#BE123C" stop-opacity="0.08" />
+      <stop offset="100%" stop-color="#050505" stop-opacity="0" />
+    </radialGradient>
+
+    <linearGradient id="surfaceMain" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#121217" stop-opacity="0.95" />
+      <stop offset="60%" stop-color="#0A0A0E" stop-opacity="0.92" />
+      <stop offset="100%" stop-color="#050507" stop-opacity="0.88" />
+    </linearGradient>
+
+    <linearGradient id="surfaceFloating" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#16161D" stop-opacity="0.96" />
+      <stop offset="100%" stop-color="#09090D" stop-opacity="0.92" />
+    </linearGradient>
+
+    <linearGradient id="roseBorder" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FB7185" stop-opacity="0.55" />
+      <stop offset="45%" stop-color="#E11D48" stop-opacity="0.22" />
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.04" />
+    </linearGradient>
+
+    <linearGradient id="roseAccent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#E11D48" />
+      <stop offset="100%" stop-color="#FB7185" />
+    </linearGradient>
+
+    <linearGradient id="chartArea" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#E11D48" stop-opacity="0.32" />
+      <stop offset="100%" stop-color="#E11D48" stop-opacity="0.0" />
+    </linearGradient>
+
+    <filter id="panelShadow" x="-15%" y="-15%" width="130%" height="135%">
+      <feDropShadow dx="0" dy="24" stdDeviation="28" flood-color="#000000" flood-opacity="0.75" />
+    </filter>
+
+    <filter id="neonGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Ambient Backlight -->
+  <rect width="1120" height="760" fill="#050505" />
+  <ellipse cx="520" cy="370" rx="490" ry="320" fill="url(#bgAmbient)" />
+
+  <!-- Architectural Perspective Grid Lines -->
+  <g stroke="#FFFFFF" stroke-opacity="0.035" stroke-width="1">
+    <line x1="80" y1="0" x2="80" y2="760" />
+    <line x1="260" y1="0" x2="260" y2="760" />
+    <line x1="440" y1="0" x2="440" y2="760" />
+    <line x1="620" y1="0" x2="620" y2="760" />
+    <line x1="800" y1="0" x2="800" y2="760" />
+    <line x1="980" y1="0" x2="980" y2="760" />
+    <line x1="0" y1="120" x2="1120" y2="120" />
+    <line x1="0" y1="280" x2="1120" y2="280" />
+    <line x1="0" y1="440" x2="1120" y2="440" />
+    <line x1="0" y1="600" x2="1120" y2="600" />
+  </g>
+
+  <!-- Connection Circuit Lines (WEM Ecosystem) -->
+  <path d="M 190 260 L 310 190 L 670 190" stroke="url(#roseAccent)" stroke-opacity="0.35" stroke-width="1.5" stroke-dasharray="4 6" />
+  <path d="M 740 480 L 890 410" stroke="url(#roseAccent)" stroke-opacity="0.35" stroke-width="1.5" stroke-dasharray="4 6" />
+
+  <!-- ========================================================= -->
+  <!-- MAIN BACKSTAGE MODULE: WEM CORE ENGINE & REAL-TIME PANEL -->
+  <!-- ========================================================= -->
+  <g filter="url(#panelShadow)">
+    <rect x="210" y="78" width="680" height="450" rx="18" fill="url(#surfaceMain)" stroke="url(#roseBorder)" stroke-width="1.2" />
+
+    <!-- Window Header Bar -->
+    <line x1="210" y1="124" x2="890" y2="124" stroke="#FFFFFF" stroke-opacity="0.06" />
+    <circle cx="240" cy="101" r="4.5" fill="#E11D48" fill-opacity="0.85" />
+    <circle cx="256" cy="101" r="4.5" fill="#FFFFFF" fill-opacity="0.16" />
+    <circle cx="272" cy="101" r="4.5" fill="#FFFFFF" fill-opacity="0.16" />
+    <rect x="304" y="94" width="160" height="14" rx="7" fill="#FFFFFF" fill-opacity="0.05" />
+    <rect x="780" y="92" width="84" height="18" rx="9" fill="#E11D48" fill-opacity="0.16" stroke="#FB7185" stroke-opacity="0.4" stroke-width="0.8" />
+
+    <!-- Left Sidebar Navigation -->
+    <line x1="330" y1="124" x2="330" y2="528" stroke="#FFFFFF" stroke-opacity="0.05" />
+    <rect x="232" y="152" width="76" height="10" rx="5" fill="#FB7185" fill-opacity="0.8" />
+    <rect x="232" y="182" width="64" height="8" rx="4" fill="#FFFFFF" fill-opacity="0.18" />
+    <rect x="232" y="208" width="72" height="8" rx="4" fill="#FFFFFF" fill-opacity="0.12" />
+    <rect x="232" y="234" width="54" height="8" rx="4" fill="#FFFFFF" fill-opacity="0.12" />
+    <rect x="232" y="260" width="68" height="8" rx="4" fill="#FFFFFF" fill-opacity="0.12" />
+    <rect x="232" y="476" width="76" height="26" rx="8" fill="#E11D48" fill-opacity="0.15" stroke="#E11D48" stroke-opacity="0.35" />
+
+    <!-- Top KPI Row inside Main Panel -->
+    <rect x="356" y="148" width="156" height="82" rx="12" fill="#FFFFFF" fill-opacity="0.025" stroke="#FFFFFF" stroke-opacity="0.06" />
+    <rect x="374" y="166" width="52" height="7" rx="3.5" fill="#FFFFFF" fill-opacity="0.3" />
+    <rect x="374" y="186" width="88" height="18" rx="5" fill="#FFFFFF" fill-opacity="0.9" />
+    <rect x="374" y="211" width="42" height="6" rx="3" fill="#FB7185" fill-opacity="0.85" />
+
+    <rect x="528" y="148" width="156" height="82" rx="12" fill="#E11D48" fill-opacity="0.06" stroke="#FB7185" stroke-opacity="0.28" />
+    <rect x="546" y="166" width="64" height="7" rx="3.5" fill="#FB7185" fill-opacity="0.8" />
+    <rect x="546" y="186" width="96" height="18" rx="5" fill="#FFFFFF" fill-opacity="0.95" />
+    <rect x="546" y="211" width="56" height="6" rx="3" fill="#FB7185" fill-opacity="0.65" />
+
+    <rect x="700" y="148" width="164" height="82" rx="12" fill="#FFFFFF" fill-opacity="0.025" stroke="#FFFFFF" stroke-opacity="0.06" />
+    <rect x="718" y="166" width="58" height="7" rx="3.5" fill="#FFFFFF" fill-opacity="0.3" />
+    <rect x="718" y="186" width="78" height="18" rx="5" fill="#FFFFFF" fill-opacity="0.88" />
+    <rect x="718" y="211" width="48" height="6" rx="3" fill="#FFFFFF" fill-opacity="0.25" />
+
+    <!-- Main Telemetry Chart Area -->
+    <rect x="356" y="248" width="508" height="252" rx="14" fill="#07070A" stroke="#FFFFFF" stroke-opacity="0.06" />
+    <rect x="380" y="272" width="118" height="10" rx="5" fill="#FFFFFF" fill-opacity="0.7" />
+    <rect x="380" y="290" width="74" height="7" rx="3.5" fill="#FB7185" fill-opacity="0.65" />
+
+    <!-- Grid Lines inside Chart -->
+    <line x1="380" y1="340" x2="840" y2="340" stroke="#FFFFFF" stroke-opacity="0.04" stroke-dasharray="3 3" />
+    <line x1="380" y1="395" x2="840" y2="395" stroke="#FFFFFF" stroke-opacity="0.04" stroke-dasharray="3 3" />
+    <line x1="380" y1="450" x2="840" y2="450" stroke="#FFFFFF" stroke-opacity="0.06" />
+
+    <!-- Smooth Performance Curve -->
+    <path d="M 380 442 C 435 438, 465 398, 520 392 C 575 386, 610 348, 670 330 C 730 312, 785 282, 840 268 L 840 450 L 380 450 Z" fill="url(#chartArea)" />
+    <path d="M 380 442 C 435 438, 465 398, 520 392 C 575 386, 610 348, 670 330 C 730 312, 785 282, 840 268" stroke="url(#roseAccent)" stroke-width="3.2" stroke-linecap="round" filter="url(#neonGlow)" />
+
+    <!-- Data Nodes on Curve -->
+    <circle cx="520" cy="392" r="4.5" fill="#0A0A0E" stroke="#FB7185" stroke-width="2.5" />
+    <circle cx="670" cy="330" r="5" fill="#0A0A0E" stroke="#FB7185" stroke-width="2.5" />
+    <circle cx="840" cy="268" r="6" fill="#FB7185" />
+  </g>
+
+  <!-- ========================================================= -->
+  <!-- FOREGROUND LEFT MODULE: TRANSPARENT CHECKOUT & CONVERSION -->
+  <!-- ========================================================= -->
+  <g filter="url(#panelShadow)">
+    <rect x="64" y="196" width="290" height="330" rx="16" fill="url(#surfaceFloating)" stroke="url(#roseBorder)" stroke-width="1.2" />
+    <rect x="90" y="224" width="96" height="8" rx="4" fill="#FB7185" fill-opacity="0.9" />
+    <rect x="90" y="244" width="168" height="14" rx="6" fill="#FFFFFF" fill-opacity="0.92" />
+
+    <!-- Payment / Funnel Steps -->
+    <rect x="90" y="278" width="238" height="54" rx="10" fill="#FFFFFF" fill-opacity="0.03" stroke="#FFFFFF" stroke-opacity="0.08" />
+    <circle cx="114" cy="305" r="10" fill="#E11D48" fill-opacity="0.2" stroke="#FB7185" stroke-width="1.2" />
+    <rect x="136" y="295" width="110" height="8" rx="4" fill="#FFFFFF" fill-opacity="0.85" />
+    <rect x="136" y="310" width="72" height="6" rx="3" fill="#FFFFFF" fill-opacity="0.35" />
+
+    <rect x="90" y="346" width="238" height="54" rx="10" fill="#E11D48" fill-opacity="0.07" stroke="#FB7185" stroke-opacity="0.35" />
+    <circle cx="114" cy="373" r="10" fill="#E11D48" />
+    <path d="M 110 373 L 113 376 L 119 370" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+    <rect x="136" y="363" width="128" height="8" rx="4" fill="#FFFFFF" fill-opacity="0.95" />
+    <rect x="136" y="378" width="84" height="6" rx="3" fill="#FB7185" fill-opacity="0.8" />
+
+    <!-- Instant Action Button Mock -->
+    <rect x="90" y="424" width="238" height="42" rx="21" fill="url(#roseAccent)" />
+    <rect x="154" y="441" width="110" height="8" rx="4" fill="#FFFFFF" fill-opacity="0.95" />
+
+    <rect x="124" y="484" width="170" height="6" rx="3" fill="#FFFFFF" fill-opacity="0.2" />
+  </g>
+
+  <!-- ========================================================= -->
+  <!-- FOREGROUND BOTTOM-CENTER/RIGHT MODULE: DYNAMIC CATALOG   -->
+  <!-- ========================================================= -->
+  <g filter="url(#panelShadow)">
+    <rect x="390" y="438" width="560" height="236" rx="16" fill="url(#surfaceFloating)" stroke="url(#roseBorder)" stroke-width="1.2" />
+
+    <rect x="420" y="466" width="112" height="8" rx="4" fill="#FB7185" fill-opacity="0.85" />
+    <rect x="420" y="484" width="210" height="12" rx="6" fill="#FFFFFF" fill-opacity="0.9" />
+    <rect x="820" y="468" width="100" height="26" rx="13" fill="#FFFFFF" fill-opacity="0.05" stroke="#FFFFFF" stroke-opacity="0.12" />
+
+    <!-- 3 Modular Product/Service Cards -->
+    <g>
+      <rect x="420" y="516" width="156" height="130" rx="12" fill="#0B0B0F" stroke="#FFFFFF" stroke-opacity="0.07" />
+      <rect x="434" y="530" width="128" height="54" rx="8" fill="#E11D48" fill-opacity="0.12" />
+      <circle cx="454" cy="557" r="10" fill="#FB7185" fill-opacity="0.3" />
+      <rect x="434" y="598" width="92" height="8" rx="4" fill="#FFFFFF" fill-opacity="0.85" />
+      <rect x="434" y="614" width="60" height="6" rx="3" fill="#FB7185" fill-opacity="0.7" />
+    </g>
+
+    <g>
+      <rect x="592" y="516" width="156" height="130" rx="12" fill="#0B0B0F" stroke="#FB7185" stroke-opacity="0.32" />
+      <rect x="606" y="530" width="128" height="54" rx="8" fill="url(#roseAccent)" fill-opacity="0.22" />
+      <circle cx="626" cy="557" r="10" fill="#E11D48" />
+      <rect x="606" y="598" width="104" height="8" rx="4" fill="#FFFFFF" fill-opacity="0.95" />
+      <rect x="606" y="614" width="72" height="6" rx="3" fill="#FB7185" fill-opacity="0.9" />
+    </g>
+
+    <g>
+      <rect x="764" y="516" width="156" height="130" rx="12" fill="#0B0B0F" stroke="#FFFFFF" stroke-opacity="0.07" />
+      <rect x="778" y="530" width="128" height="54" rx="8" fill="#FFFFFF" fill-opacity="0.04" />
+      <circle cx="798" cy="557" r="10" fill="#FFFFFF" fill-opacity="0.18" />
+      <rect x="778" y="598" width="86" height="8" rx="4" fill="#FFFFFF" fill-opacity="0.75" />
+      <rect x="778" y="614" width="54" height="6" rx="3" fill="#FFFFFF" fill-opacity="0.35" />
+    </g>
+  </g>
+</svg>

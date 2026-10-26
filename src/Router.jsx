@@ -8,6 +8,7 @@ const About = lazy(() => import('@pages/public/About'));
 const Projects = lazy(() => import('@pages/public/Projects'));
 const Services = lazy(() => import('@pages/public/Services'));
 const WhyWavem = lazy(() => import('@pages/public/WhyWavem'));
+const WemTemplates = lazy(() => import('@pages/public/WemTemplates'));
 const AdminAuthGuard = lazy(() => import('@pages/admin/AdminAuthGuard'));
 const AdminLogin = lazy(() => import('@pages/admin/AdminLogin'));
 const AdminLayout = lazy(() => import('@/components/layout/AdminLayout'));
@@ -34,6 +35,14 @@ export const router = createBrowserRouter([
             {
                 path: 'porque-wavem',
                 element: withSuspense(WhyWavem),
+            },
+            {
+                path: 'templates-wem',
+                element: withSuspense(WemTemplates),
+            },
+            {
+                path: 'modelos-wem',
+                element: <Navigate to="/templates-wem" replace />,
             },
             {
                 path: 'sobre',

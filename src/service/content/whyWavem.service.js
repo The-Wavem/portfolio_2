@@ -96,6 +96,37 @@ export const defaultWhyWavemContent = {
             }
         }
     },
+    templatesSection: {
+        overtitle: 'MODELOS DE NEGÓCIO WEM',
+        tag: 'MODELOS DE NEGÓCIO WEM',
+        title: 'Sistemas prontos para escalar. Moldados para a sua operação.',
+        titlePrefix: 'Sistemas prontos para escalar.',
+        titleHighlight: 'Moldados para a sua operação.',
+        ctaText: 'Explorar Modelos WEM',
+        ctaLink: '/templates-wem',
+        imageUrl: '/templates-wem-showcase.svg',
+        imageAlt: 'Ecossistema de modelos e sistemas de negócio WEM em operação',
+        hotspots: [
+            {
+                id: 'checkout',
+                x: '22%',
+                y: '46%',
+                label: 'Checkout Transparente'
+            },
+            {
+                id: 'painel',
+                x: '62%',
+                y: '28%',
+                label: 'Painel em Tempo Real'
+            },
+            {
+                id: 'catalogo',
+                x: '58%',
+                y: '72%',
+                label: 'Catálogo Dinâmico'
+            }
+        ]
+    },
     cta: {
         title: 'Pronto para ter um sistema que trabalha com a sua empresa?',
         description:

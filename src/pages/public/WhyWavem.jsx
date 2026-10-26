@@ -9,6 +9,7 @@ import { trackPageView } from '@/service/analytics/tracking.service';
 import WhyWavemHeroSection from '@/section/whyWavem/WhyWavemHeroSection';
 import WhyWavemCmsSection from '@/section/whyWavem/WhyWavemCmsSection';
 import WhyWavemMetricsSection from '@/section/whyWavem/WhyWavemMetricsSection';
+import WhyWavemTemplatesSection from '@/section/whyWavem/WhyWavemTemplatesSection';
 import WhyWavemCaseStudySection from '@/section/whyWavem/WhyWavemCaseStudySection';
 import WhyWavemCtaSection from '@/section/whyWavem/WhyWavemCtaSection';
 
@@ -45,6 +46,7 @@ export default function WhyWavem() {
             <WhyWavemHeroSection content={content} />
             <WhyWavemCmsSection content={content} />
             <WhyWavemMetricsSection content={content} />
+            <WhyWavemTemplatesSection content={content} />
             {/* <WhyWavemCaseStudySection content={content} /> */}
             <WhyWavemCtaSection content={content} />
         </Box>

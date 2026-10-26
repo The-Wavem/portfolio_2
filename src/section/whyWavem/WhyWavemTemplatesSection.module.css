@@ -1,0 +1,395 @@
+.section {
+    position: relative;
+    padding-top: 88px;
+    padding-bottom: 88px;
+    overflow: hidden;
+    background: transparent;
+}
+
+@media (min-width: 900px) {
+    .section {
+        padding-top: 120px;
+        padding-bottom: 120px;
+    }
+}
+
+/* ==========================================================================
+   ORBES LÍQUIDOS DE FUNDO (DRIFT CONTÍNUO EM FRAMER MOTION)
+   ========================================================================== */
+.liquidOrbsContainer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.liquidOrbWine {
+    position: absolute;
+    top: 8%;
+    left: 6%;
+    width: 520px;
+    height: 520px;
+    border-radius: 50%;
+    background: radial-gradient(
+        circle,
+        rgba(190, 18, 60, 0.16) 0%,
+        rgba(94, 22, 36, 0.11) 48%,
+        rgba(5, 5, 5, 0) 74%
+    );
+    filter: blur(110px);
+    will-change: transform;
+}
+
+.liquidOrbCoral {
+    position: absolute;
+    bottom: 4%;
+    right: 12%;
+    width: 460px;
+    height: 460px;
+    border-radius: 50%;
+    background: radial-gradient(
+        circle,
+        rgba(225, 29, 72, 0.13) 0%,
+        rgba(251, 113, 133, 0.07) 45%,
+        rgba(5, 5, 5, 0) 72%
+    );
+    filter: blur(95px);
+    will-change: transform;
+}
+
+/* Grid assimétrico: ~58% esquerda (showcase visual) e ~42% direita (copy minimalista + ação) */
+.asymmetricGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 44px;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+
+@media (min-width: 960px) {
+    .asymmetricGrid {
+        grid-template-columns: minmax(0, 1.38fr) minmax(0, 1fr);
+        gap: 64px;
+    }
+}
+
+/* ==========================================================================
+   COLUNA ESQUERDA: SHOWCASE VISUAL INTERATIVO INTEGRADO AO FUNDO ESCURO
+   ========================================================================== */
+.showcaseColumn {
+    position: relative;
+    width: 100%;
+    perspective: 1200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.breathingWrapper {
+    width: 100%;
+    will-change: transform;
+}
+
+.showcaseStage {
+    position: relative;
+    width: 100%;
+    border-radius: 20px;
+    transform-style: preserve-3d;
+    will-change: transform;
+    cursor: crosshair;
+}
+
+/* Backlight glow reativo ao cursor atrás dos mockups da imagem */
+.cursorBacklight {
+    position: absolute;
+    inset: -14%;
+    pointer-events: none;
+    z-index: 0;
+    filter: blur(44px);
+    opacity: 0.78;
+    transition: opacity 0.4s ease, filter 0.4s ease;
+}
+
+.showcaseStage:hover .cursorBacklight,
+.section:has(.ctaButton:hover) .cursorBacklight {
+    opacity: 1;
+    filter: blur(50px);
+}
+
+/* Iluminação ambiente fixa para profundidade no tema escuro */
+.ambientAura {
+    position: absolute;
+    top: 12%;
+    left: 10%;
+    width: 76%;
+    height: 76%;
+    border-radius: 50%;
+    background: radial-gradient(
+        circle,
+        rgba(225, 29, 72, 0.16) 0%,
+        rgba(190, 18, 60, 0.06) 52%,
+        transparent 75%
+    );
+    filter: blur(56px);
+    pointer-events: none;
+    z-index: 0;
+    transition: transform 0.45s ease, opacity 0.45s ease;
+}
+
+.showcaseStage:hover .ambientAura,
+.section:has(.ctaButton:hover) .ambientAura {
+    opacity: 1;
+    transform: scale(1.06);
+}
+
+/* Container da imagem com máscara de fusão (mask-image) nas bordas direita e inferior */
+.maskedVisualFrame {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    overflow: hidden;
+    -webkit-mask-image:
+        linear-gradient(to right, rgba(0, 0, 0, 0.92) 0%, #000000 12%, #000000 68%, rgba(0, 0, 0, 0.22) 92%, transparent 100%),
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.9) 0%, #000000 14%, #000000 66%, rgba(0, 0, 0, 0.18) 91%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-image:
+        linear-gradient(to right, rgba(0, 0, 0, 0.92) 0%, #000000 12%, #000000 68%, rgba(0, 0, 0, 0.22) 92%, transparent 100%),
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.9) 0%, #000000 14%, #000000 66%, rgba(0, 0, 0, 0.18) 91%, transparent 100%);
+    mask-composite: intersect;
+}
+
+.showcaseImage {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    mix-blend-mode: lighten;
+    filter: contrast(1.04) brightness(0.98);
+    transition: filter 0.45s ease;
+    user-select: none;
+}
+
+.showcaseStage:hover .showcaseImage,
+.section:has(.ctaButton:hover) .showcaseImage {
+    filter: contrast(1.08) brightness(1.05);
+}
+
+/* Vinheta adicional de segurança para fusão absoluta em #050505 / #0a0a0a */
+.edgeFadeOverlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    background:
+        radial-gradient(circle at 42% 45%, transparent 45%, rgba(5, 5, 5, 0.78) 88%, #050505 100%),
+        linear-gradient(90deg, transparent 62%, rgba(5, 5, 5, 0.85) 92%, #050505 100%),
+        linear-gradient(180deg, transparent 60%, rgba(5, 5, 5, 0.88) 92%, #050505 100%);
+}
+
+/* ==========================================================================
+   HOTSPOTS INTERATIVOS MINIMALISTAS (PADRÃO BRANDNETWORKMARK)
+   ========================================================================== */
+.hotspotsLayer {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.hotspotNode {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    pointer-events: auto;
+    background: transparent;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    outline: none;
+}
+
+.hotspotPulse {
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: rgba(225, 29, 72, 0.28);
+    border: 1px solid rgba(251, 113, 133, 0.55);
+    animation: nodePulse 2.6s infinite ease-in-out;
+    pointer-events: none;
+}
+
+.hotspotCore {
+    position: relative;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--brand-end, #FB7185) 0%, var(--brand-start, #E11D48) 100%);
+    box-shadow: 0 0 14px rgba(225, 29, 72, 0.85);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.hotspotNode:hover .hotspotCore,
+.hotspotNode:focus-visible .hotspotCore,
+.hotspotNodeActive .hotspotCore {
+    transform: scale(1.35);
+    box-shadow: 0 0 20px rgba(251, 113, 133, 1);
+}
+
+.hotspotTag {
+    position: absolute;
+    left: calc(100% + 6px);
+    top: 50%;
+    transform: translateY(-50%) translateX(-6px);
+    white-space: nowrap;
+    padding: 5px 11px;
+    border-radius: 999px;
+    background: rgba(10, 10, 14, 0.88);
+    border: 1px solid rgba(251, 113, 133, 0.38);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.65), 0 0 16px rgba(225, 29, 72, 0.22);
+    backdrop-filter: blur(8px);
+    font-family: 'Fira Code', monospace, sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: #FFFFFF;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.22s;
+}
+
+.hotspotNode:hover .hotspotTag,
+.hotspotNode:focus-visible .hotspotTag,
+.hotspotNodeActive .hotspotTag {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%) translateX(0);
+}
+
+@media (max-width: 600px) {
+    .hotspotTag {
+        left: 50%;
+        top: auto;
+        bottom: calc(100% + 6px);
+        transform: translateX(-50%) translateY(4px);
+    }
+
+    .hotspotNode:hover .hotspotTag,
+    .hotspotNode:focus-visible .hotspotTag,
+    .hotspotNodeActive .hotspotTag {
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+@keyframes nodePulse {
+    0%, 100% {
+        transform: scale(0.85);
+        opacity: 0.65;
+    }
+    50% {
+        transform: scale(1.45);
+        opacity: 0.12;
+    }
+}
+
+/* ==========================================================================
+   COLUNA DIREITA: COPY MINIMALISTA & AÇÃO
+   ========================================================================== */
+.copyColumn {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    text-align: left;
+    position: relative;
+    z-index: 2;
+}
+
+.overtitle {
+    font-family: 'Fira Code', monospace, sans-serif;
+    font-size: 0.74rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    color: var(--brand-end, #FB7185);
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.overtitle::before {
+    content: '';
+    display: inline-block;
+    width: 18px;
+    height: 1px;
+    background: linear-gradient(90deg, var(--brand-start, #E11D48), var(--brand-end, #FB7185));
+}
+
+.title {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1.14;
+    letter-spacing: -0.03em;
+    color: #FFFFFF;
+    margin: 0 0 34px 0;
+    max-width: 520px;
+}
+
+@media (min-width: 600px) {
+    .title {
+        font-size: 2.55rem;
+    }
+}
+
+@media (min-width: 1100px) {
+    .title {
+        font-size: 2.85rem;
+        line-height: 1.1;
+    }
+}
+
+.titleGradient {
+    display: inline;
+    background: linear-gradient(135deg, #FFFFFF 0%, var(--brand-end, #FB7185) 52%, var(--brand-start, #E11D48) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.ctaWrapper {
+    display: inline-flex;
+    align-items: center;
+}
+
+.ctaButton {
+    position: relative;
+}
+
+.arrowIcon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ctaButton:hover .arrowIcon {
+    transform: translateX(5px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .showcaseStage,
+    .showcaseImage,
+    .arrowIcon {
+        transition: none;
+        transform: none !important;
+    }
+
+    .hotspotPulse {
+        animation: none;
+    }
+}
